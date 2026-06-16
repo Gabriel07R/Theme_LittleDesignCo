@@ -1,0 +1,329 @@
+<!doctype html>
+<html class="no-js" lang="{{ request.locale.iso_code }}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <!-- Establish early connection to external domains -->
+    <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.shopify.com" crossorigin>
+    <link rel="preconnect" href="https://monorail-edge.shopifysvc.com">
+    <link rel="preconnect" href="//ajax.googleapis.com" crossorigin>
+
+    {%- liquid
+      assign main_font = settings.main_font
+      assign heading_font = settings.heading_font
+      assign nav_font = settings.nav_font
+      assign main_font_bold = main_font | font_modify: 'weight', 'bolder'
+      assign main_font_italic = main_font | font_modify: 'style', 'italic'
+      assign main_font_bold_italic = main_font_bold | font_modify: 'style', 'italic'
+    -%}
+
+    <!-- Preload onDomain stylesheets and script libraries -->
+    <link rel="preload" href="{{ 'stylesheet.css' | asset_url }}" as="style">
+    <link rel="preload" as="font" href="{{ main_font | font_url }}" type="font/woff2" crossorigin>
+    <link rel="preload" as="font" href="{{ nav_font | font_url }}" type="font/woff2" crossorigin>
+    <link rel="preload" as="font" href="{{ heading_font | font_url }}" type="font/woff2" crossorigin>
+    <link rel="preload" href="{{ 'eventemitter3.min.js' | asset_url }}" as="script">
+    <link rel="preload" href="{{ 'vendor-video.js' | asset_url }}" as="script">
+    <link rel="preload" href="{{ 'theme.js' | asset_url }}" as="script">
+    
+
+    {% if settings.favicon -%}
+      <link rel="shortcut icon" href="{{ settings.favicon | image_url: width: 32, height: 32 }}" type="image/png">
+    {%- endif %}
+    <link rel="canonical" href="{{ canonical_url }}">
+
+    <title>
+      {{ page_title }}
+      {% if current_tags %} &ndash; {{ 'general.meta.title.tagged' | t }} "{{ current_tags | join: ', ' }}"{% endif %}
+      {% if current_page != 1 %}
+        &ndash; {{ 'general.meta.title.page' | t }}
+        {{ current_page -}}
+      {%- endif %}
+      {% unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless %}
+    </title>
+    {% if page_description %}<meta name="description" content="{{ page_description | escape }}">{% endif %}
+
+    {% render 'social-media-tags' %}
+    {% render 'structured-data' %}
+    {% render 'css-variables' %}
+
+    <link rel="stylesheet" href="{{ 'stylesheet.css' | asset_url }}" type="text/css">
+    <link rel="stylesheet" href="{{ 'component-wishlist.css' | asset_url }}" type="text/css">
+
+
+    <style>
+      {{ main_font | font_face: font_display: 'swap' }}
+      {{ nav_font | font_face: font_display: 'swap' }}
+      {{ heading_font | font_face: font_display: 'swap' }}
+      {{ main_font_bold | font_face: font_display: 'swap' }}
+      {{ main_font_italic | font_face: font_display: 'swap' }}
+      {{ main_font_bold_italic | font_face: font_display: 'swap' }}
+    </style>
+
+    {{ content_for_header }}
+    <link rel="stylesheet" href="https://use.typekit.net/qdt1nip.css">
+  </head>
+
+  <body class="gridlock {{ template | handleize }} template-{{ template | handleize }} js-slideout-toggle-wrapper js-modal-toggle-wrapper {% render 'body-classes' %}">
+    <a class="skip-link button og-visually-hidden" href="#main-content" tabindex="0">
+      {{- 'accessibility.skip_to_text' | t -}}
+    </a>
+    {% if settings.enable_age_verify %}
+      {% render 'age-verification' %}
+    {% endif %}
+
+    {% section 'mobile-navigation' %}
+
+    <main id="main-content" class="site-wrap" role="main" tabindex="-1" data-money-format="{{ shop.money_format }}">
+      <div id="wrapper" class="site-wrap__container">
+        {% sections 'header-group' %}
+
+        {{ content_for_layout }}
+
+        <div class="clear"></div>
+      </div>
+      <!-- End wrapper -->
+      {% sections 'footer-group' %}
+    </main>
+
+    {% liquid
+      assign cart_featured_collection = false
+      if settings.cart_featured_collection != blank
+        assign cart_featured_collection = true
+        assign collection = settings.cart_featured_collection
+      endif
+
+      assign cart_recently_viewed = false
+      if settings.enable_recently_viewed_in_cart
+        assign cart_recently_viewed = true
+      endif
+    %}
+
+    {%- if settings.cart_type == 'drawer' -%}
+      <aside
+        popover="auto"
+        class="slideout slideout__drawer-right mini-cart{% if cart_featured_collection or cart_recently_viewed %} has--featured_collection{% endif %}"
+        data-wau-slideout="ajax-cart"
+        id="slideout-ajax-cart"
+      >
+      {% if cart_recently_viewed %}
+        <div class="cart--featured_collection">
+          <h4>Recently viewed</h4>
+          <section
+            id="cart-recently-viewed-products"
+            class="cart-recently-viewed-products"
+            data-section-type="cart-recently-viewed-products"
+          >
+            <div class="cart__disclosure">
+              <p>Recently viewed products. <a href="#">Search the store?</a></p>
+            </div>
+            <div id="cart-recently-viewed-products-wrapper"></div>
+          </section>
+          <style>
+            .cart__disclosure {
+              display: none;
+            }
+            .cart-recently-viewed-products:has(#cart-recently-viewed-products-wrapper:empty) .cart__disclosure {
+              display: block;
+            }
+          </style>
+        </div>
+      {% elsif cart_featured_collection %}
+        <div class="cart--featured_collection">
+          <h4>{{ 'cart.general.featured_items' | t }}</h4>
+          {% for product in collection.products limit: 4 %}
+            {% if product.available %}
+              <div
+                class="product-index product-listing-simple"
+                id="product-listing-{{ product.id }}"
+                data-product-id="{{ product.id }}"
+                data-alpha="{{ product.title }}"
+                data-price="{{ product.price }}"
+              >
+                {% render 'product-listing-simple', product: product, collection: collection %}
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
+
+        {% render 'cart-mini' %}
+      </aside>
+    {% elsif settings.cart_type == 'modal_cart' %}
+      <div
+        popover="auto"
+        class="modal__container"
+        data-wau-modal="ajax-cart"
+        id="modal-ajax-cart"
+      >
+        <div class="modal__inner-wrapper">
+          {% render 'cart-mini' %}
+        </div>
+      </div>
+    {%- endif -%}
+    {%- if settings.quickview -%}
+      <div
+        popover="auto"
+        class="modal__container"
+        data-wau-modal="quickview"
+        id="modal-quickview-cart"
+      >
+        <div class="modal__inner-wrapper">
+          {%- render 'product-quickview' -%}
+        </div>
+      </div>
+    {%- endif -%}
+
+    {% render 'cart-config' %}
+    <script src="{{ 'eventemitter3.min.js' | asset_url }}" defer></script>
+    <script src="{{ 'vendor-video.js' | asset_url }}" defer></script>
+    <script src="{{ 'theme.js' | asset_url }}" defer></script>
+    <script src="{{ 'wishlist.js' | asset_url }}" defer></script>
+
+    {% section 'mailing-popup' %}
+
+      <script src="{{ 'shopify_common.js' | shopify_asset_url }}" defer="defer"></script>
+    {%- if request.page_type contains 'customers/' -%}
+      <script src="{{ 'customer_area.js' | shopify_asset_url }}" defer></script>
+    {%- endif -%}
+
+    <script>
+      document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
+    </script>
+
+    <script type="text/javascript">
+      var jsAssets = {
+        "parallax": {{ 'vendor-parallax.js' | asset_url | json }}
+      }
+      var jsFormat = {
+        "money": {{ shop.money_format | json }}
+      }
+    </script>
+
+    <wau-popover-loader data-asset-url='{{ 'vendor-popover-polyfill.js' | asset_url }}' data-css-class="popover"></wau-popover-loader>
+
+    <!-- Root element of PhotoSwipe. Must have class pswp. -->
+    <div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+      <!--
+        Background of PhotoSwipe.
+        It's a separate element as animating opacity is faster than rgba().
+      -->
+      <div class="pswp__bg"></div>
+      <!-- Slides wrapper with overflow:hidden. -->
+      <div class="pswp__scroll-wrap">
+        <!--
+          Container that holds slides.
+
+          PhotoSwipe keeps only 3 of them in the DOM to save memory.
+          Don't modify these 3 pswp__item elements, data is added later on.
+        -->
+        <div class="pswp__container">
+          <div class="pswp__item"></div>
+          <div class="pswp__item"></div>
+          <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+          <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            {% render 'snip-icons',
+              wrapper: '.pswp__button',
+              type: 'apollo',
+              icon: 'flickity-left-carrot',
+              classes: 'pswp__button--icon',
+              size: '14px',
+              fill: 'var(--directional-color)',
+              hover: 'var(--directional-color)'
+            %}
+          </button>
+          <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            {% render 'snip-icons',
+              wrapper: '.pswp__button',
+              type: 'apollo',
+              icon: 'flickity-right-carrot',
+              classes: 'pswp__button--icon',
+              size: '14px',
+              fill: 'var(--directional-color)',
+              hover: 'var(--directional-color)'
+            %}
+          </button>
+          <button class="pswp__button pswp__button--close" title="Close (Esc)">
+            {% render 'snip-icons',
+              wrapper: '.pswp__button',
+              type: 'apollo',
+              icon: 'close',
+              classes: 'pswp__button--icon',
+              size: '14px',
+              fill: 'var(--directional-color)',
+              hover: 'var(--directional-color)'
+            %}
+          </button>
+        </div>
+      </div>
+    </div>
+
+      {% capture search_modal_content %}
+      {%- if settings.predictive_search_enabled -%}
+        <predictive-search
+          data-routes="{{ routes.predictive_search_url | default: '/search/suggest' }}"
+          data-input-selector='input[name="q"]'
+          data-results-selector="#predictive-search"
+        >
+      {%- endif -%}
+      <form
+        id="search-box"
+        class="header__search-box-inline search-form"
+        action="{{ routes.search_url }}"
+        method="get"
+      >
+        <label class="visually-hidden" for="q--search-box">{{ 'sections.search.placeholder' | t }}</label>
+        <input
+          type="text"
+          name="q"
+          id="q--search-box"
+          class="search__input search-field"
+          placeholder="{{ 'sections.search.placeholder' | t }}"
+          value="{{ search.terms | escape }}"
+          {%- if settings.predictive_search_enabled -%}
+            role="combobox"
+            aria-expanded="false"
+            aria-owns="predictive-search-results-list"
+            aria-controls="predictive-search-results-list"
+            aria-haspopup="listbox"
+            aria-autocomplete="list"
+            autocorrect="off"
+            autocomplete="off"
+            autocapitalize="off"
+            spellcheck="false"
+          {%- endif -%}
+        >
+        <button type="submit">
+          {% render 'snip-icons',
+            wrapper: '.header__search-box-inline',
+            type: 'vantage-theme',
+            icon: 'search',
+            classes: 'header__search-box-inline--icon vib-center',
+            size: '16px',
+            fill: 'var(--text-color)',
+            hover: 'var(--text-color)'
+          %}
+        </button>
+        <input name="options[prefix]" type="hidden" value="last">
+
+        {% if settings.search_show_products_only %}
+          <input type="hidden" name="type" value="product">
+        {% endif %}
+
+        {%- if settings.predictive_search_enabled -%}
+          <div id="predictive-search" class="predictive-search" tabindex="-1"></div>
+        {%- endif -%}
+      </form>
+      {%- if settings.predictive_search_enabled -%}
+        </predictive-search>
+      {%- endif -%}
+    {% endcapture %}
+    {% render 'modal', id: 'search-modal', content: search_modal_content, attributes: 'data-wau-modal-full' %}
+    {%  section 'quickview' %}
+  </body>
+</html>

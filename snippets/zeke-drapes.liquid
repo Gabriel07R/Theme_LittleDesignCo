@@ -1,0 +1,87 @@
+<div class="product-form__input product-form__input--dropdown plus-product-form__select zeke-drapes-fields">
+  <div class="adjustable-bed-container">
+    <label class="form__label js-AB label-center" for="pleat-style-{{ section.id }}">
+      Pleat Style
+    </label>
+
+    <div class="select mb20">
+      <select
+        required
+        class="required styled-select plus-line-item-property__input zeke-drape-property"
+        id="pleat-style-{{ section.id }}"
+        name="items[0]properties[Pleat Style]"
+        data-zeke-property="pleat-style"
+      >
+        <option value="Double Finger">Double Finger</option>
+        <option value="Triple Finger">Triple Finger</option>
+        <option value="Double Euro">Double Euro</option>
+        <option value="Triple Euro">Triple Euro</option>
+      </select>
+    </div>
+  </div>
+
+  <label class="form__label label-center" for="fabric-colorway-{{ section.id }}">
+    Fabric Colorway
+  </label>
+
+  <div class="select">
+    <select
+      required
+      class="required styled-select plus-line-item-property__input zeke-drape-property"
+      id="fabric-colorway-{{ section.id }}"
+      name="items[0]properties[Fabric Colorway]"
+      data-zeke-property="fabric-colorway"
+    >
+      {% if product.title contains 'CHARLESTON CHECK' %}
+        <option value="Apple Red">Apple Red</option>
+        <option value="Celadon">Celadon</option>
+        <option value="Chambray">Chambray</option>
+        <option value="Chocolate">Chocolate</option>
+        <option value="Clover">Clover</option>
+        <option value="Lavender">Lavender</option>
+        <option value="Navy Blue">Navy Blue</option>
+        <option value="Powder Blue">Powder Blue</option>
+        <option value="Primrose">Primrose</option>
+        <option value="Sand">Sand</option>
+        <option value="Spa Blue">Spa Blue</option>
+        <option value="Stone">Stone</option>
+      {% endif %}
+    </select>
+  </div>
+</div>
+
+<script>
+  window.zekeDrapeValues = window.zekeDrapeValues || {};
+
+  document.addEventListener('change', function(event) {
+    if (!event.target.matches('.zeke-drape-property')) return;
+
+    var key = event.target.dataset.zekeProperty;
+    if (!key) return;
+
+    window.zekeDrapeValues[key] = event.target.value;
+  });
+
+  function restoreZekeDrapeValues() {
+    document.querySelectorAll('.zeke-drape-property').forEach(function(select) {
+      var key = select.dataset.zekeProperty;
+      var savedValue = window.zekeDrapeValues[key];
+
+      if (savedValue) {
+        select.value = savedValue;
+      }
+    });
+  }
+
+  document.addEventListener('variant:change', restoreZekeDrapeValues);
+  document.addEventListener('variantchange', restoreZekeDrapeValues);
+  document.addEventListener('shopify:section:load', restoreZekeDrapeValues);
+
+  document.addEventListener('change', function(event) {
+    if (event.target.matches('.js-variant-selector')) {
+      setTimeout(restoreZekeDrapeValues, 50);
+      setTimeout(restoreZekeDrapeValues, 150);
+      setTimeout(restoreZekeDrapeValues, 300);
+    }
+  });
+</script>

@@ -1,0 +1,242 @@
+{% comment %}
+  snippets/product-variants.liquid
+
+  Snippet that renders product variants and size chart.
+
+  Accepts:
+  - product: {Object} Product Liquid object
+  - Section: {Object} Section object
+  - block: {Object} Block object
+  - current_variant: {Object} Variant liquid object
+  - show_size_chart: {Boolean} For showing the size chart
+  - size_chart_label: {String} String for size chart label
+  - size_chart_page: {Object} Page object from input setting
+  - size_chart_type: {String} Size chart type
+  - section_id: {String} Unique section ID so that popup are different
+
+  Usage:
+  {%
+    render 'product-variants',
+    product: product,
+    section: section,
+    block: block,
+    current_variant: current_variant,
+    show_size_chart: show_size_chart,
+    size_chart_label: size_chart_label,
+    size_chart_page: size_chart_page,
+    section_id: section.id
+  %}
+{% endcomment %}
+{% render 'snip-product-json', product: product %}
+{%- unless product.has_only_default_variant -%}
+  {%- if settings.product_variants == 'swatches' -%}
+    <div
+      class="product__variants-swatches mt4 mb6 no-js-hidden"
+      data-section="{{ section.id }}"
+      data-section-id="{{ section.id }}"
+      data-url="{{ product.url }}"
+      data-selected-variant-id="{{ current_variant.id }}"
+    >
+      {% for option in product.options_with_values %}
+        {% render 'swatch',
+          option: option,
+          current_variant: current_variant,
+          product: product,
+          show_size_chart: show_size_chart,
+          size_chart_label: size_chart_label,
+          size_chart_page: size_chart_page,
+          size_chart_type: size_chart_type,
+          section_id: section_id
+        %}
+      {% endfor %}
+    </div>
+  {%- else -%}
+    <div
+      class="product__variants-select no-js-hidden selector-wrapper"
+      data-section="{{ section.id }}"
+      data-url="{{ product.url }}"
+      data-section-id="{{ section.id }}"
+    >
+      {%- for option in product.options_with_values -%}
+        {% unless template == 'product.quick' %}
+          {% assign option_name = option.name | downcase %}
+          {% assign size_swatches = 'size, sizes, talla, taglia, taille, tamanho, grosse' | split: ', ' %}
+          {% if show_size_chart and size_swatches contains option_name %}
+            {% render 'size-chart',
+              label: size_chart_label,
+              page: size_chart_page,
+              section_id: section_id,
+              type: size_chart_type
+            %}
+          {% endif %}
+        {% endunless %}
+        <div class="product-form__input product-form__input--dropdown">
+          <label
+            class="form__label"
+            for="Option-{{ section.id }}-{{ forloop.index0 }}"
+          >
+            <div class="tooltip">
+              {{ option.name }}
+              {% if option.name == 'Width' %}
+                <div class="question-mark">?</div>
+                <div class="tooltip-img" style="text-align:center;">description of widths will be Here</div>
+              {% endif %}
+            </div>
+          </label>
+          <div class="select">
+            <select
+              id="Option-{{ section.id }}-{{ forloop.index0 }}"
+              class="js-variant-selector styled-select"
+              name="options[{{ option.name | escape }}]"
+              form="product-form-{{ section.id }}"
+            >
+              {%- for option_value in option.values -%}
+                <option
+                  value="{{ option_value | escape }}"
+                  {% if option.selected_value == option_value %}
+                    selected="selected"
+                  {% endif %}
+                  data-position="{{ option.position }}"
+                  data-option-value-id="{{ option_value.id }}"
+                  name="{{ option.name | downcase | escape }}"
+                >
+                  {% if option_value.available %}
+                    {{ option_value }}
+                  {% else %}
+                    {{ option_value }} - Unavailable
+                  {% endif %}
+                </option>
+              {%- endfor -%}
+            </select>
+          </div>
+        </div>
+
+        {% if forloop.index == 2 %}
+          <div
+            id="custom-fields-after-option-2-{{ section.id }}"
+            class="custom-fields-slot custom-fields-slot--after-option-2"
+          ></div>
+        {% endif %}
+      {%- endfor -%}
+    </div>
+
+    <template id="custom-fields-template-after-option-2-{{ section.id }}">
+      <div class="product-form__input product-form__input--dropdown plus-product-form__select custom-product-property-field">
+        <div class="adjustable-bed-container">
+          <div style="display: flex">
+            <label class="form__label js-AB label-center" for="pleat-style-{{ section.id }}"> Pleat Style </label>
+            <div class="tooltip">
+              <div class="question-mark">?</div>
+              <div class="tooltip-img" style="text-align:center;">description of Pleat Style will be Here</div>
+            </div>
+          </div>
+
+          <div class="select mb20">
+            <select
+              required
+              class="required styled-select custom-property-input"
+              id="pleat-style-{{ section.id }}"
+              data-custom-property-key="Pleat Style"
+            >
+              <option value="Double Finger">Double Finger</option>
+              <option value="Triple Finger">Triple Finger</option>
+              <option value="Double Euro">Double Euro</option>
+              <option value="Triple Euro">Triple Euro</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-form__input product-form__input--dropdown plus-product-form__select custom-product-property-field">
+        <label class="form__label label-center" for="fabric-colorway-{{ section.id }}"> Fabric Colorway </label>
+
+        <div class="select">
+          <select
+            required
+            class="required styled-select custom-property-input"
+            id="fabric-colorway-{{ section.id }}"
+            data-custom-property-key="Fabric Colorway"
+          >
+            {% if product.title contains 'CHARLESTON CHECK' %}
+              <option value="Apple Red">Apple Red</option>
+              <option value="Celadon">Celadon</option>
+              <option value="Chambray">Chambray</option>
+              <option value="Chocolate">Chocolate</option>
+              <option value="Clover">Clover</option>
+              <option value="Lavender">Lavender</option>
+              <option value="Navy Blue">Navy Blue</option>
+              <option value="Powder Blue">Powder Blue</option>
+              <option value="Primrose">Primrose</option>
+              <option value="Sand">Sand</option>
+              <option value="Spa Blue">Spa Blue</option>
+              <option value="Stone">Stone</option>
+            {% endif %}
+
+            {% if product.title contains 'EMPIRE' %}
+              <option value="JADE">JADE</option>
+              <option value="SPA BLUE">SPA BLUE</option>
+              <option value="MARBLE">MARBLE</option>
+              <option value="STONE">STONE</option>
+              <option value="CELADON">CELADON</option>
+              <option value="MIST">MIST</option>
+            {% endif %}
+
+            {% if product.title contains 'PLAZA' %}
+              <option value="LAVENDER">LAVENDER</option>
+              <option value="BALLET">BALLET</option>
+              <option value="BLUSH">BLUSH</option>
+              <option value="BONE">BONE</option>
+              <option value="CERULEAN BLUE">CERULEAN BLUE</option>
+              <option value="CHARTREUSE">CHARTREUSE</option>
+              <option value="MIST">MIST</option>
+              <option value="ROSE PINK">ROSE PINK</option>
+            {% endif %}
+
+            {% if product.title contains 'SOHO' %}
+              <option value="BONE">BONE</option>
+              <option value="CAMEL">CAMEL</option>
+              <option value="CAMEO">CAMEO</option>
+              <option value="GREY">GREY</option>
+              <option value="NAVY BLUE">NAVY BLUE</option>
+              <option value="SPA BLUE">SPA BLUE</option>
+            {% endif %}
+
+            {% if product.title contains 'STANDARD' %}
+              <option value="COGNAC">COGNAC</option>
+              <option value="AEGEAN">AEGEAN</option>
+              <option value="BLUSH">BLUSH</option>
+              <option value="CAPRI BLUE">CAPRI BLUE</option>
+              <option value="CASHMERE">CASHMERE</option>
+              <option value="CELADON">CELADON</option>
+              <option value="CERISE">CERISE</option>
+              <option value="CERULEAN BLUE">CERULEAN BLUE</option>
+              <option value="CHARCOAL">CHARCOAL</option>
+              <option value="DOVE GREY">DOVE GREY</option>
+              <option value="EMERALD">EMERALD</option>
+              <option value="EUCALYPTUS">EUCALYPTUS</option>
+              <option value="FLAMINGO">FLAMINGO</option>
+              <option value="FRENCH BLUE">FRENCH BLUE</option>
+              <option value="GRAPHITE">GRAPHITE</option>
+              <option value="GREY">GREY</option>
+              <option value="MAHOGANY">MAHOGANY</option>
+              <option value="NAVY BLUE">NAVY BLUE</option>
+              <option value="OLIVE">OLIVE</option>
+              <option value="PEACOCK">PEACOCK</option>
+              <option value="PRUSSIAN BLUE">PRUSSIAN BLUE</option>
+              <option value="SABLE">SABLE</option>
+              <option value="SMOKEY LILAC">SMOKEY LILAC</option>
+              <option value="SOFT BLUE">SOFT BLUE</option>
+            {% endif %}
+          </select>
+        </div>
+      </div>
+    </template>
+  {%- endif -%}
+{%- endunless -%}
+
+<input
+  class="formVariantId"
+  name=""
+  type="hidden"
+  value="{{ current_variant.id }}"
+>

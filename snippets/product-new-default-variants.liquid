@@ -1,0 +1,223 @@
+{% comment %}
+  snippets/product-variants.liquid
+
+  Snippet that renders product variants and size chart.
+
+  Accepts:
+  - product: {Object} Product Liquid object
+  - Section: {Object} Section object
+  - block: {Object} Block object
+  - current_variant: {Object} Variant liquid object
+  - show_size_chart: {Boolean} For showing the size chart
+  - size_chart_label: {String} String for size chart label
+  - size_chart_page: {Object} Page object from input setting
+  - size_chart_type: {String} Size chart type
+  - section_id: {String} Unique section ID so that popup are different
+
+  Usage:
+  {%
+    render 'product-variants',
+    product: product,
+    section: section,
+    block: block,
+    current_variant: current_variant,
+    show_size_chart: show_size_chart,
+    size_chart_label: size_chart_label,
+    size_chart_page: size_chart_page,
+    section_id: section.id
+  %}
+{% endcomment %}
+{% render 'snip-product-json', product: product %}
+{%- unless product.has_only_default_variant -%}
+  {%- if settings.product_variants == 'swatches' -%}
+    <div
+      class="product__variants-swatches mt4 mb6 no-js-hidden"
+      data-section="{{ section.id }}"
+      data-section-id="{{ section.id }}"
+      data-url="{{ product.url }}"
+      data-selected-variant-id="{{ current_variant.id }}"
+    >
+      {% for option in product.options_with_values %}
+        {% render 'swatch',
+          option: option,
+          current_variant: current_variant,
+          product: product,
+          show_size_chart: show_size_chart,
+          size_chart_label: size_chart_label,
+          size_chart_page: size_chart_page,
+          size_chart_type: size_chart_type,
+          section_id: section_id
+        %}
+      {% endfor %}
+    </div>
+  {%- else -%}
+    <div
+      class="product__variants-select no-js-hidden selector-wrapper"
+      data-section="{{ section.id }}"
+      data-url="{{ product.url }}"
+      data-section-id="{{ section.id }}"
+    >
+      {% if product.metafields.custom.combined_listing %}
+        <div class="product-form__input product-form__input--dropdown">
+          {% assign combine_listing = product.metafields.custom.combined_listing.value %}
+
+          <div class="related-product-swatches">
+            {% assign priority_tags = 'BRASS CORDING,MONOCHROME,COLORBLOCK,TAPE TRIM,MARIPOSA,FRINGE,PANEL,KNIFE EDGE,EDGE FINISH,SOLID'
+              | split: ','
+            %}
+
+            {% for related_product in combine_listing %}
+              <div class="swatch-item">
+                <a
+                  href="{{ related_product.url }}"
+                  class="swatch {% if related_product.id == product.id %}active{% endif %}"
+                >
+                  <img
+                    src="{{ related_product.featured_image | image_url: width: 200 }}"
+                    alt="{{ related_product.title }}"
+                    width="200"
+                    height="auto"
+                  >
+                </a>
+
+                {% assign displayed_tag = '' %}
+
+                {% for priority_tag in priority_tags %}
+                  {% if related_product.tags contains priority_tag %}
+                    {% assign displayed_tag = priority_tag %}
+                    {% break %}
+                  {% endif %}
+                {% endfor %}
+
+                {% if displayed_tag != '' %}
+                  <span class="swatch-label">{{ displayed_tag }}</span>
+                {% endif %}
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+
+      {%- for option in product.options_with_values -%}
+        {% unless template == 'product.quick' %}
+          {% assign option_name = option.name | downcase %}
+          {% assign size_swatches = 'size, sizes, talla, taglia, taille, tamanho, grosse' | split: ', ' %}
+          {% if show_size_chart and size_swatches contains option_name %}
+            {% render 'size-chart',
+              label: size_chart_label,
+              page: size_chart_page,
+              section_id: section_id,
+              type: size_chart_type
+            %}
+          {% endif %}
+        {% endunless %}
+        <div class="product-form__input product-form__input--dropdown">
+          <label
+            class="form__label"
+            for="Option-{{ section.id }}-{{ forloop.index0 }}"
+          >
+            {{ option.name }}
+          </label>
+          <div class="select">
+            <select
+              id="Option-{{ section.id }}-{{ forloop.index0 }}"
+              class="js-variant-selector styled-select"
+              name="options[{{ option.name | escape }}]"
+              form="product-form-{{ section.id }}"
+            >
+              {%- for option_value in option.values -%}
+                <option
+                  value="{{ option_value | escape }}"
+                  {% if option.selected_value == option_value %}
+                    selected="selected"
+                  {% endif %}
+                  data-position="{{ option.position }}"
+                  data-option-value-id="{{ option_value.id }}"
+                  name="{{ option.name | downcase | escape }}"
+                >
+                  {% if option_value.available %}
+                    {{ option_value }}
+                  {% else %}
+                    {{ option_value }} - Unavailable
+                  {% endif %}
+                </option>
+              {%- endfor -%}
+            </select>
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+{%- endunless -%}
+
+<input
+  class="formVariantId"
+  name=""
+  type="hidden"
+  value="{{ current_variant.id }}"
+>
+<style>
+  .related-product-swatches {
+    display: flex;
+    gap: 0px;
+    flex-wrap: wrap;
+    justify-content: left;
+    width: 75%; /* controls space between */
+  }
+
+  .swatch {
+    display: flex;
+    border: 2px solid transparent;
+    border-radius: 6px;
+    overflow: hidden;
+    width: 65%; /* controls image size */    
+    cursor: pointer;
+    justify-content: center;
+    position: relative;
+  }
+
+  .swatch img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .swatch:hover {
+      border-color: black
+  }
+
+  .swatch.active {
+    border-color: black;
+  }
+
+  .swatch-label {
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    white-space: nowrap;
+    text-align: center;
+  }
+
+  .swatch-item {
+    flex: 1; /* every item same width */
+    max-width: 140px; /* optional cap */
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+</style>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const select = document.getElementById('related-product-select');
+
+    if (!select) return;
+
+    select.addEventListener('change', function () {
+      const url = this.value;
+      if (url) {
+        window.location.href = url;
+      }
+    });
+  });
+</script>

@@ -1,0 +1,168 @@
+{%- liquid
+  assign section_padding = ''
+  if section.settings.section_padding == 'top'
+    assign section_padding = 'pb0'
+  elsif section.settings.section_padding == 'bottom'
+    assign section_padding = 'mt0'
+  elsif section.settings.section_padding == 'none'
+    assign section_padding = 'mt0 pb0'
+  endif
+-%}
+
+{% assign unique_id = section.id | slice: -7, 7 %}
+
+{% capture section_classes %}
+  section-accordion section-accordion--{{ section.id }} {% if settings.animation != 'none' %} animate {{ settings.animation }} {% endif %}
+{% endcapture %}
+
+<div class="global__section {{ section_padding }}">
+  <section
+    id="section-accordion--{{ section.id }}"
+    class="{{- section_classes | strip -}}"
+    data-section-type="accordion"
+    data-section-loaded="false"
+    data-section-id="{{ section.id }}"
+  >
+    <div class="row grid__wrapper">
+      {% if section.settings.heading != blank %}
+        <h2 class="section-title span-12 auto">{{ section.settings.heading | escape }}</h2>
+      {% endif %}
+
+      {% if section.blocks.size > 0 %}
+        <div
+          class="{% if section.settings.reduced_width %} span-8 push-2{% else %} span-12{% endif %} md-span-12 sm-span-12 auto"
+        >
+          {% for block in section.blocks %}
+
+            <details
+              class="details"
+              {% unless section.settings.allow_multiple %}
+                name="{{ section.id }}"
+              {% endunless %}
+              id="{{ block.id }}"
+              {{ block.shopify_attributes }}
+            >
+              <summary class="details__summary">
+                <h3 class="details__title">{{ block.settings.heading }}</h3>
+                <div class="details__icon">
+                  {% render 'snip-icons',
+                    wrapper: '',
+                    type: 'apollo',
+                    icon: 'minus',
+                    classes: 'details__svg open c-accordion__header-icons--icon',
+                    size: '14px',
+                    fill: 'var(--accordion-color)',
+                    hover: 'var(--accordion-color)'
+                  %}
+                  {% render 'snip-icons',
+                    wrapper: '',
+                    type: 'apollo',
+                    icon: 'plus',
+                    classes: 'details__svg closed c-accordion__header-icons--icon',
+                    size: '14px',
+                    fill: 'var(--accordion-color)',
+                    hover: 'var(--accordion-color)'
+                  %}
+                </div>
+              </summary>
+              <div class="details__content rte">
+                {{ block.settings.content }}
+              </div>
+            </details>
+          {% endfor %}
+        </div>
+        <!-- /.c-accordion -->
+      {% else %}
+        {% render 'no-blocks' %}
+      {% endif %}
+    </div>
+  </section>
+</div>
+{% schema %}
+{
+  "name": "Accordion",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "FAQs"
+    },
+    {
+      "type": "checkbox",
+      "id": "allow_multiple",
+      "label": "Allow multiple accordions open at one time",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "reduced_width",
+      "label": "Reduce section width"
+    },
+    {
+      "type": "select",
+      "id": "section_padding",
+      "label": "Section spacing",
+      "options": [
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        },
+        {
+          "value": "both",
+          "label": "Both"
+        },
+        {
+          "value": "none",
+          "label": "None"
+        }
+      ],
+      "default": "both",
+      "visible_if": "{{ settings.index_padding > 0 }}"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "panel",
+      "name": "Panel",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Heading"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Content",
+          "default": "<p>Use this text to share information about your brand with your customers. Describe a product, share announcements, or welcome customers to your store.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Accordion",
+      "blocks": [
+        {
+          "type": "panel"
+        },
+        {
+          "type": "panel"
+        },
+        {
+          "type": "panel"
+        }
+      ]
+    }
+  ],
+  "disabled_on": {
+    "groups": ["header", "footer", "aside"]
+  }
+}
+{% endschema %}

@@ -1,0 +1,38 @@
+{%- liquid
+  assign sample_label = 'Sample 4" X 4"'
+  assign sample_label_downcase = sample_label | downcase
+  assign sample_variant_id = ''
+
+  for variant in product.variants
+    if variant.available
+      for option_value in variant.options
+        assign option_value_downcase = option_value | downcase
+        if option_value_downcase == sample_label_downcase
+          assign sample_variant_id = variant.id
+          break
+        endif
+      endfor
+    endif
+
+    if sample_variant_id != ''
+      break
+    endif
+  endfor
+-%}
+
+{%- if sample_variant_id != '' -%}
+  <form class="product-sample-form product-sample-form--card" action="/cart/add" method="post">
+    <input type="hidden" name="id" value="{{ sample_variant_id }}">
+    <input type="hidden" name="quantity" value="1">
+    <button
+      type="submit"
+      class="product-sample-button product-sample-button--card AddtoCart js-ajax-submit"
+      name="button"
+      value="Sample"
+      data-quick-add
+      aria-label="Add {{ sample_label | escape }} sample for {{ product.title | escape }} to cart"
+    >
+      Sample
+    </button>
+  </form>
+{%- endif -%}

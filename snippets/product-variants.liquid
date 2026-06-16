@@ -1,0 +1,109 @@
+{% comment %}
+    snippets/product-variants.liquid
+
+    Snippet that renders product variants and size chart.
+
+    Accepts:
+    - product: {Object} Product Liquid object
+    - Section: {Object} Section object
+    - block: {Object} Block object
+    - current_variant: {Object} Variant liquid object
+    - show_size_chart: {Boolean} For showing the size chart
+    - size_chart_label: {String} String for size chart label
+    - size_chart_page: {Object} Page object from input setting
+    - size_chart_type: {String} Size chart type
+    - section_id: {String} Unique section ID so that popup are different
+
+    Usage:
+    {%
+      render 'product-variants',
+      product: product,
+      section: section,
+      block: block,
+      current_variant: current_variant,
+      show_size_chart: show_size_chart,
+      size_chart_label: size_chart_label,
+      size_chart_page: size_chart_page,
+      section_id: section.id
+    %}
+{% endcomment %}
+{% render 'snip-product-json', product: product %}
+{%- unless product.has_only_default_variant -%}
+ {%- if settings.product_variants == 'swatches' -%}
+   <div
+    class="product__variants-swatches mt4 mb6 no-js-hidden"
+    data-section="{{ section.id }}"
+    data-section-id="{{ section.id }}"
+    data-url="{{ product.url }}"
+    data-selected-variant-id="{{ current_variant.id }}"
+   >
+     {% for option in product.options_with_values %}
+       {% render "swatch",
+         option: option,
+         current_variant: current_variant,
+         product: product,
+         show_size_chart: show_size_chart,
+         size_chart_label: size_chart_label,
+         size_chart_page: size_chart_page,
+         size_chart_type: size_chart_type,
+         section_id: section_id
+        %}
+     {% endfor %}
+   </div>
+ {%- else -%}
+   <div
+    class="product__variants-select no-js-hidden selector-wrapper"
+    data-section="{{ section.id }}"
+    data-url="{{ product.url }}"
+    data-section-id="{{ section.id }}"
+   >
+     {%- for option in product.options_with_values -%}
+       {% unless template == 'product.quick' %}
+        {% assign option_name = option.name | downcase %}
+        {% assign size_swatches = "size, sizes, talla, taglia, taille, tamanho, grosse" | split: ", " %}
+          {% if show_size_chart and size_swatches contains option_name %}
+              {% render 'size-chart', label: size_chart_label, page: size_chart_page, section_id: section_id, type: size_chart_type %}
+          {% endif %}
+        {% endunless %}
+       <div class="product-form__input product-form__input--dropdown">
+         <label
+          class="form__label"
+          for="Option-{{ section.id }}-{{ forloop.index0 }}">
+           {{ option.name }}
+         </label>
+          <div class="select">
+              <select id="Option-{{ section.id }}-{{ forloop.index0 }}"
+                class="js-variant-selector styled-select"
+                name="options[{{ option.name | escape }}]"
+                form="product-form-{{ section.id }}"
+              >
+                {%- for option_value in option.values -%}
+                  <option
+                    value="{{ option_value | escape }}"
+                    {% if option.selected_value == option_value %}
+                      selected="selected"
+                    {% endif %}
+                    data-position="{{ option.position }}"
+                    data-option-value-id="{{ option_value.id }}"
+                    name="{{ option.name | downcase | escape }}"
+                  >
+                    {% if option_value.available %}
+                      {{ option_value }}
+                    {% else %}
+                      {{ option_value }} - Unavailable
+                    {% endif %}
+                  </option>
+                {%- endfor -%}
+              </select>
+           </div>
+       </div>
+     {%- endfor -%}
+   </div>
+ {%- endif -%}
+{%- endunless -%}
+
+<input
+class="formVariantId"
+name=""
+type="hidden"
+value="{{ current_variant.id }}">

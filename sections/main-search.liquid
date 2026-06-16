@@ -1,0 +1,327 @@
+{%- liquid
+
+ assign show_filters = false
+
+ if section.settings.show_filters
+   assign show_filters = true
+ endif
+
+ assign filter_count = 0
+ for filter in search.filters
+   if filter.type == 'price_range'
+     if filter.min_value.value != nil or filter.max_value.value != nil
+       assign filter_count = 1
+     endif
+   endif
+
+   assign filter_count = filter_count | plus: filter.active_values.size
+ endfor
+
+ assign filter_appearance = 'sidebar'
+ if section.settings.filter_appearance == 'slideout'
+   assign filter_appearance = 'slideout'
+ endif
+
+-%}
+
+<div class="main__section"
+data-section-id="{{ section.id }}"
+data-section-type="search-section">
+{% paginate search.results by 24 %}
+  <div id="searchResultsWrapper" class="row">
+    {%- liquid
+
+      assign has_products = false
+      assign has_articles = false
+      assign has_pages = false
+
+    -%}
+      <div id="page" class="grid__wrapper main__section">
+        <h1 class="span-6 push-3 sm-span-12">{{ 'sections.search.title' | t }}</h1>
+        <div id="search-bar" class="span-6 push-3 sm-span-12 auto">
+          <form action="{{ routes.search_url }}" method="get">
+            <label class="visually-hidden" for="q">{{ 'sections.search.placeholder' | t }}</label>
+            <div class="search-form">
+              <input
+                type="text"
+                name="q"
+                id="q"
+                class="search__input"
+                placeholder="{{ 'sections.search.placeholder' | t }}"/>
+              <button type="submit">
+                {% render 'snip-icons',
+                   wrapper: '.search__input',
+                   type: 'vantage-theme',
+                   icon: 'search',
+                   classes: 'search__input--icon vib-center',
+                   size: '14px',
+                   fill: 'var(--text-color)',
+                   hover: 'var(--text-color)' %}
+              </button>
+              {% if settings.search_show_products_only %}
+                <input type="hidden" name="type" value="product">
+              {% endif %}
+            </div>
+            {% if search.performed %}
+              {% if search.results_count == 0 %}
+                <p>{{ 'sections.search.no_results_html' | t: terms: search.terms }}</p>
+              {% else %}
+                <p>{{ 'sections.search.results_for_html' | t: terms: search.terms }}</p>
+              {% endif %}
+            {% endif %}
+          </form>
+        </div>
+      </div>
+
+      {% if search.performed %}
+        {% if show_filters %}
+          {%
+            render 'search-topbar',
+            filter_count: filter_count,
+            filter_appearance: filter_appearance
+          %}
+          {% if filter_appearance == 'slideout' %}
+            <aside
+              popover="auto"
+              class="slideout slideout__drawer-right"
+              data-wau-slideout="collection-sidebar"
+              data-wau-accordions-closed
+              id="slideout-collection-sidebar"
+            >
+
+              <div class="slideout__trigger--close">
+                <button
+                  class="slideout__trigger-collection-sidebar js-slideout-close button-as-link"
+                  data-slideout-direction="right"
+                  aria-label="Close sidebar"
+                  tabindex="0"
+                  type="button"
+                  name="button"
+                  popovertarget="slideout-collection-sidebar"
+                  popovertargetaction="hide"
+                >
+                  <div class="icn-close"></div>
+                </button>
+              </div>
+              {%
+                render 'search-sidebar'
+              %}
+            </aside>
+          {% endif %}
+        {% endif %}
+
+        {%- liquid
+
+          for item in search.results
+            if item.object_type == 'product'
+            assign has_products = true
+            endif
+            if item.object_type == 'article'
+            assign has_articles = true
+            endif
+            if item.object_type == 'page'
+            assign has_pages = true
+            endif
+          endfor
+
+        -%}
+
+        {%- if search.results_count < 1 -%}
+          <div id="main-search-results"
+            class="search--empty grid__wrapper"
+            data-id="{{ section.id }}">
+            {%- if filter_count > 0 -%}
+              <span class="rte span-12 auto">{{ 'collections.filters.use_fewer_filters_html' | t: link: routes.search_url, class: "underline" }}</span>
+            {%- endif -%}
+          </div>
+        {%- else -%}
+           <div id="main-search-results"
+                class="search__grid grid__wrapper"
+                data-grid-type="grid"
+                data-id="{{ section.id }}">
+
+            {% if filter_appearance == 'sidebar' and show_filters %}
+              <div id="search--sidebar_container"
+                  class="search--sidebar_wrapper span-3 sm-span-12 auto js-sidebar-wrapper"
+                  data-search-sidebar-layout>
+                {% render
+                  'search-sidebar',
+                  filter_appearance: filter_appearance
+                %}
+              </div>
+              <div id="main-search-results-grid"
+                   class="search--results_wrapper span-9 auto sm-span-12 grid__wrapper grid__wrapper-nest">
+              {% comment %} When sidebar we switch to show a persistent sidebar and introduce a wrapper {% endcomment %}
+            {% endif %}
+
+                {% if has_products %}
+                  <h2 class="section-title span-6 push-3 sm-span-12 auto">{{ 'sections.search.products' | t }}</h2>
+                  <div id="product-loop" class="span-12 auto grid__wrapper grid__wrapper-nest">
+                  {% for item in search.results %}
+                    {% if item.object_type == 'product' %}
+                      {% liquid
+                        assign loading = 'lazy'
+                        assign fetch_priority = 'auto'
+                        if section.index == 1 and forloop.index <= 4
+                          assign loading = 'eager'
+                          assign fetch_priority = 'high'
+                        endif
+                        %}
+                      <div
+                        class="product-index span-3 sm-span-6 auto {% if settings.animation != 'none' %} animate {{ settings.animation }} delay--{{ forloop.index }}{% endif %}"
+                        id="prod-{{ item.id }}"
+                        data-alpha="{{ item.title }}"
+                        data-price="{{ item.price }}">
+                        {% render 'product-listing', product: item, collection: collection, grid: 3, loading: loading, fetchpriority: fetch_priority %}
+                      </div>
+                    {% endif %}
+                  {% endfor %}
+                  </div>
+                {% endif %}
+
+                {% if section.settings.show_articles and has_articles %}
+                  <h2 class="section-title span-6 push-3 sm-span-12 auto">{{ 'sections.search.articles' | t }}</h2>
+                  <div id="search-article-loop" class="span-12 auto grid__wrapper grid__wrapper-nest">
+                    {% for item in search.results %}
+                      {% if item.object_type == 'article' %}
+                      <div class="search-article span-3 auto sm-span-6{% if settings.animation != 'none' %} animate {{ settings.animation }}{% endif %}">
+                        <!--'item' is an article All article object properties can be accessed. -->
+                        {% if item.image %}
+                          <div class="prod-image">
+                            <a href="{{ item.url }}" title="{{ item.title | escape }}">
+                              {% liquid
+                                assign loading = 'lazy'
+                                assign fetch_priority = 'auto'
+                                if section.index == 1 and has_products == false and forloop.index <= 4
+                                  assign loading = 'eager'
+                                  assign fetch_priority = 'high'
+                                endif
+                                %}
+                              {%- render 'basic-responsive-image',
+                                type: item.image,
+                                width: 600,
+                                loading: loading,
+                                fetchpriority: fetch_priority
+                              -%}
+                            </a>
+                          </div>
+                        {% endif %}
+                        <div class="product-info">
+                          <h4 class="page-info"><a href="{{ item.url }}">{{ item.title }}</a></h4>
+                          <p>{{ item.content | strip_html | truncate: 200 }}</p>
+                        </div>
+                      </div>
+                      {% endif %}
+                    {% endfor %}
+                  </div>
+                {% endif %}
+
+                {% if section.settings.show_pages and has_pages %}
+                  <h2 class="section-title span-6 push-3 sm-span-12 auto">{{ 'sections.search.pages' | t }}</h2>
+                  <div id="search-page-loop" class="span-12 auto grid__wrapper grid__wrapper-nest">
+                    {% for item in search.results %}
+                      {% if item.object_type == 'page' %}
+                      <div class="search-page span-3 auto sm-span-6{% if settings.animation != 'none' %} animate {{ settings.animation }}{% endif %}">
+                        <!--'item' is an page All page object properties can be accessed. -->
+                        {% if item.content contains '<img' %}
+                          <div class="prod-image">
+                            <a href="{{ item.url }}" title="{{ item.title | escape }}">
+                              {% assign page_images = item.content | split: 'src="' %}
+                              {% for page_image in page_images %}
+                                {% if forloop.index0 == 1 %}
+                                  {% assign first_image_src = page_image | split: '"' | first %}
+                                  {% if item.content contains "alt" %}
+                                    {% assign first_image_alt = page_image | split: 'alt="' | last | split: '"' | first %}
+                                  {% else %}
+                                    {% assign first_image_alt = "" %}
+                                  {% endif %}
+                                {% endif %}
+                              {% endfor %}
+                              {% liquid
+                                assign loading = 'lazy'
+                                assign fetch_priority = 'auto'
+                                if section.index == 1 and has_products == false and has_articles == false and forloop.index <= 4
+                                  assign loading = 'eager'
+                                  assign fetch_priority = 'high'
+                                endif
+                                %}
+                              <img src="{{ first_image_src }}" {% if first_image_alt != blank %} alt="{{ first_image_alt }}" {% endif %} width="100%" loading="{{ loading }}" fetchpriority="{{ fetch_priority }}" />
+                            </a>
+                          </div>
+                        {% endif %}
+                        <div class="product-info">
+                          <h4 class="page-info"><a href="{{ item.url }}">{{ item.title }}</a></h4>
+                          <p>{{ item.content | strip_html | truncate: 200 }}</p>
+                        </div>
+                      </div>
+                      {% endif %}
+                    {% endfor %}
+                  </div>
+                {% endif %}
+
+            {% if filter_appearance == 'sidebar' and show_filters %}
+              </div> {%  comment %} .search--results_wrapper {% endcomment %}
+            {% endif %}
+
+            {% render 'pagination', paginate: paginate %}
+          </div>
+        {%- endif -%}
+      {% endif %}
+  </div><!-- /.row -->
+{% endpaginate %}
+</div>
+
+{% schema %}
+{
+  "name": "Search",
+  "settings":
+  [
+    {
+      "type": "checkbox",
+      "id": "show_filters",
+      "label": "Show search filters",
+      "info": "Learn how to add storefront filters [here](https:\/\/help.shopify.com\/en\/manual\/online-store\/themes\/os20\/customize\/filters)"
+    },
+    {
+      "type": "select",
+      "id": "filter_appearance",
+      "label": "Filter appearance",
+      "default": "sidebar",
+      "options": [
+        {
+          "value": "sidebar",
+          "label": "Sidebar"
+        },
+        {
+          "value": "slideout",
+          "label": "Slideout drawer"
+        }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "show_filter_swatches",
+      "label": "Show filter color swatches",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_layout_buttons",
+      "label": "Show grid/list layout options",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_articles",
+      "label": "Show relevant blog articles",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_pages",
+      "label": "Show relevant pages",
+      "default": true
+    }
+  ]
+}
+{% endschema %}

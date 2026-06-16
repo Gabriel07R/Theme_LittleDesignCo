@@ -1,0 +1,17 @@
+{% comment %}
+templates/product.listing.liquid
+{% endcomment %}
+{% layout none %}
+
+
+<template data-html="listing">
+
+  {% render 'product-listing', product: product, collection: collection %}
+
+</template>
+
+<template data-html="simple-listing">
+
+  {% render 'product-listing-simple', product: product, collection: collection %}
+
+</template>

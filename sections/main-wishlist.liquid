@@ -1,0 +1,44 @@
+<div class="row grid__wrapper">
+  <div id="wishlist-page" class="span-12 auto main__section main__wishlist-section">
+    <header class="wishlist-page__header">
+      <h1>Favorites</h1>
+      {% if page.content != blank %}
+        <div class="rte wishlist-page__content">
+          {{ page.content }}
+        </div>
+      {% endif %}
+    </header>
+
+    <div class="wishlist-page" data-wishlist-page>
+      <form class="wishlist-groups__form" data-wishlist-group-form>
+        <label for="wishlist-group-name">Create a favorites group</label>
+        <div class="wishlist-groups__form-row">
+          <input
+            id="wishlist-group-name"
+            type="text"
+            name="group_name"
+            placeholder="Group name"
+            maxlength="40"
+            data-wishlist-group-input
+          >
+          <button type="submit" class="button">Create group</button>
+        </div>
+        <p class="wishlist-groups__message" data-wishlist-group-message role="status"></p>
+      </form>
+
+      <div class="wishlist-page__empty" data-wishlist-empty hidden>
+        <p>Your favorites are empty.</p>
+        <a class="button" href="{{ routes.all_products_collection_url }}">Continue shopping</a>
+      </div>
+
+      <div class="wishlist-page__groups" data-wishlist-items aria-live="polite"></div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Favorites",
+  "settings": []
+}
+{% endschema %}

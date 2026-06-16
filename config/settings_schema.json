@@ -1,0 +1,1556 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Vantage",
+    "theme_author": "Underground",
+    "theme_version": "12.2.0",
+    "theme_documentation_url": "https://www.weareunderground.com/collections/shopify-themes/products/vantage",
+    "theme_support_url": "https://www.weareunderground.com/blogs/theme-support"
+  },
+  {
+    "name": "[Plus] Add an insert",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "plus_add_insert",
+        "default": true,
+        "label": "Enable 'add an insert' checkbox for pillow products",
+        "info": "Pillows with a value in [metafields.custom.add_an_insert](https://little-design-co.myshopify.com/admin/settings/custom_data/productvariant/metafields/800325712) will show a checkbox to add an insert variant along with the pillow."
+      }
+    ]
+  },
+  {
+    "name": "Favicon",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "Favicon image",
+        "info": "Will be scaled down to 32 x 32px"
+      }
+    ]
+  },
+  {
+    "name": "Typography",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Font families"
+      },
+      {
+        "type": "header",
+        "content": "Body font"
+      },
+      {
+        "type": "font_picker",
+        "id": "main_font",
+        "label": "Main font",
+        "default": "instrument_sans_n4"
+      },
+      {
+        "type": "range",
+        "id": "font_size",
+        "min": 13,
+        "max": 40,
+        "step": 1,
+        "unit": "px",
+        "label": "Base size",
+        "default": 16
+      },
+      {
+        "type": "select",
+        "id": "main_letter_spacing",
+        "label": "Letter spacing",
+        "default": "0",
+        "options": [
+          {
+            "value": "0",
+            "label": "0"
+          },
+          {
+            "value": "0.025",
+            "label": "0.25"
+          },
+          {
+            "value": "0.050",
+            "label": "0.50"
+          },
+          {
+            "value": "0.075",
+            "label": "0.75"
+          },
+          {
+            "value": "0.1",
+            "label": "1"
+          }
+        ]
+      },
+      {
+        "type": "header",
+        "content": "Navigation"
+      },
+      {
+        "type": "font_picker",
+        "id": "nav_font",
+        "label": "Navigation",
+        "default": "instrument_sans_n4"
+      },
+      {
+        "type": "range",
+        "id": "nav_size",
+        "min": 12,
+        "max": 20,
+        "step": 1,
+        "unit": "px",
+        "label": "Navigation size",
+        "default": 14
+      },
+      {
+        "type": "checkbox",
+        "id": "upcase_nav",
+        "label": "Capitalize",
+        "default": false
+      },
+      {
+        "type": "select",
+        "id": "nav_letter_spacing",
+        "label": "Letter spacing",
+        "default": "0.050",
+        "options": [
+          {
+            "value": "0",
+            "label": "0"
+          },
+          {
+            "value": "0.025",
+            "label": "0.25"
+          },
+          {
+            "value": "0.050",
+            "label": "0.50"
+          },
+          {
+            "value": "0.075",
+            "label": "0.75"
+          },
+          {
+            "value": "0.1",
+            "label": "1"
+          },
+          {
+            "value": "0.125",
+            "label": "1.25"
+          },
+          {
+            "value": "0.150",
+            "label": "1.50"
+          },
+          {
+            "value": "0.175",
+            "label": "1.75"
+          },
+          {
+            "value": "0.2",
+            "label": "2"
+          }
+        ]
+      },
+      {
+        "type": "header",
+        "content": "Headings"
+      },
+      {
+        "type": "font_picker",
+        "id": "heading_font",
+        "label": "Headings",
+        "default": "instrument_sans_n6"
+      },
+      {
+        "type": "range",
+        "id": "h1_size",
+        "min": 12,
+        "max": 80,
+        "step": 1,
+        "unit": "px",
+        "label": "Page titles",
+        "default": 32
+      },
+      {
+        "type": "range",
+        "id": "h2_size",
+        "min": 12,
+        "max": 70,
+        "step": 1,
+        "unit": "px",
+        "label": "Section titles",
+        "default": 26
+      },
+      {
+        "type": "range",
+        "id": "h3_size",
+        "min": 12,
+        "max": 60,
+        "step": 1,
+        "unit": "px",
+        "label": "Subheadings",
+        "default": 22
+      },
+      {
+        "type": "select",
+        "id": "heading_letter_spacing",
+        "label": "Letter spacing",
+        "default": "0.050",
+        "options": [
+          {
+            "value": "0",
+            "label": "0"
+          },
+          {
+            "value": "0.025",
+            "label": "0.25"
+          },
+          {
+            "value": "0.050",
+            "label": "0.50"
+          },
+          {
+            "value": "0.075",
+            "label": "0.75"
+          },
+          {
+            "value": "0.1",
+            "label": "1"
+          },
+          {
+            "value": "0.125",
+            "label": "1.25"
+          },
+          {
+            "value": "0.150",
+            "label": "1.50"
+          },
+          {
+            "value": "0.175",
+            "label": "1.75"
+          },
+          {
+            "value": "0.2",
+            "label": "2"
+          }
+        ]
+      },
+      {
+        "type": "header",
+        "content": "Appearance"
+      },
+      {
+        "type": "select",
+        "id": "section_title_border",
+        "label": "Section heading borders",
+        "options": [
+          {
+            "value": "top-and-bottom-full",
+            "label": "Top and Bottom"
+          },
+          {
+            "value": "bottom-only-full",
+            "label": "Bottom only"
+          },
+          {
+            "value": "bottom-only-short",
+            "label": "Bottom only short"
+          },
+          {
+            "value": "none",
+            "label": "None"
+          }
+        ]
+      },
+      {
+        "type": "range",
+        "id": "heading_border_weight",
+        "min": 1,
+        "max": 5,
+        "step": 1,
+        "unit": "px",
+        "label": "Section heading border weight",
+        "default": 1
+      }
+    ]
+  },
+  {
+    "name": "Colors",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Announcement bar"
+      },
+      {
+        "type": "color",
+        "id": "announcement_bar_background",
+        "label": "Background",
+        "default": "#000000"
+      },
+      {
+        "type": "color",
+        "id": "announcement_bar_text_color",
+        "label": "Text",
+        "default": "#f0f0f0"
+      },
+      {
+        "type": "color",
+        "id": "top_bar_links_active",
+        "label": "Active link",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "top_bar_links_bg_active",
+        "label": "Active link background",
+        "default": "#000000"
+      },
+      {
+        "type": "header",
+        "content": "Header"
+      },
+      {
+        "type": "color",
+        "id": "header_wrapper_background",
+        "label": "Header background",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "header_text_color",
+        "label": "Header text",
+        "default": "#000000"
+      },
+      {
+        "type": "header",
+        "content": "Navigation"
+      },
+      {
+        "type": "color",
+        "id": "navigation",
+        "label": "Navigation background",
+        "default": "#f0f0f0"
+      },
+      {
+        "type": "color",
+        "id": "nav_color",
+        "label": "Navigation links",
+        "default": "#ffffff"
+      },
+      {
+        "type": "header",
+        "content": "General"
+      },
+      {
+        "type": "color",
+        "id": "background",
+        "label": "Background",
+        "default": "#000000"
+      },
+      {
+        "type": "color",
+        "id": "text_color",
+        "label": "Text",
+        "default": "#000000"
+      },
+      {
+        "type": "color",
+        "id": "dotted_color",
+        "label": "Borders",
+        "default": "#d5d5d5"
+      },
+      {
+        "type": "color",
+        "id": "sale_color",
+        "label": "Sale tag",
+        "default": "#000000"
+      },
+      {
+        "type": "header",
+        "content": "Buttons"
+      },
+      {
+        "type": "color",
+        "id": "button_color",
+        "label": "Primary button background",
+        "default": "#000000"
+      },
+      {
+        "type": "color",
+        "id": "button_text",
+        "label": "Primary button text",
+        "default": "#000000"
+      },
+      {
+        "type": "color",
+        "id": "secondary_button_color",
+        "label": "Secondary button background",
+        "default": "#ddd"
+      },
+      {
+        "type": "color",
+        "id": "secondary_button_text",
+        "label": "Secondary button text",
+        "default": "#000000"
+      },
+      {
+        "type": "header",
+        "content": "Banners and overlays"
+      },
+      {
+        "type": "paragraph",
+        "content": "Set the text color for titles that overlay images, used on collection list items with the overlay setting applied, collection and blog header banner images."
+      },
+      {
+        "type": "color",
+        "id": "banner_title",
+        "label": "Banner title",
+        "default": "#ffffff"
+      },
+      {
+        "type": "header",
+        "content": "Slide/carousel arrows"
+      },
+      {
+        "type": "color",
+        "id": "directional_background",
+        "label": "Button background",
+        "default": "#000000"
+      },
+      {
+        "type": "color",
+        "id": "directional_color",
+        "label": "Button icon",
+        "default": "#fff"
+      },
+      {
+        "type": "header",
+        "content": "Footer"
+      },
+      {
+        "type": "color",
+        "id": "footer_background",
+        "label": "Background",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "footer_text_color",
+        "label": "Text",
+        "default": "#000"
+      },
+      {
+        "type": "header",
+        "content": "Section color scemes"
+      },
+      {
+        "type": "paragraph",
+        "content": "Create up to 3 color schemes for background and text which can be chosen in specific sections."
+      },
+      {
+        "type": "header",
+        "content": "Section color sheme 1"
+      },
+      {
+        "type": "color",
+        "id": "cs1_color",
+        "label": "Text",
+        "default": "#000"
+      },
+      {
+        "type": "color",
+        "id": "cs1_background",
+        "label": "Background",
+        "default": "#ffffff"
+      },
+      {
+        "type": "header",
+        "content": "Section color sheme 2"
+      },
+      {
+        "type": "color",
+        "id": "cs2_color",
+        "label": "Text",
+        "default": "#000"
+      },
+      {
+        "type": "color",
+        "id": "cs2_background",
+        "label": "Background",
+        "default": "#f5f5f5"
+      },
+      {
+        "type": "header",
+        "content": "Section color sheme 3"
+      },
+      {
+        "type": "color",
+        "id": "cs3_color",
+        "label": "Text",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "cs3_background",
+        "label": "Background",
+        "default": "#222222"
+      }
+    ]
+  },
+  {
+    "name": "Appearance",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Section loading animations"
+      },
+      {
+        "type": "select",
+        "id": "animation",
+        "label": "Loading animations",
+        "default": "fadeIn",
+        "options": [
+          {
+            "value": "none",
+            "label": "None"
+          },
+          {
+            "value": "fadeIn",
+            "label": "Fade in"
+          },
+          {
+            "value": "fadeInUp",
+            "label": "Fade in up"
+          }
+        ]
+      },
+      {
+        "type": "header",
+        "content": "Appearance"
+      },
+      {
+        "type": "range",
+        "id": "index_padding",
+        "min": 0,
+        "max": 100,
+        "step": 10,
+        "unit": "px",
+        "label": "Homepage section padding",
+        "info": "Select px of margin above and below sections",
+        "default": 60
+      },
+      {
+        "type": "range",
+        "id": "section_rounding",
+        "min": 0,
+        "max": 10,
+        "step": 1,
+        "unit": "px",
+        "label": "Section and image corner rounding",
+        "default": 0
+      },
+      {
+        "type": "select",
+        "id": "button_shape",
+        "label": "Button shape",
+        "default": "rounded",
+        "options": [
+          {
+            "value": "squared",
+            "label": "Squared corners"
+          },
+          {
+            "value": "rounded",
+            "label": "Rounded corners"
+          },
+          {
+            "value": "pill",
+            "label": "Pill"
+          }
+        ]
+      },
+      {
+        "type": "header",
+        "content": "Keyboard Focus"
+      },
+      {
+        "type": "paragraph",
+        "content": "These options control the style of the keyboard focus"
+      },
+      {
+        "type": "color",
+        "id": "keyboard_focus",
+        "label": "Border color",
+        "default": "#007ace"
+      },
+      {
+        "type": "select",
+        "id": "focus_border_style",
+        "label": "Border style",
+        "default": "dashed",
+        "options": [
+          {
+            "value": "dashed",
+            "label": "Dashed"
+          },
+          {
+            "value": "solid",
+            "label": "Solid"
+          },
+          {
+            "value": "dotted",
+            "label": "Dotted"
+          }
+        ]
+      },
+      {
+        "type": "range",
+        "id": "focus_border_weight",
+        "min": 1,
+        "max": 3,
+        "step": 1,
+        "unit": "px",
+        "label": "Border weight",
+        "default": 2
+      },
+      {
+        "type": "header",
+        "content": "Search"
+      },
+      {
+        "type": "checkbox",
+        "id": "search_show_products_only",
+        "label": "Only show products in results",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "predictive_search_enabled",
+        "label": "Enable product suggestions",
+        "info": "Suggested results in header search",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "Age verification",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "enable_age_verify",
+        "label": "Enable age verification popup",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_test_mode",
+        "label": "Enable test mode for editing",
+        "default": false
+      },
+      {
+        "type": "range",
+        "id": "age_limit",
+        "min": 16,
+        "max": 25,
+        "step": 1,
+        "label": "Minimum age",
+        "default": 21
+      },
+      {
+        "type": "url",
+        "id": "age_link",
+        "label": "Terms + conditions link",
+        "info": "Leave blank to hide"
+      },
+      {
+        "type": "header",
+        "content": "Styles"
+      },
+      {
+        "type": "image_picker",
+        "id": "age_logo",
+        "label": "Logo image"
+      },
+      {
+        "type": "range",
+        "id": "logo_max_width",
+        "min": 50,
+        "max": 500,
+        "step": 5,
+        "unit": "px",
+        "label": "Logo width",
+        "default": 200,
+        "visible_if": "{{ settings.age_logo != blank }}"
+      },
+      {
+        "type": "range",
+        "id": "logo_size",
+        "min": 20,
+        "max": 60,
+        "step": 1,
+        "unit": "px",
+        "label": "Logo text",
+        "default": 36,
+        "visible_if": "{{ settings.age_logo == blank }}"
+      },
+      {
+        "type": "color",
+        "id": "age_text_color",
+        "label": "Text color",
+        "default": "#262b2c"
+      },
+      {
+        "type": "color",
+        "id": "age_bg_color",
+        "label": "Background color",
+        "default": "#faf4e8"
+      },
+      {
+        "type": "image_picker",
+        "id": "age_bg_image",
+        "label": "Background image",
+        "info": "Overrides color"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_age_overlay_color",
+        "label": "Show background overlay color",
+        "default": false
+      },
+      {
+        "type": "color",
+        "id": "age_bg_overlay_color",
+        "label": "Background image overlay color",
+        "default": "#f5f5f5"
+      },
+      {
+        "type": "range",
+        "id": "age_overlay_color_opacity",
+        "min": 10,
+        "max": 100,
+        "step": 10,
+        "unit": "%",
+        "label": "Color Overlay Opacity",
+        "default": 80
+      }
+    ]
+  },
+  {
+    "name": "Collection cards",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Settings for the collection grid items shown in collection lists."
+      },
+      {
+        "type": "select",
+        "id": "collection_image_ratio",
+        "label": "Image ratio",
+        "info": "If you choose a ratio images will be force cropped to ratio.",
+        "default": "square",
+        "options": [
+          {
+            "value": "natural",
+            "label": "Natural"
+          },
+          {
+            "value": "square",
+            "label": "Square"
+          },
+          {
+            "value": "vertical",
+            "label": "Vertical"
+          },
+          {
+            "value": "horizontal",
+            "label": "Horizontal"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "collection_style",
+        "label": "Title appearance",
+        "default": "overlay",
+        "info": "Change overlay title color in theme settings > colors > banners & overlays",
+        "options": [
+          {
+            "value": "below",
+            "label": "Below"
+          },
+          {
+            "value": "overlay",
+            "label": "Overlay"
+          },
+          {
+            "value": "overlay_button",
+            "label": "Overlay button"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "collection_title_position",
+        "label": "Title position",
+        "default": "middle_center",
+        "visible_if": "{{ settings.collection_style contains 'overlay' }}",
+        "options": [
+          {
+            "value": "top_left",
+            "label": "Top left"
+          },
+          {
+            "value": "top_center",
+            "label": "Top center"
+          },
+          {
+            "value": "top_right",
+            "label": "Top right"
+          },
+          {
+            "value": "middle_left",
+            "label": "Middle left"
+          },
+          {
+            "value": "middle_center",
+            "label": "Middle center"
+          },
+          {
+            "value": "middle_right",
+            "label": "Middle right"
+          },
+          {
+            "value": "bottom_left",
+            "label": "Bottom left"
+          },
+          {
+            "value": "bottom_center",
+            "label": "Bottom center"
+          },
+          {
+            "value": "bottom_right",
+            "label": "Bottom right"
+          }
+        ]
+      },
+      {
+        "type": "color",
+        "id": "collection_overlay_color",
+        "label": "Overlay color",
+        "default": "#00000015",
+        "visible_if": "{{ settings.collection_style contains 'overlay' }}",
+        "alpha": true
+      },
+      {
+        "type": "select",
+        "id": "collection_image",
+        "label": "Image",
+        "default": "collection_image",
+        "options": [
+          {
+            "value": "collection_image",
+            "label": "Collection image"
+          },
+          {
+            "value": "first_product",
+            "label": "First product"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Product cards",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Settings for the product cards shown on collection pages and other featured collections of products store wide."
+      },
+      {
+        "type": "checkbox",
+        "id": "image_flip",
+        "label": "Switch product images on hover"
+      },
+      {
+        "type": "checkbox",
+        "id": "product_grid_video",
+        "label": "Show product videos",
+        "default": true
+      },
+      {
+        "type": "select",
+        "id": "image_ratio",
+        "label": "Image ratio",
+        "info": "If you choose a ratio images will be force cropped to ratio.",
+        "default": "as-is",
+        "options": [
+          {
+            "value": "as-is",
+            "label": "Natural"
+          },
+          {
+            "value": "square",
+            "label": "Square"
+          },
+          {
+            "value": "vertical",
+            "label": "Vertical"
+          },
+          {
+            "value": "horizontal",
+            "label": "Horizontal"
+          }
+        ]
+      },
+      {
+        "type": "text_alignment",
+        "id": "grid_text_alignment",
+        "label": "Product info alignment",
+        "default": "center"
+      },
+      {
+        "type": "checkbox",
+        "id": "vendor",
+        "label": "Show product vendor"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_rating",
+        "default": false,
+        "label": "Show product rating",
+        "info": "To display a rating, add a product rating app. [Learn more](https://weareunderground.com/blogs/theme-support/how-to-display-product-rating-on-product-grid-and-product-page)"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_colors",
+        "label": "Show color swatches",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "show_sizes",
+        "label": "Show available sizes",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "quickview",
+        "label": "Enable quick view"
+      },
+      {
+        "type": "checkbox",
+        "id": "quick_add",
+        "label": "Enable quick add to cart",
+        "info": "Will not appear on products with multiple options like size and color.",
+        "default": true
+      },
+      {
+        "type": "select",
+        "id": "sale_items",
+        "label": "Sale items",
+        "info": "Optionally show saving for [sale items](https://help.shopify.com/en/manual/discounts/sales) as a replacement for sale icon.",
+        "default": "percentage",
+        "options": [
+          {
+            "value": "percentage",
+            "label": "Show percentage saving"
+          },
+          {
+            "value": "amount",
+            "label": "Show amount saved"
+          },
+          {
+            "value": "icon",
+            "label": "Show sale icon"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Products",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "show_payment_button",
+        "label": "Show dynamic checkout button",
+        "info": "Lets customers check out directly using a familiar payment method. [Learn more](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+        "default": true
+      },
+      {
+        "type": "select",
+        "id": "product_variants",
+        "label": "Product variant display",
+        "options": [
+          {
+            "value": "swatches",
+            "label": "Swatches"
+          },
+          {
+            "value": "dropdowns",
+            "label": "Dropdowns"
+          }
+        ],
+        "default": "swatches"
+      },
+      {
+        "type": "select",
+        "id": "color_swatch_shape",
+        "label": "Color swatch shape",
+        "default": "square",
+        "options": [
+          {
+            "value": "square",
+            "label": "Square"
+          },
+          {
+            "value": "circle",
+            "label": "Circle"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "color_swatch_style",
+        "label": "Color swatch style",
+        "options": [
+          {
+            "value": "default-color",
+            "label": "Default color"
+          },
+          {
+            "value": "custom-image",
+            "label": "Custom uploaded images"
+          },
+          {
+            "value": "swatch",
+            "label": "Swatch"
+          },
+          {
+            "value": "variant-image",
+            "label": "Zoomed in variant images"
+          }
+        ],
+        "default": "variant-image"
+      },
+      {
+        "type": "text",
+        "id": "swatch_option_names",
+        "label": "Swatch option name",
+        "default": "color, colour, farbe, couleur, cor, colore",
+        "info": "Add comma separated option titles like color, colour, colore to dictate where color swatches should be used"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_quantity",
+        "label": "Show quantity selector",
+        "default": true
+      },
+      {
+        "type": "select",
+        "id": "cart_added_event",
+        "label": "When adding to cart",
+        "info": "Select how your theme will confirm that an item has been successfully added.",
+        "options": [
+          {
+            "value": "go_to_active_cart",
+            "label": "Open shopping cart"
+          },
+          {
+            "value": "product_page",
+            "label": "Stay on product page and show message"
+          }
+        ],
+        "default": "go_to_active_cart"
+      }
+    ]
+  },
+  {
+    "name": "Customer Accounts",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "show_ca_returns",
+        "label": "Show return/exchanges info",
+        "default": true
+      },
+      {
+        "type": "page",
+        "id": "ca_returns_page",
+        "label": "Return/exchanges info"
+      }
+    ]
+  },
+  {
+    "name": "Cart",
+    "settings": [
+      {
+        "type": "select",
+        "id": "cart_type",
+        "label": "Cart Type",
+        "options": [
+          {
+            "value": "page_only",
+            "label": "Page only"
+          },
+          {
+            "value": "drawer",
+            "label": "Drawer Cart"
+          },
+          {
+            "value": "modal_cart",
+            "label": "Modal Cart"
+          },
+          {
+            "value": "mini_cart",
+            "label": "Mini Cart"
+          },
+          {
+            "value": "no_js_cart",
+            "label": "Page only - no automatic updates"
+          }
+        ],
+        "default": "drawer"
+      },
+      {
+        "id": "cart_featured_collection",
+        "type": "collection",
+        "label": "Featured collection",
+        "info": "Feature 4 items from a collection (drawer cart only)"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_recently_viewed_in_cart",
+        "label": "Show recently viewed items in the cart.",
+        "info": "Hides the cart's featured collection if enabled.",
+        "default": false
+      },
+      {
+        "type": "select",
+        "id": "cart_icon",
+        "label": "Cart Icon",
+        "default": "bag",
+        "options": [
+          {
+            "value": "bag",
+            "label": "Bag"
+          },
+          {
+            "value": "cart",
+            "label": "Cart"
+          }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "show_tax_note",
+        "label": "Show tax note",
+        "default": false,
+        "info": "Shows a note that tax is calculated at checkout"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_shipping_note",
+        "label": "Show shipping note",
+        "default": false,
+        "info": "Shows a note that shipping is calculated at checkout"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_cart_notes",
+        "label": "Show cart note box",
+        "default": true,
+        "info": "Allows customers to leave a note on their order."
+      },
+      {
+        "type": "header",
+        "content": "Shipping Calculator"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_shipping_calculator",
+        "label": "Show shipping estimator",
+        "default": true,
+        "info": "Shipping calculator will show on the cart page only, not in the drawer or modal"
+      },
+      {
+        "type": "text",
+        "id": "shipping_calculator_default_country",
+        "label": "Default country selection",
+        "default": "United States",
+        "visible_if": "{{ settings.show_shipping_calculator == true }}"
+      },
+      {
+        "type": "paragraph",
+        "content": "If your customer is logged-in, the country in his default shipping address will be selected. If you are not sure about the  spelling to use here, refer to the first checkout page.",
+        "visible_if": "{{ settings.show_shipping_calculator == true }}"
+      },
+      {
+        "type": "header",
+        "content": "Free Shipping Countdown"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_shipping_countdown",
+        "label": "Show free shipping countdown",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "free_shipping_threshold",
+        "label": "What price qualifies for free shipping?",
+        "default": "99",
+        "visible_if": "{{ settings.show_shipping_countdown == true }}"
+      },
+      {
+        "type": "color",
+        "id": "free_shipping_bg",
+        "label": "Countdown box background",
+        "default": "#ac5f1f",
+        "visible_if": "{{ settings.show_shipping_countdown == true }}"
+      },
+      {
+        "type": "color",
+        "id": "free_shipping_text",
+        "label": "Countdown box text",
+        "default": "#fff",
+        "visible_if": "{{ settings.show_shipping_countdown == true }}"
+      }
+    ]
+  },
+  {
+    "name": "Social media",
+    "settings": [
+      {
+        "type": "text",
+        "id": "twitter_url",
+        "label": "Twitter",
+        "info": "//www.twitter.com/shopify/"
+      },
+      {
+        "type": "text",
+        "id": "facebook_url",
+        "label": "Facebook",
+        "info": "//www.facebook.com/shopify/"
+      },
+      {
+        "type": "text",
+        "id": "pinterest_url",
+        "label": "Pinterest",
+        "info": "//www.pinterest.com/shopify/"
+      },
+      {
+        "type": "text",
+        "id": "tumblr_url",
+        "label": "Tumblr",
+        "info": "//shopify.tumblr.com/"
+      },
+      {
+        "type": "text",
+        "id": "flickr_url",
+        "label": "Flickr",
+        "info": "//www.flickr.com/photos/shopify/"
+      },
+      {
+        "type": "text",
+        "id": "youtube_url",
+        "label": "YouTube",
+        "info": "//www.youtube.com/user/shopify"
+      },
+      {
+        "type": "text",
+        "id": "vimeo_url",
+        "label": "Vimeo",
+        "info": "//vimeo.com/shopify"
+      },
+      {
+        "type": "text",
+        "id": "linkedin_url",
+        "label": "Linkedin",
+        "info": "//www.linkedin.com/company/shopify"
+      },
+      {
+        "type": "text",
+        "id": "instagram_url",
+        "label": "Instagram",
+        "info": "//www.instagram.com/shopify"
+      },
+      {
+        "type": "text",
+        "id": "snapchat_id",
+        "label": "Snapchat ID",
+        "info": "shopify"
+      },
+      {
+        "type": "text",
+        "id": "tiktok",
+        "label": "Tiktok",
+        "info": "//www.tiktok.com/@shopify"
+      },
+      {
+        "type": "text",
+        "id": "etsy",
+        "label": "Etsy",
+        "info": "//www.etsy.com/shop/shopify"
+      }
+    ]
+  },
+  {
+    "name": "Swym Wishlist Product Button",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Button Placement",
+        "info": "We recommend using the Admin App to configure these settings. [Open App](/admin/apps/swym-relay)"
+      },
+      {
+        "type": "select",
+        "id": "swym_button_position",
+        "label": "Select Position",
+        "info": "Choose where the wishlist button appears on your product page. Select 'Custom Placement' to manually specify a location using a CSS selector. [Help](https://help.getswym.com/en/articles/13249541-how-to-find-css-selectors-for-custom-button-placement)",
+        "default": "default",
+        "options": [
+          {
+            "value": "default",
+            "label": "Inline with Product Details"
+          },
+          {
+            "value": "product_image",
+            "label": "Overlay on Product Image"
+          },
+          {
+            "value": "product_title",
+            "label": "Near Product Title"
+          },
+          {
+            "value": "custom",
+            "label": "Custom Placement"
+          }
+        ]
+      },
+      {
+        "type": "text",
+        "id": "swym_custom_selector",
+        "label": "Custom Placement Selector",
+        "info": "Enter a CSS selector of the parent element to anchor the button. Only used if Button Position is set to 'Custom' Placement. [Help](https://help.getswym.com/en/articles/13249541-how-to-find-css-selectors-for-custom-button-placement)",
+        "default": "#swym-custom-wishlist-button"
+      },
+      {
+        "type": "header",
+        "content": "Button Appearance",
+        "info": "We recommend using the Admin App to configure these settings. [Open App](/admin/apps/swym-relay)"
+      },
+      {
+        "type": "html",
+        "id": "swym_wishlist_custom_button_before_html",
+        "label": "Add to Wishlist HTML",
+        "info": "Customize the button's appearance for products not yet saved to the wishlist.",
+        "default": "<button class=\"swym-icon-text\" type=\"button\">\n\t<svg class=\"swym-icon\" width=\"20\" height=\"20\" viewbox=\"0 0 24 24\">\n\t\t<path d=\"M19.6706 5.4736C17.6806 3.8336 14.7206 4.1236 12.8906 5.9536L12.0006 6.8436L11.1106 5.9536C9.29063 4.1336 6.32064 3.8336 4.33064 5.4736C2.05064 7.3536 1.93063 10.7436 3.97063 12.7836L11.6406 20.4536C11.8406 20.6536 12.1506 20.6536 12.3506 20.4536L20.0206 12.7836C22.0706 10.7436 21.9506 7.3636 19.6706 5.4736Z\" stroke=\"currentColor\" stroke-width=\"1.75px\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path>\n\t</svg>\n\t<span class=\"swym-custom-btn-txt\">{{WishlistAddCTA}}</span>\n</button>"
+      },
+      {
+        "type": "html",
+        "id": "swym_wishlist_custom_button_after_html",
+        "label": "Added to Wishlist HTML",
+        "info": "Customize the button's appearance for products already in the wishlist.",
+        "default": "<button class=\"swym-icon-text\" type=\"button\">\n\t<svg class=\"swym-icon\" width=\"20\" height=\"20\" viewbox=\"0 0 24 24\">\n\t\t<path d=\"M19.6706 5.4736C17.6806 3.8336 14.7206 4.1236 12.8906 5.9536L12.0006 6.8436L11.1106 5.9536C9.29063 4.1336 6.32064 3.8336 4.33064 5.4736C2.05064 7.3536 1.93063 10.7436 3.97063 12.7836L11.6406 20.4536C11.8406 20.6536 12.1506 20.6536 12.3506 20.4536L20.0206 12.7836C22.0706 10.7436 21.9506 7.3636 19.6706 5.4736Z\" stroke=\"currentColor\" stroke-width=\"1.75px\" fill=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path>\n\t</svg>\n\t<span class=\"swym-custom-btn-txt\">{{WishlistAddedCTA}}</span>\n</button>"
+      },
+      {
+        "type": "textarea",
+        "id": "swym_wishlist_custom_button_css",
+        "label": "Custom Styling (CSS)",
+        "info": "Modify CSS here to fine-tune the button's design and ensure it matches your theme perfectly.",
+        "default": "/* Base button styles using CSS variables (set by JavaScript) */\n/* Loading state for user interactions */\n.swym-loading .swym-button-content button,\n.swym-loading .swym-button-content [role=\"button\"],\n.swym-loading .swym-button-content .btn,\n.swym-loading .swym-button-content a {\n  opacity: 0.6;\n  cursor: not-allowed;\n  pointer-events: none;\n}\n.swym-button-content > button,\n.swym-button-content > [role=\"button\"],\n.swym-button-content > span,\n.swym-button-content > a {\n  color: #fff;  \n  background: #000;\n  border: 1px solid #000;\n  font-family: inherit;\n  padding: 12px 16px;\n  font-size: 14px;\n  font-weight: normal;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  cursor: pointer;\n  transition: all 0.2s ease;\n  text-align: center;\n  pointer-events: auto;\n  min-height: 45px;\n  width: 100%;\n  letter-spacing: normal;\n}\n\n/* Focus styles for accessibility */\n.swym-button-content button:focus-visible,\n.swym-button-content [role=\"button\"]:focus-visible,\n.swym-button-content .btn:focus-visible,\n.swym-button-content a:focus-visible {\n  outline: 2px solid currentColor;\n  outline-offset: 2px;\n}\n/* Disabled state styles */\n.swym-button-content button:disabled,\n.swym-button-content [role=\"button\"][aria-disabled=\"true\"],\n.swym-button-content .btn:disabled,\n.swym-button-content a[aria-disabled=\"true\"] {\n  opacity: 0.5;\n  cursor: not-allowed;\n  pointer-events: none;\n}\n/* Product image position styling (top-left default) */\n.swym-atw-btn-wrapper-for-img.swym-btn-position-product-img {\n  position: absolute;\n  top: 10px;\n  left: 10px;\n  z-index: 10;\n  width: fit-content!important;\n}\n.swym-custom-pdp-button.swym-btn-position-product-title {\n  width: fit-content;\n}\n.swym-button-content.swym-btn-custom-position {\n  margin-top: 8px;\n} \n.swym-button-content button.swym-icon-text svg {\n  margin-right: 5px;\n}\n/* ACCESSIBILITY IMPROVEMENTS */\n@media (prefers-reduced-motion: reduce) {\n  .swym-button-content,\n  .swym-button-content button,\n  .swym-button-content [role=\"button\"],\n  .swym-button-content .btn,\n  .swym-button-content a {\n    transition: none;\n    animation: none;\n  }  \n  .swym-button-content.swym-initialized button:hover,\n  .swym-button-content.swym-initialized [role=\"button\"]:hover,\n  .swym-button-content.swym-initialized .btn:hover,\n  .swym-button-content.swym-initialized a:hover {\n    transform: none;\n  }\n}\n/* HIGH CONTRAST MODE SUPPORT */\n@media (prefers-contrast: high) {\n  .swym-atw-btn-wrapper-for-img .swym-button-content button,\n  .swym-atw-btn-wrapper-for-img .swym-button-content [role=\"button\"],\n  .swym-atw-btn-wrapper-for-img .swym-button-content .btn,\n  .swym-atw-btn-wrapper-for-img .swym-button-content a {\n    border: 2px solid;\n    background: #fff;\n  }\n}"
+      }
+    ]
+  },
+  {
+    "name": "Swym Wishlist Collections Button",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Configure the wishlist button that appears on collection pages. This button allows customers to add products to their wishlist directly from collection listings. [Help](https://help.getswym.com/en/articles/13712073-customizing-the-advanced-wishlist-button-on-collections-pages)",
+        "info": "We recommend using the Admin App to configure these settings. [Open App](/admin/apps/swym-relay)"
+      },
+      {
+        "type": "checkbox",
+        "id": "swym_advanced_collections_wishlist_enabled",
+        "label": "Enable Quick Save Button",
+        "default": false,
+        "info": "Enable Quick Save Button on Collections Pages"
+      },
+      {
+        "type": "checkbox",
+        "id": "swym_advanced_collections_wishlist_social_count",
+        "label": "Show Social Count",
+        "default": false,
+        "info": "Display the number of times a product has been wishlisted"
+      },
+      {
+        "type": "header",
+        "content": "Button HTML Templates"
+      },
+      {
+        "type": "html",
+        "id": "swym_advanced_collections_wishlist_button_before_html",
+        "label": "Button HTML (Before Adding)",
+        "default": "<button\n  type=\"button\"\n  class=\"swym-advanced-wishlist-collections\"\n  aria-label=\"{{ADD_TO_WISHLIST}}\"\n  aria-pressed=\"false\"\n  style=\"color:{{ICON_COLOR}}; transform:{{ICON_POSITION}};\"\n>\n  <div class=\"swym-advanced-wishlist-collections-social-count\">\n    {{SOCIAL_COUNT}}\n  </div>\n  <svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n    <path d=\"M19.6706 5.4736C17.6806 3.8336 14.7206 4.1236 12.8906 5.9536L12.0006 6.8436L11.1106 5.9536C9.29063 4.1336 6.32064 3.8336 4.33064 5.4736C2.05064 7.3536 1.93063 10.7436 3.97063 12.7836L11.6406 20.4536C11.8406 20.6536 12.1506 20.6536 12.3506 20.4536L20.0206 12.7836C22.0706 10.7436 21.9506 7.3636 19.6706 5.4736Z\" stroke=\"{{ICON_COLOR}}\" stroke-width=\"{{ICON_WIDTH}}\" fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path>\n  </svg>\n</button>",
+        "info": "Custom HTML for the wishlist button before a product is added. Leave empty to use default"
+      },
+      {
+        "type": "html",
+        "id": "swym_advanced_collections_wishlist_button_after_html",
+        "label": "Button HTML (After Adding)",
+        "default": "<button\n  type=\"button\"\n  class=\"swym-advanced-wishlist-collections\"\n  aria-label=\"{{ADDED_TO_WISHLIST}}\"\n  aria-pressed=\"true\"\n  style=\"color:{{ICON_COLOR}}; transform:{{ICON_POSITION}};\"\n>\n  <div class=\"swym-advanced-wishlist-collections-social-count\">\n    {{SOCIAL_COUNT}}\n  </div>\n  <svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n    <path d=\"M19.6706 5.4736C17.6806 3.8336 14.7206 4.1236 12.8906 5.9536L12.0006 6.8436L11.1106 5.9536C9.29063 4.1336 6.32064 3.8336 4.33064 5.4736C2.05064 7.3536 1.93063 10.7436 3.97063 12.7836L11.6406 20.4536C11.8406 20.6536 12.1506 20.6536 12.3506 20.4536L20.0206 12.7836C22.0706 10.7436 21.9506 7.3636 19.6706 5.4736Z\" stroke=\"{{ICON_COLOR}}\" stroke-width=\"{{ICON_WIDTH}}\" fill=\"{{ICON_COLOR}}\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path>\n  </svg>\n</button>",
+        "info": "Custom HTML for the wishlist button after a product is added. Leave empty to use default"
+      },
+      {
+        "type": "header",
+        "content": "Button Styling"
+      },
+      {
+        "type": "textarea",
+        "id": "swym_advanced_collections_wishlist_button_css",
+        "label": "Button CSS",
+        "default": ".swym-advanced-wishlist-collections-container {\n  position: absolute;\n  top: 0;\n  left: 0;\n  padding: 10px;\n  z-index: 5;\n  cursor: pointer;\n  width: 60px;\n  height: 40px;\n}\n\n.swym-advanced-wishlist-collections,\n.swym-advanced-wishlist-collections svg {\n  cursor: pointer;\n  background: unset;\n  border: unset;\n  display: flex;\n  align-items: center;\n  flex-direction: row-reverse;\n  gap: 5px;\n  color: currentColor;\n  min-width: 24px;\n  min-height: 24px;\n}\n\n.swym-advanced-wishlist-collections svg path {\n  stroke: currentColor;\n}\n\n.swym-advanced-wishlist-collections\n  .swym-advanced-wishlist-collections-social-count {\n  font-size: 14px;\n  font-weight: 500;\n  color: currentColor;\n}\n\n.swym-sr-only {\n  clip: rect(0 0 0 0);\n  clip-path: inset(50%);\n  height: 1px;\n  width: 1px;\n  overflow: hidden;\n  white-space: nowrap;\n  position: absolute;\n}\n",
+        "info": "CSS styles for the wishlist button. Leave empty to use default styles."
+      },
+      {
+        "type": "header",
+        "content": "Theme Integration (Advanced)"
+      },
+      {
+        "type": "text",
+        "id": "swym_advanced_collections_wishlist_product_url_selector",
+        "label": "Product URL Selector",
+        "default": "not_found",
+        "info": "CSS selector to find product links on collection pages. [Help](https://help.getswym.com/en/articles/13712096-finding-selectors-for-advanced-collections-quick-save)"
+      },
+      {
+        "type": "text",
+        "id": "swym_advanced_collections_wishlist_attach_button_selector",
+        "label": "Button Container Selector",
+        "default": "not_found",
+        "info": "CSS selector for where to attach the wishlist button. [Help](https://help.getswym.com/en/articles/13712096-finding-selectors-for-advanced-collections-quick-save)"
+      },
+      {
+        "label": "Button Position on tile",
+        "id": "swym_advanced_collections_wishlist_icon_position",
+        "type": "select",
+        "default": "top-left",
+        "options": [
+          {
+            "value": "top-right",
+            "label": "Top right of the tile"
+          },
+          {
+            "value": "top-left",
+            "label": "Top left of the tile"
+          },
+          {
+            "value": "bottom-left",
+            "label": "Bottom left of the tile"
+          },
+          {
+            "value": "bottom-right",
+            "label": "Bottom right of the tile"
+          }
+        ]
+      },
+      {
+        "label": "Icon Color",
+        "id": "swym_advanced_collections_wishlist_icon_color",
+        "type": "color",
+        "default": "#000000"
+      },
+      {
+        "type": "range",
+        "label": "Icon Thickness",
+        "id": "swym_advanced_collections_wishlist_icon_width",
+        "min": 1,
+        "max": 2.5,
+        "step": 0.1,
+        "unit": "px",
+        "default": 1.7
+      }
+    ]
+  },
+  {
+    "name": "Swym Wishlist Launcher Button",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Configure the wishlist launcher icon that appears in your store header. This icon provides quick access to the wishlist page and can display the count of saved products.",
+        "info": "We recommend using the Admin App to configure these settings. [Open App](/admin/apps/swym-relay)"
+      },
+      {
+        "type": "header",
+        "content": "General Settings"
+      },
+      {
+        "type": "checkbox",
+        "id": "swym_header_icon_enabled",
+        "label": "Enable Header Icon",
+        "default": false,
+        "info": "Enable or disable the wishlist launcher icon in your store header"
+      },
+      {
+        "type": "checkbox",
+        "id": "swym_header_icon_show_count",
+        "label": "Show Wishlist Count",
+        "default": false,
+        "info": "Display the total number of products wishlisted by the customer"
+      },
+      {
+        "type": "header",
+        "content": "Icon HTML Templates"
+      },
+      {
+        "type": "html",
+        "id": "swym_header_icon_custom_html",
+        "label": "Icon HTML",
+        "default": "not_found",
+        "info": "Custom HTML for the wishlist icon. Leave empty to use default"
+      },
+      {
+        "type": "html",
+        "id": "swym_header_icon_count_bubble_html",
+        "label": "Count Bubble HTML",
+        "default": "not_found",
+        "info": "Custom HTML for the count bubble that displays the number of wishlisted items"
+      },
+      {
+        "type": "header",
+        "content": "Icon Styling"
+      },
+      {
+        "type": "textarea",
+        "id": "swym_header_icon_custom_css",
+        "label": "Custom CSS",
+        "default": "not_found",
+        "info": "CSS styles for the header icon. Leave empty to use default styles."
+      },
+      {
+        "type": "header",
+        "content": "Theme Integration (Advanced)"
+      },
+      {
+        "type": "text",
+        "id": "swym_header_icon_selector_desktop",
+        "label": "Desktop Placement Selector",
+        "default": "not_found",
+        "info": "CSS selector for where to attach the icon on desktop view"
+      },
+      {
+        "type": "text",
+        "id": "swym_header_icon_selector_mobile",
+        "label": "Mobile Placement Selector",
+        "default": "not_found",
+        "info": "CSS selector for where to attach the icon on mobile view"
+      }
+    ]
+  }
+]

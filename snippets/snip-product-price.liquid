@@ -1,0 +1,47 @@
+{% comment %}
+ 
+  Product Price Block Snippet
+  ---------------------------------------------------------- 
+
+  Objects:
+  - block: The product price block settings and properties
+  - product: The current product object
+  - current_variant: The currently selected product variant
+
+  Settings:
+  - show_tax_info: Boolean to determine if tax information should be displayed
+
+  Usage:
+  {% render 'snip-product-price', block: block, product: product, current_variant: current_variant %}
+
+{% endcomment %}
+
+<div
+  class="product-blocks__block product-blocks__block--{{ block.type }}"
+  {{ block.shopify_attributes }}>
+  <h5>
+    {% render 'product-price', variant: current_variant, product: product %}
+  </h5>
+
+  <!-- tax -->
+  {%- if section.settings.show_tax_info -%}
+    {%- if cart.taxes_included or shop.shipping_policy.body != blank -%}
+      <div class="product__policies rte" data-product-policies>
+        {%- if cart.taxes_included -%}
+          {{ 'products.product.include_taxes' | t }}
+        {%- endif -%}
+        {%- if shop.shipping_policy.body != blank -%}
+          {{ 'products.product.shipping_policy_html' | t: link: shop.shipping_policy.url }}
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  {%- endif -%}
+
+  {% unless product == empty %}
+  {% render 'spi-banner',
+      section: section,
+      product: product,
+      current_variant: current_variant %}
+  {% endunless %}
+</div>
+<div class="clear"></div>

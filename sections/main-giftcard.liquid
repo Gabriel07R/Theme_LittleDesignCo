@@ -1,0 +1,197 @@
+{% layout 'giftcard' %}
+
+<section
+id="giftcard-page"
+class="gift-card-page {% if gift_card.expired or gift_card.enabled != true %}disabled{% endif %}"
+data-section-id="{{ section.id }}"
+data-section-type="giftcard-page">
+
+  <div class="grid__wrapper">
+    <div class="span-12 a-center">
+      {% if section.settings.logo != blank %}
+        <div class="giftcard__header__logo-image">
+          {% assign image_size = '600x' %}
+          <a href="{{ routes.root_url }}">
+            {{ section.settings.logo | image_url: width: 600 |image_tag: loading: 'eager', fetchpriority: 'high' }}
+            <h1 class="h2 visually-hidden">{{ shop.name }}</h1>
+          </a>
+        </div>
+      {% else %}
+        <div id="logo" class="giftcard__header__logo-text">
+          <a href="{{ routes.root_url }}">
+            <h1 class="h2">{{ shop.name }}</h1>
+          </a>
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="span-12 auto a-center">
+      <h2 class="h4">{{ 'gift_cards.issued.subtext' | t }}</h2>
+      {% unless gift_card.enabled %}
+        <span class="giftcard__tag">
+          {{ 'gift_cards.issued.disabled' | t }}
+        </span>
+      {% endunless %}
+
+      {% assign gift_card_expiry_date = gift_card.expires_on | date : "%d/%m/%y" %}
+
+      {% if gift_card.expired and gift_card.enabled %}
+        <span class="giftcard__tag">
+          {{ 'gift_cards.issued.expired' | t: expiry: gift_card_expiry_date }}
+        </span>
+      {% endif %}
+
+      {% if gift_card.expired != true and gift_card.expires_on and gift_card.enabled %}
+        <span class="giftcard__tag giftcard__tag--active">
+          {{ 'gift_cards.issued.active' | t: expiry: gift_card_expiry_date }}
+        </span>
+      {% endif %}
+
+
+      <div class="gift-cart-image center-content">
+        <p class="amount">{{ gift_card.balance | money }}</p>
+        {% if section.settings.gift_card_image != blank %}
+          {% assign image_width = '570' %}
+          {% assign image_height = '570' | divided_by: 1.5 %}
+          {{ section.settings.gift_card_image | image_url: width: image_width, height: image_height | image_tag: alt: section.settings.gift_card_image.alt, class: 'gift-card__image' }}
+        {% else %}
+          <img
+            class="gift-card__image"
+            src="{{ 'gift-card/card.svg' | shopify_asset_url }}"
+            alt=""
+            height="{{ 570 | divided_by: 1.5 }}"
+            width="570"
+          >
+        {% endif %}
+      </div>
+
+      <p class="mt4 mb3">{{ 'gift_cards.issued.redeem' | t }}</p>
+
+      {% assign code_size = gift_card.code | format_code | size %}
+      <div class="gift-card-code mb4 {% if code_size <= 25 %}large{% elsif code_size > 25 and code_size <= 30 %}medium{% else %}small{% endif %}"
+        onclick="selectText('gift-card-code-digits');">
+        <div id="gift-card-code-inner">
+          <strong id="gift-card-code-digits">{{ gift_card.code | format_code }}</strong>
+        </div>
+      </div>
+
+      {% if section.settings.show_qr_code %}
+        <div id="qr-code" class="center-content a-center mt7 mb7">
+        </div>
+      {% endif %}
+
+      <script>
+        new QRCode(document.getElementById("qr-code"), {
+          height: 120,
+          text  : "{{ gift_card.qr_identifier }}",
+          width : 120
+        });
+      </script>
+
+      <div class="gift-card-actions">
+        <a href="{{ routes.root_url }}" class="gift-card__shop button" target="_blank" rel="noreferrer">{{ 'gift_cards.issued.shop_link' | t }}</a>
+        <a href="#" rel="nofollow" class="gift-card__print" onclick="printContent('giftcard-page');">
+          <span class="vib-center">{{ 'gift_cards.issued.print' | t }}</span>
+        </a>
+        <script type="text/javascript">
+          function printContent(el){
+            var restorepage = document.querySelector('body').innerHTML;
+            const printcontent = document.querySelector('#' + el).cloneNode(true);
+
+            document.querySelector('body').innerHTML = '';
+            document.querySelector('body').appendChild(printcontent);
+
+            window.print();
+
+            document.querySelector('body').innerHTML = restorepage;
+          }
+        </script>
+      </div>
+
+      <div class="gift-card-wallet">
+        {% if gift_card.pass_url %}
+          <a href="{{ gift_card.pass_url }}"
+           ><img
+             id="apple-wallet-badge"
+             src="{{ 'gift-card/add-to-apple-wallet.svg' | shopify_asset_url }}"
+             width="120"
+             height="40"
+             alt="Add To Apple Wallet"
+          /></a>
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
+  <style>
+    .giftcard__header__logo-image {
+      max-width: {{ section.settings.logo_max_width }}px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .gift-cart-image {
+      background-color: {{ section.settings.bg_color }} !important;
+      color: {{ section.settings.text_color }} !important;
+    }
+    .gift-cart-image p {
+      color: {{ section.settings.text_color }} !important;
+    }
+    .gift-card-image svg #Desk---Gift-Card {
+      fill: {{ section.settings.text_color }} !important;
+    }
+    @media print {
+      body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+    }
+  </style>
+</section>
+
+{% schema %}
+{
+  "name": "Gift card page",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Image",
+      "info" : "250px x 80px recommended"
+    },
+    {
+      "type": "range",
+      "id": "logo_max_width",
+      "min": 100,
+      "max": 250,
+      "step": 5,
+      "unit": "px",
+      "label": "Image width",
+      "default": 200
+    },
+    {
+      "type": "image_picker",
+      "id": "gift_card_image",
+      "label": "Gift card image",
+      "info" : "570px x 380px recommended"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_qr_code",
+      "label": "Show QR code",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Giftcard text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Giftcard bg color",
+      "default": "#000000"
+    }
+  ]
+}
+{% endschema %}

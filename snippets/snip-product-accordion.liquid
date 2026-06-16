@@ -1,0 +1,61 @@
+{% comment %}
+
+  Product Accordion Block
+  -----------------------
+  Renders an accordion block within the product page.
+
+  Objects:
+  - block: The current block object containing settings and content.
+
+  Settings:
+  - accordion_heading: The heading text for the accordion summary.
+  - default_open_accordion: Boolean to determine if the accordion is open by default.
+  - page: A reference to a page for content (if applicable).
+  - richtext: Additional rich text content for the accordion.
+
+  Usage:
+  {% render 'snip-product-accordion', block: block %}
+
+{% endcomment %}
+
+<div
+  class="product-blocks__block product-blocks__block--{{ block.type }} {% if block.settings.show_as_accordion %}product-blocks__block--accordion-item{% endif %}"
+>
+  <details
+    class="details details--fade"
+    id="{{ block.id }}"
+    {% if block.settings.default_open_accordion %}
+        open
+    {% endif %}
+    data-default-open-accordion="{{ block.settings.default_open_accordion }}"
+    {{ block.shopify_attributes }}
+  >
+    <summary class="details__summary">
+      <h3 class="details__title">{{ block.settings.accordion_heading }}</h3>
+      <div class="details__icon">
+        {% render 'snip-icons',
+            wrapper: '',
+            type: 'apollo',
+            icon: 'minus',
+            classes: 'details__svg open c-accordion__header-icons--icon',
+            size: '14px',
+            fill: 'var(--accordion-color)',
+            hover: 'var(--accordion-color)' %}
+        {% render 'snip-icons',
+            wrapper: '',
+            type: 'apollo',
+            icon: 'plus',
+            classes: 'details__svg closed c-accordion__header-icons--icon',
+            size: '14px',
+            fill: 'var(--accordion-color)',
+            hover: 'var(--accordion-color)' %}
+      </div>
+    </summary>
+    <div class="details__content rte">
+      {% comment %} TODO {% endcomment %}
+      {{ block.settings.page.content }}
+      {{ block.settings.richtext }}
+    </div>
+  </details>
+</div><!-- /.product-blocks__block -->
+<div class="clear"></div>

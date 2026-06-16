@@ -1,0 +1,69 @@
+{% comment %}
+snippets/sidebar-sortby.liquid
+
+Use the "defaultOpen" variable to determine if the sortby will be
+collapsed by default in the accordion.
+{% endcomment %}
+
+  {%- liquid
+    assign total_active_values = total_active_values | plus: filter.active_values.size
+  -%}
+
+
+  {% capture accordion_heading_capture %}
+    {{ 'collections.filters.sort_by_placeholder' | t }}
+  {% endcapture %}
+
+  {% capture accordion_content_capture %}
+    <div class="collection__page-sort sidebar-filter" data-collection-sort-by>
+      <ul>
+        {% for option in collection.sort_options %}
+          {%- liquid
+
+            if option.value == collection.sort_by
+              assign status = 'current'
+            else
+              assign status = 'available'
+            endif
+          -%}
+          <li class="js-collection-side-filter {{ status }}" data-placeholder="{{ option.name }}" data-option-value="{{ option.value }}">
+            <input type="checkbox"
+                   name="sort_by"
+                   id="{{ option.name }}"
+                   value="{{ option.value | escape }}">
+            <label for="{{ option.name }}">{{ option.name }}</label>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endcapture %}
+
+  <li>
+    <details
+      class="details details--fade"
+      {% unless allow_multiple_open %}
+        name="{{ level_two }}"
+      {% endunless %}
+    >
+      <summary class="details__summary">
+        <h3 class="details__title">{{ accordion_heading_capture }}</h3>
+        <div class="details__icon">
+          {% render 'snip-icons',
+            wrapper: '',
+            type: 'apollo',
+            icon: 'down-carrot',
+            classes: 'details__svg vib-center',
+            size: '6px',
+            fill: 'var(--accordion-color)',
+            hover: 'var(--accordion-color)'
+          %}
+        </div>
+      </summary>
+      <div
+        class="details__content"
+        data-accordion-context="{{ block.id }}"
+      >
+        {{ accordion_content_capture }}
+      </div>
+    </details>
+  </li>

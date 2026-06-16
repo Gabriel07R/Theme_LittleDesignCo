@@ -1,0 +1,135 @@
+{% liquid
+  assign menu = linklists[sidenav]
+  assign allow_multiple_open = true
+%}
+{% comment %} TODO: Remove WAU Accordion {% endcomment %}
+<ul class="menu__list">
+  {% if menu.links.size > 0 %}
+    {% for link in menu.links %}
+      {% if forloop.first %}
+        {% assign level_one = 'level--' | append: forloop.index %}
+      {% endif %}
+      {% if link.links.size > 0 %}
+        <li class="menu__item">
+          <details
+            class="details details--fade"
+            {% unless allow_multiple_open %}
+              name="{{ level_one }}"
+            {% endunless %}
+          >
+            <summary class="details__summary">
+              <a class="details__link" href="{{ link.url }}">{{ link.title }}</a>
+              <div class="details__icon">
+                {% render 'snip-icons',
+                  wrapper: '',
+                  type: 'apollo',
+                  icon: 'down-carrot',
+                  classes: 'details__svg vib-center',
+                  size: '6px',
+                  fill: 'var(--accordion-color)',
+                  hover: 'var(--accordion-color)'
+                %}
+              </div>
+            </summary>
+            <div class="details__content details__content--padding-left">
+              <ul class="menu__list">
+                {% for sub_link in link.links %}
+                  {% if forloop.first %}
+                    {% assign level_two = level_one | append: '--' | append: forloop.parentloop.index %}
+                  {% endif %}
+                  {% if sub_link.links.size > 0 %}
+                    <li class="menu__item">
+                      <details
+                        class="details details--fade"
+                        {% unless allow_multiple_open %}
+                          name="{{ level_two }}"
+                        {% endunless %}
+                      >
+                        <summary class="details__summary">
+                          <a class="details__link" href="{{ sub_link.url }}">{{ sub_link.title }}</a>
+                          <div class="details__icon">
+                            {% render 'snip-icons',
+                              wrapper: '',
+                              type: 'apollo',
+                              icon: 'down-carrot',
+                              classes: 'details__svg vib-center',
+                              size: '5px',
+                              fill: 'var(--accordion-color)',
+                              hover: 'var(--accordion-color)'
+                            %}
+                          </div>
+                        </summary>
+                        <div class="details__content details__content--padding-left">
+                          <ul class="menu__list">
+                            {% for sub_sub_link in sub_link.links %}
+                              <li class="menu__item">
+                                <a class="menu__link" href="{{ sub_sub_link.url }}">{{ sub_sub_link.title }}</a>
+                              </li>
+                            {% endfor %}
+                          </ul>
+                        </div>
+                      </details>
+                    </li>
+                  {% else %}
+                    <li class="menu__item">
+                      <a class="menu__link" href="{{ sub_link.url }}">{{ sub_link.title }}</a>
+                    </li>
+                  {% endif %}
+                {% endfor %}
+              </ul>
+            </div>
+          </details>
+        </li>
+      {% else %}
+        <li class="menu__item">
+          <a class="menu__link" href="{{ link.url }}">{{ link.title }}</a>
+        </li>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+  {% if shop.customer_accounts_enabled and block.settings.customer_account_links %}
+    {% if customer %}
+      <li class="mobile-menu__item menu__item">
+        <a class="menu__link" href="{{ routes.account_url }}">
+          {% render 'snip-icons',
+            wrapper: '.mobile-menu__item',
+            type: 'vantage-theme',
+            icon: 'user',
+            classes: 'mobile-menu__item--icon vib-center',
+            size: '14px',
+            fill: section.settings.link_color,
+            hover: section.settings.link_color
+          %}
+          <span class="vib-center">{{ 'general.mobile_nav.account' | t }}</span>
+        </a>
+        <a class="menu__link" href="{{ routes.account_logout_url }}">
+          {% render 'snip-icons',
+            wrapper: '.mobile-menu__item',
+            type: 'vantage-theme',
+            icon: 'user-logout',
+            classes: 'mobile-menu__item--icon vib-center',
+            size: '14px',
+            fill: section.settings.link_color,
+            hover: section.settings.link_color
+          %}
+          <span class="vib-center">{{ 'general.mobile_nav.logout' | t }}</span>
+        </a>
+      </li>
+    {% else %}
+      <li class="mobile-menu__item menu__item">
+        <a class="menu__link" href="{{ routes.account_login_url }}">
+          {% render 'snip-icons',
+            wrapper: '.mobile-menu__item',
+            type: 'vantage-theme',
+            icon: 'user',
+            classes: 'mobile-menu__item--icon vib-center',
+            size: '14px',
+            fill: section.settings.link_color,
+            hover: section.settings.link_color
+          %}
+          <span class="vib-center">{{ 'general.mobile_nav.login' | t }}</span>
+        </a>
+      </li>
+    {% endif %}
+  {% endif %}
+</ul>

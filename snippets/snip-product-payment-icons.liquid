@@ -1,0 +1,23 @@
+{% comment %}
+  
+  Objects:
+    block - The product block object for the current block.
+
+  Settings:
+    block.settings.title - Title for the payment icons block.
+    block.settings.background_color - Background color for the payment icons block.
+  
+  Usage:
+    {% render 'snip-product-payment-icons', block: block %}
+
+{% endcomment %}
+
+<div class="product-blocks__block product-blocks__block--{{ block.type }}"
+    style="background-color:{{ block.settings.background_color }};" {{ block.shopify_attributes }}>
+  {% if block.settings.title != blank %}
+    <h5>{{ block.settings.title | escape }}</h5>
+  {% endif %}
+{% for type in shop.enabled_payment_types %}
+  {{ type | payment_type_svg_tag: class:'payment-icon' }}
+{% endfor %}
+</div>

@@ -1,0 +1,119 @@
+{% if context == 'widget' %}
+  {%# Displays a checkbox for each variant's corresponding insert variant.
+    # Shows/hides/deselects with JS on variant change %}
+  <div class="plus-insert-widget">
+    {% for variant in product.variants %}
+      {%#Zeke insert variant original price%}
+      {% liquid
+        assign insert = false
+        if variant.metafields.custom.add_an_insert != blank
+          assign insert = variant.metafields.custom.add_an_insert.value
+          assign original_insert_price = insert.metafields.custom.original_price | times: 100
+  else
+        endif
+      %}
+
+      {% if insert %}
+        <div
+          class="plus-insert-checkbox {% unless forloop.first %}  {% endunless %}"
+          data-variant-id="{{variant.id}}"
+        >
+          <input
+            type="checkbox"
+            name="{{ insert.title | escape }}"
+            id="insert_checkbox-{{insert.id}}"
+            data-insert-id="{{insert.id}}"
+            
+            {% if insert_checkbox_checked %}
+              checked
+            {% endif %}
+          >
+          <label for="insert_checkbox-{{insert.id}}">{%if product.title contains "DRAPES" %}Add Rush Fee {% else %} {{ 'general.plus_add_insert.add_an_insert' | t }} {% endif %} {{ insert.price | money }} {% if customer and customer.tags contains "TRADE20" or customer.tags contains "RETAILER20" or customer.tags contains "RETAILER30"%}
+        <span style="text-decoration: line-through;">{{ original_insert_price | money }}</span>
+      {% endif %} </label>
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+{% elsif context == 'input' %}
+  {%# Hidden inputs for the add to cart form/button.
+    # they get updated with JS on variant or quantity change 
+  %}
+  {% assign insert = product.selected_or_first_available_variant.metafields.custom.add_an_insert.value %}
+  <input
+    class="formQty insertQty"
+    name="items[1][quantity]"
+    type="hidden"
+    value="1"
+    disabled="true"
+  >
+  <input
+    class="formVariantId insertId"
+    name="items[1][id]"
+    type="hidden"
+    value="{{ insert.id }}"
+    disabled="true" 
+  >
+    <input 
+      class="insertProperty"
+      type="hidden" 
+      name="items[1]properties[_insertPillowId]"
+      value="{{product.selected_or_first_available_variant.id}}"
+      disabled="true"
+    >
+    
+{% endif %}
+
+{%# Styles, mostly for the checkbox element%}
+<style>
+  .plus-insert-checkbox {
+    display: flex;
+    margin: 5px 0;
+  }
+
+  .plus-insert-checkbox input[type='checkbox'] {
+    appearance: none;
+    background-color: #fff;
+    margin: 0;
+    font: inherit;
+    font-weight: var(--main-weight);
+    color: currentColor;
+    width: 1.15em;
+    height: 1.15em;
+    border: 1px solid currentColor;
+    transform: translateY(-0.075em);
+    display: grid;
+    place-content: center;
+  }
+
+  .plus-insert-checkbox input[type='checkbox']::before {
+    content: '';
+    width: 0.65em;
+    height: 0.65em;
+    transform: scale(0);
+    transition: 120ms transform ease-in-out;
+    box-shadow: inset 1em 1em var(--button-color);
+    /* Windows High Contrast Mode */
+    background-color: CanvasText;
+    /* Clip path checkmark */
+    transform-origin: bottom left;
+    clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+  }
+
+  /* Scale up checkmark when input checked */
+  .plus-insert-checkbox input[type='checkbox']:checked::before {
+    transform: scale(1);
+  }
+
+  /* Focus state for accessibility */
+  .plus-insert-checkbox input[type='checkbox']:focus {
+    outline: max(2px, 0.15em) solid currentColor;
+    outline-offset: max(2px, 0.15em);
+  }
+
+  .plus-insert-checkbox label {
+    margin: 0 5px;
+    line-height: 100%;
+    font-weight: var(--main-weight);
+  }
+</style>

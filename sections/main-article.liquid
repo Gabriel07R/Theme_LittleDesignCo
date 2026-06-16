@@ -1,0 +1,291 @@
+<div class="article-template main__section" data-section-id="{{ section.id }}" data-section-type="article-template">
+
+  {%- liquid
+
+    assign number_of_comments = article.comments_count
+    if comment and comment.created_at
+      assign number_of_comments = article.comments_count | plus: 1
+    endif
+
+  -%}
+
+  <div class="row">
+    <div id="page">
+
+      {% paginate article.comments by 20 %}
+
+        <div id="article-body" class="desktop-12 tablet-6 mobile-3">
+
+          {% if section.blocks.size > 0 %}
+            <article>
+            {% for block in section.blocks %}
+              {% case block.type %}
+                {% when 'header' %}
+                  <header class="article__header">
+                    <!-- header -->
+                    <h1 class="blog-title desktop-12">{{ article.title }}</h1>
+
+                    <!-- posted -->
+                    {% if block.settings.show_date or block.settings.show_author %}
+                      <p class="posted">{% if block.settings.show_date %}{{ article.published_at | date: format: 'date' }}{% endif %}{% if block.settings.show_date and block.settings.show_author %} – {% endif %}{% if block.settings.show_author %}{{ article.author }}{% endif %}</p>
+                    {% endif %}
+                  </header>
+
+                {% when 'image' %}
+
+                  <!-- image -->
+                  {% if article.image %}
+                    <figure class="article__figure">
+                      {%- render 'basic-responsive-image',
+                        type: article.image,
+                        width: 2000,
+                        loading: 'eager',
+                        fetchpriority: 'high'
+                      -%}
+                      {% if article.image.alt %}
+                      <figcaption>{{ article.image.alt }}</figcaption>
+                      {% endif %}
+                    </figure>
+                  {% endif %}
+
+                {% when 'content' %}
+
+                  <!-- content -->
+                  <div class="article__content">
+                    <div class="rte">
+                      {{ article.content }}
+                    </div>
+                  </div>
+
+                {% when 'info' %}
+
+                  <!-- details -->
+                  <footer class="article__footer">
+                    <div class="article-details">
+                      {% if article.tags and block.settings.show_tags %}
+                        <p>{{ 'blogs.article.tagged' | t }}:
+                          {% for tag in article.tags %}
+                            <a href="{{ blog.url }}/tagged/{{ tag | handle }}">{{ tag }}</a>{% unless forloop.last %},{% endunless %}
+                          {% endfor %}
+                        </p>
+                      {% endif %}
+                      {% if block.settings.show_social %}
+                       {% render 'social' with article %}
+                      {% endif %}
+                    </div>
+                  </footer>
+
+              {% endcase %}
+            {% endfor %}
+            </article>
+          {% endif %}
+
+          <!-- comments -->
+          {% if blog.comments_enabled? %}
+            <div id="comments">
+              <h3>{{ 'blogs.comments.comments_with_count' | t: count: number_of_comments }}</h3>
+              <div class="desktop-7 tablet-6 mobile-3">
+                <ul>
+                  {% for comment in article.comments %}
+                    <li>
+                      <div class="comment-details">
+                        {{ comment.author }}: {{ comment.created_at | date: format: 'date' }}
+                      </div>
+                      <div class="gravatar desktop-1 mobile-1">
+                        <img src="//www.gravatar.com/avatar/{{ comment.email | remove: ' ' | strip_newlines | downcase | md5 }}" alt="Author's avatar image" />
+                      </div>
+                      <div class="comment desktop-11 mobile-2">
+                        {{ comment.content }}
+                      </div>
+                    </li>
+                  {% endfor %}
+                </ul>
+                {% if paginate.pages > 1 %}
+                  <div id="pagination">
+                    {% if paginate.previous %}
+                      <a class="prev-page" href="{{ paginate.previous.url }}">
+                        {% render 'snip-icons',
+                           wrapper: '.pagination-wrapper',
+                           type: 'apollo',
+                           icon: 'left-carrot',
+                           classes: 'pagination-wrapper--icon',
+                           size: '10px',
+                           fill: 'var(--text-color)',
+                           hover: 'var(--text-color)' %}
+                      </a>
+                    {% endif %}
+                    {% for part in paginate.parts %}
+                      {% if part.is_link %}
+                        {{ part.title | link_to: part.url }}
+                      {% else %}
+                        {% if part.title == '&hellip;' %}
+                          {{ part.title }}
+                        {% else %}
+                          <span class="current">{{ part.title }}</span>
+                        {% endif %}
+                      {% endif %}
+                    {% endfor %}
+                    {% if paginate.next %}
+                      <a class="next-page" href="{{ paginate.next.url }}">
+                        {% render 'snip-icons',
+                           wrapper: '.pagination-wrapper',
+                           type: 'apollo',
+                           icon: 'right-carrot',
+                           classes: 'pagination-wrapper--icon',
+                           size: '10px',
+                           fill: 'var(--text-color)',
+                           hover: 'var(--text-color)' %}
+                      </a>
+                    {% endif %}
+                  </div>
+                {% endif %}
+              </div>
+
+              <!-- Comment Form -->
+              <div id="comment-form" class="desktop-5 tablet-6 mobile-3">
+                {% form article %}
+                  <h5>{{ 'blogs.comments.title' | t }}</h5>
+                  <!-- Check if a comment has been submitted in the last request, and if yes display an appropriate message -->
+                {% if form.posted_successfully? %}
+                  {% if blog.moderated? %}
+                    <div class="notice">
+                      {{ 'blogs.comments.success_moderated' | t }}
+                    </div>
+                  {% else %}
+                    <div class="notice">
+                      {{ 'blogs.comments.success' | t }}
+                    </div>
+                  {% endif %}
+                {% endif %}
+
+                {% if form.errors %}
+                  <div class="notice error">
+                    {{ 'general.forms.post_error' | t }}
+                  </div>
+                {% endif %}
+                <dl>
+                  <dt class="{% if form.errors contains 'author' %}error{% endif %}">
+                    <label for="comment_author">{{ 'blogs.comments.your_name' | t }}</label>
+                  </dt>
+                  <dd>
+                    <input type="text" id="comment_author" name="comment[author]" size="40" value="{{ form.author }}" class="{% if form.errors contains 'author' %}input-error{% endif %}" />
+                  </dd>
+
+                  <dt class="{% if form.errors contains 'email' %}error{% endif %}">
+                    <label for="comment_email">{{ 'blogs.comments.your_email' | t }}</label>
+                  </dt>
+                  <dd>
+                    <input type="text" id="comment_email" name="comment[email]" size="40" value="{{ form.email }}" class="{% if form.errors contains 'email' %}input-error{% endif %}" />
+                  </dd>
+
+                  <dt class="{% if form.errors contains 'body' %}error{% endif %}">
+                    <label for="comment_body">{{ 'blogs.comments.your_comment' | t }}</label>
+                  </dt>
+                  <dd>
+                    <textarea id="comment_body" name="comment[body]" cols="40" rows="5" class="{% if form.errors contains 'body' %}input-error{% endif %}">{{ form.body }}</textarea>
+                  </dd>
+                </dl>
+                {% if blog.moderated? %}
+                  <p class="hint">{{ 'blogs.comments.moderated' | t }}</p>
+                {% endif %}
+                  <input type="submit" value="{{ 'blogs.comments.post' | t }}" />
+                {% endform %}
+              </div>
+            </div>
+          {% endif %}
+        </div><!-- /.article-body -->
+        <div class="clear"></div>
+        <div id="article-pagination">
+          {% if blog.previous_article != blank %}
+            <a class="prev-article" href="{{ blog.previous_article }}">
+              {% render 'snip-icons',
+                 wrapper: '.prev-article',
+                 type: 'apollo',
+                 icon: 'left-carrot',
+                 classes: 'prev-article--icon vib-center',
+                 size: '14px',
+                 fill: 'var(--text-color)',
+                 hover: 'var(--text-color)' %}
+              <span class="vib-center">{{ blog.previous_article.title | truncate: 30 }}</span>
+            </a>
+          {% endif %}
+          {% if blog.next_article != blank %}
+            <a class="next-article" href="{{ blog.next_article }}">
+              <span class="vib-center">{{ blog.next_article.title | truncate: 30 }}</span>
+              {% render 'snip-icons',
+                 wrapper: '.next-article',
+                 type: 'apollo',
+                 icon: 'right-carrot',
+                 classes: 'next-article--icon vib-center',
+                 size: '14px',
+                 fill: 'var(--text-color)',
+                 hover: 'var(--text-color)' %}
+            </a>
+          {% endif %}
+        </div>
+      {% endpaginate %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Blog posts",
+  "blocks":
+  [
+    {
+      "type": "header",
+      "name": "Header",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_date",
+          "label": "Show published date",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_author",
+          "label": "Show author",
+          "default": true
+        }
+      ]
+    },
+    {
+      "type": "image",
+      "name": "Image",
+      "limit": 1,
+      "settings": []
+    },
+    {
+      "type": "content",
+      "name": "Content",
+      "limit": 1,
+      "settings": []
+    },
+    {
+      "type": "info",
+      "name": "Info",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_tags",
+          "label": "Show post tags",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_social",
+          "label": "Show social share icons",
+          "default": true
+        }
+      ]
+    }
+  ],
+  "settings":
+  [
+  ]
+}
+{% endschema %}

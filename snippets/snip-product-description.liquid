@@ -1,0 +1,66 @@
+{% comment %}
+
+    Snippet: snip-product-description.liquid
+    Description: Renders the product description, optionally as an accordion.
+
+  Objects:
+    product - The product object for the current product.
+
+  Settings:
+    block.settings.show_as_accordion - Boolean to determine if the description should be shown as an accordion.
+    block.settings.default_open_accordion - Boolean to determine if the accordion should be open by default.
+
+  Usage:
+    {% render 'snip-product-description', product: product, block: block %}
+
+{% endcomment %}
+
+
+<div
+  class="product-blocks__block product-blocks__block--{{ block.type }} {% if block.settings.show_as_accordion %}product-blocks__block--accordion-item{% endif %}"
+>
+
+  {% if block.settings.show_as_accordion %}
+
+    <details
+      class="details details--fade"
+      id="{{ block.id }}"
+      {% if block.settings.default_open_accordion %}
+          open
+      {% endif %}
+      data-default-open-accordion="{{ block.settings.default_open_accordion }}"
+      {{ block.shopify_attributes }}
+    >
+      <summary class="details__summary">
+        <h3 class="details__title">{{ 'products.product.product_description' | t }}</h3>
+        <div class="details__icon">
+          {% render 'snip-icons',
+              wrapper: '',
+              type: 'apollo',
+              icon: 'minus',
+              classes: 'details__svg open c-accordion__header-icons--icon',
+              size: '14px',
+              fill: 'var(--accordion-color)',
+              hover: 'var(--accordion-color)' %}
+          {% render 'snip-icons',
+              wrapper: '',
+              type: 'apollo',
+              icon: 'plus',
+              classes: 'details__svg closed c-accordion__header-icons--icon',
+              size: '14px',
+              fill: 'var(--accordion-color)',
+              hover: 'var(--accordion-color)' %}
+        </div>
+      </summary>
+      <div class="details__content rte">
+        {% comment %} TODO: Remove split?? {% endcomment %}
+        {{ product.description | split: '<!-- split -->' | first }}
+      </div>
+    </details>
+  {% else %}
+    <div class="rte">
+      {{ product.description | split: '<!-- split -->' | first }}
+    </div>
+  {% endif %}
+</div><!-- /.product-blocks__block -->
+<div class="clear"></div>

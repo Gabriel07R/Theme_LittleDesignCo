@@ -1,0 +1,150 @@
+{% comment %}
+    Renders a swatch and size chart.
+
+    Accepts:
+    - option: {Object} Product Option Liquid object
+    - current_variant: {Object} Variant Liquid object
+    - product: {Object} Product Liquid object
+    - show_size_chart: {Boolean} For showing the size chart
+    - size_chart_label: {String} String for size chart label
+    - size_chart_page: {Object} Page object from input setting
+    - section_id: {String} Unique section ID so that popup are different
+
+
+    Usage:
+    {% render "swatch",
+      option: option,
+      current_variant: current_variant,
+      product: product,
+      show_size_chart: show_size_chart,
+      size_chart_label: size_chart_label,
+      size_chart_page: size_chart_page,
+      section_id: section_id
+     %}
+{% endcomment %}
+
+{%- liquid
+
+  assign color_swatch_style = settings.color_swatch_style
+  assign option_name = option.name | downcase
+  assign color_swatch_options = settings.swatch_option_names | replace: ' ,', ',' | replace: ', ', ',' | split: ',' | downcase
+  assign current_option = "option" | append: option.position
+  assign other_options = "option1 option2 option3" | remove: current_option | strip | split: " "
+  assign size_swatches = "size, sizes, talla, taglia, taille, tamanho, grosse" | split: ", "
+
+-%}
+
+<div
+  class="swatch clearfix js-variant-selector"
+  data-option-index="{{ option.position }}"
+  data-other-options='{{ other_options | json }}'
+>
+
+  <p class="option-label">
+    {{ option.name }} | {% for option_value in option.values %}{% if option.selected_value == option_value %}<span id="selected-option-{{ option.position }}" >{{ option_value }}</span>{% endif %}{% endfor %}
+  </p>
+
+  {% for option_value in option.values %}
+
+    {%- liquid
+
+      assign has_image = false
+      assign image_url = option_value | handle | append: '.png' | file_url
+      assign css_color = option_value | split: ' ' | last | handle
+      assign available = false
+      assign swatch_image_url = nil
+      if option_value.swatch.image
+        assign swatch_image_url = option_value.swatch.image | image_url: width: 50
+        assign has_image = true
+      endif
+      if option_value.swatch.color and color_swatch_style == 'swatch'
+        assign css_color = option_value.swatch.color
+      endif
+
+    -%}
+
+    <!-- Checking Availability -->
+    {%- liquid
+
+      assign available = option_value.available
+
+    -%}
+
+    <!-- Building Variant Image -->
+    {%- liquid
+
+      assign variant_image_url = ''
+
+      if option_value.variant.image != blank
+        assign variant_image_url = option_value.variant.image | image_url: width: 100
+      endif
+
+      assign checked = ""
+
+      if option_value.selected
+        assign checked = 'checked="checked"'
+      endif
+
+    -%}
+
+    {%- capture handle %}{{ section.id }}-{{ option.name | handleize }}-{{ forloop.index0 }}{% endcapture -%}
+
+    {% capture radio_button %}
+      <input
+        type="radio"
+        class="swatches__form--input"
+        id="{{ handle }}"
+        name="{{ option_name }}"
+        value="{{ option_value | escape }}"
+        form="product-form-{{ section.id }}"
+        data-position="{{ option.position }}"
+        data-option-value-id="{{ option_value.id }}"
+        {{ checked }}
+       />
+    {% endcapture %}
+
+    {% capture regular_swatch %}
+      <div class="swatch-element {% unless available %}soldout{% endunless %}">
+        {{ radio_button }}
+
+        <label
+          class="swatches__form--label"
+          for="{{ handle }}"
+          tabindex="0"
+        >
+          {{ option_value }}
+        </label>
+      </div>
+    {% endcapture %}
+
+    {% capture color_swatch %}
+      <div class="swatch-element color {% unless available %}soldout{% endunless %}">
+
+        {{ radio_button }}
+
+        <label
+          class="swatches__form--label"
+          for="{{ handle }}"
+          style="background-color: {{ css_color }};
+          {% unless color_swatch_style == 'default-color' %}
+            background-image: url({% if color_swatch_style == 'custom-image' %}{{ image_url }}{% elsif color_swatch_style == 'variant-image' %}{{ variant_image_url }}{% elsif color_swatch_style == 'swatch' %}{{ swatch_image_url }}{% endif %});background-position: center center;"
+          {% endunless %}
+          tabindex="0">
+        </label>
+      </div>
+    {% endcapture %}
+
+    {% if color_swatch_options contains option_name %}
+      {{ color_swatch }}
+    {% else %}
+      {{ regular_swatch }}
+    {% endif %}
+  {% endfor %}
+
+  {% unless template == 'product.quick' %}
+    {% if show_size_chart and size_swatches contains option_name %}
+      {% render 'size-chart', label: size_chart_label, page: size_chart_page, section_id: section_id, type: size_chart_type %}
+    {% endif %}
+  {% endunless %}
+
+</div>

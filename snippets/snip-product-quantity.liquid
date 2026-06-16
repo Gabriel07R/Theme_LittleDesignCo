@@ -1,0 +1,60 @@
+{% comment %}
+  This snippet is used to render the product quantity selector component on the product page.
+  Accepts:
+    - product: {Object} The product object
+    - current_variant: {Object} The current variant object
+    - product_form_id: {String} The product form ID
+    - product_form_config: {String} The product form configuration
+  Usage:
+    {% render 'snip-product-quantity', product: product, current_variant: current_variant, product_form_id: product_form_id, product_form_config: product_form_config %}
+{% endcomment %}
+
+<div
+  class="product-blocks__block product-blocks__block--{{ block.type }}"
+  data-product-qty
+  {{ block.shopify_attributes }}>
+    {%
+      form 'product', product,
+      id: product_form_id,
+      class: "product_form",
+      data-product-form: product_form_config,
+      data-product-id: product.id
+    %}
+
+    <label
+      class="option-label"
+      for="product-qty-{{ product.id }}">
+      {{ 'products.product.quantity' | t }}
+    </label>
+
+    <div class="quantity-selector mb20">
+      <button
+        class="quantity-control-down"
+        type="button">
+        <span class="visually-hidden">{{ 'cart.general.decrease' | t: product: product.title | escape }}</span>
+      -</button>
+      <input
+        id="product-qty-{{ product.id }}"
+        type="text"
+        name="quantity"
+        class="product-qty quantity" {% if current_variant.inventory_management == 'shopify' %}{% unless current_variant.inventory_policy == 'continue' %}
+        data-limit="{{ current_variant.inventory_quantity }}"
+        {% endunless %}{% endif %}
+        value="1"
+        style="max-width: 50px; text-align: center; margin: 0 auto 10px;"/>
+      <button
+        class="quantity-control-up"
+        type="button">
+        <span class="visually-hidden">{{ 'cart.general.increase' | t: product: product.title | escape }}</span>
+      +</button>
+    </div><!-- /.quantity-selector.mb20 -->
+
+    <input
+      class="formVariantId"
+      name="id"
+      type="hidden"
+      value="{{ product.selected_or_first_available_variant.id }}"
+    >
+  {% endform %}
+</div><!-- /.product-blocks__block -->
+<div class="clear"></div>

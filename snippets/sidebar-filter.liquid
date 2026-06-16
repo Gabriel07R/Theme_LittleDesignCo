@@ -1,0 +1,300 @@
+{% comment %}
+snippets/sidebar-filter.liquid
+
+Use the "defaultOpen" variable to determine if the filter will be
+collapsed by default in the accordion.
+{% endcomment %}
+
+{% liquid
+  assign swatch_option_names = settings.swatch_option_names | replace: ' ,', ',' | replace: ', ', ',' | split: ',' | downcase
+%}
+
+{%- for filter in collection.filters -%}
+  {%- liquid
+
+    assign defaultOpen = false
+    assign accordion_content_id = accordion_content_class | append: block.id | append: '-' | append: forloop.index
+    assign total_active_values = total_active_values | plus: filter.active_values.size
+    assign open_by_default = false
+
+  -%}
+  {% case filter.type %}
+    {% when 'list' %}
+      {%- liquid
+
+        # Set default to false since we are in a loop.
+        assign is_size_filter = false
+        assign is_color_filter = false
+        assign filter_label_to_lowercase = filter.label | downcase
+
+        # Figure out color filters.
+        if swatch_option_names contains filter_label_to_lowercase
+          assign is_color_filter = true
+        endif
+
+        # Don't worry about size option filters for now as they do not do anything.
+        assign size_option_names = 'size,talla,taglia,taille,tamanho,grosse' | split: ','
+        if size_option_names contains filter.label
+          assign is_size_filter = true
+        endif
+
+        # Determine filter type.
+        if is_color_filter
+          assign filter_type = 'color'
+          assign defaultOpen = false
+        elsif is_size_filter
+          assign filter_type = 'size'
+          assign defaultOpen = false
+        else
+          assign filter_type = 'regular'
+        endif
+
+        assign show_filter_swatches = false
+        if block.settings.show_filter_swatches
+          assign show_filter_swatches = true
+        endif
+
+        if is_color_filter and show_filter_swatches == false
+          assign filter_type = 'regular'
+        endif
+
+
+        assign active_filter = filter.values | has: 'active', true
+
+        if active_filter
+          assign open_by_default = true
+        endif
+
+      -%}
+        {% capture accordion_heading_capture %}
+        {{ filter.label | escape }}{% if filter.operator == 'AND' %}<small>({{ 'collections.filters.match_all' | t }})</small>{% endif %}
+        {% endcapture %}
+        {% capture accordion_content_capture %}
+
+          <div class="sidebar-filter filter--{{ filter_type }}">
+            <ul>
+              {% liquid
+                if filter.operator == 'AND'
+                  assign active_values = filter.values | where: 'active', true
+                  assign inactive_values = filter.values | where: 'active', false
+                  assign sorted_values = active_values | concat: inactive_values
+                else
+                  assign sorted_values = filter.values
+                endif
+               %}
+              {% for value in sorted_values %}
+
+                {%- liquid
+                  if value.active
+                    assign status = 'current'
+                    assign url = value.url_to_remove
+                  elsif value.count == 0 and value.active == false
+                    assign status = 'disabled'
+                    assign url = ''
+                  else
+                    assign status = ''
+                    assign url = value.url_to_add
+                  endif
+                -%}
+
+                <li class="{{ status }} {% unless is_color_filter and show_filter_swatches %}checkbox-wrapper{% endunless %}">
+                  {% if is_color_filter and show_filter_swatches %}
+                    {%- liquid
+                      assign swatch_color_name = value.label | handleize | downcase | append: '.png'
+                      assign swatch_image_url = swatch_color_name | file_url
+                      assign css_color = value.label | split: ' ' | last | downcase
+
+                      if images[swatch_color_name] != blank
+                        assign bg_img = 'background-image:url(' | append:  swatch_image_url | append: ');'
+                        else
+                        assign bg_img = ''
+                      endif
+                      assign bg_color = 'background-color:' | append:  css_color | append: ';'
+                    -%}
+                    <a class="js-collection-side-filter {{ status }}" href="{{ url }}" title="{{ value.label }}">
+                      <input type="checkbox"
+                             name="{{ value.param_name }}"
+                             value="{{ value.value }}"
+                             id="{{ filter.label | handle }}--{{ value.value }}"
+                             {% if value.active %}checked{% endif %}
+                             {% if value.count == 0 and value.active == false %}disabled{% endif %} >
+
+                              {%- capture classes -%}
+                                  color-filter color-filter--{{ status }} {{ status }} color-filter--{{- filter.presentation }}
+                              {%- endcapture -%}
+                              {% case filter.presentation %}
+                                {% assign classes = classes | append: ' color-filter--rounded' %}
+                                {% when 'swatch' %}
+                                  {% if value.swatch.image %}
+                                    {{
+                                      value.swatch.image
+                                      | image_url: width: 300
+                                      | image_tag: alt: value.swatch.image.alt, class: classes
+                                    }}
+                                  {% elsif value.swatch.color %}
+                                    {% assign swatch_background = 'rgb('
+                                      | append: value.swatch.color.rgb
+                                      | append: ')'
+                                    %}
+                                    <div class="{{- classes -}}" style="background: {{ swatch_background }};"></div>
+                                  {% endif %}
+                                {% when 'image' %}
+                                  {% if value.image %}
+                                    {{
+                                      value.image
+                                      | image_url: width: 300
+                                      | image_tag: alt: value.image.alt, class: classes, style: swatch_size_class
+                                    }}
+                                  {% endif %}
+                                {% else %}
+                                  <span
+                                    class="color-filter color-filter--rounded color-filter--{{ status }} {{ status }} color-filter--default"
+                                    style="{{ bg_color }}{{ bg_img }}"
+                                  ></span>
+                              {% endcase %}
+                        {% unless show_filter_swatches %}div class="checkbox-indicator"></div>{% endunless %}
+                      <label class="color-filter--label" for="{{ filter.label | handle }}--{{ value.value }}">{{ value.label | escape }} <span class="filter__count">({{ value.count }})</span></label>
+                    </a>
+                  {% else %}
+                    <a class="js-collection-side-filter {{ status }}" data-tag="{{ url }}" href="{{ url }}">
+                      <input type="checkbox"
+                                   name="{{ value.param_name }}"
+                                   value="{{ value.value }}"
+                                   id="{{ filter.label | handle }}--{{ value.value }}"
+                                   {% if value.active %}checked{% endif %}
+                                   {% if value.count == 0 and value.active == false %}disabled{% endif %} >
+                      <div class="checkbox-indicator"></div>
+                      <label class="regular-filter--label" for="{{ filter.label | handle }}--{{ value.value }}">{{ value.label | escape }} <span class="filter__count">({{ value.count }})</span></label>
+                    </a>
+                  {% endif %}
+                </li>
+              {% endfor %}
+
+            </ul>
+          </div>
+        {% endcapture %}
+    {% when 'price_range' %}
+      {%- liquid
+        assign currencies_using_comma_decimals = "ANG,ARS,BRL,BYN,BYR,CLF,CLP,COP,CRC,CZK,DKK,EUR,HRK,HUF,IDR,ISK,MZN,NOK,PLN,RON,RUB,SEK,TRY,UYU,VES,VND" | split: ','
+        assign uses_comma_decimals = false
+
+        if currencies_using_comma_decimals contains cart.currency.iso_code
+          assign uses_comma_decimals = true
+        endif
+
+        if filter.min_value.value or filter.max_value.value
+          assign open_by_default = true
+        endif
+      -%}
+
+        {% capture accordion_heading_capture %}
+        {{ filter.label | escape }}
+        {% endcapture %}
+        {% capture accordion_content_capture %}
+        <div class="sidebar-filter filter--price-range" data-collection-filters-price-range>
+          <div class="filter-range__boxes js-price-range">
+            <div class="filter-range__field">
+              <label class="filter-range__field__label visually-hidden" for="Filter-{{ filter.label | escape }}-{{ forloop.index }}">{{ 'collections.filters.from' | t }}</label>
+              <span class="filter-range__field__currency">{{ cart.currency.symbol }}</span>
+              <input class="filter-range__field__input js-filter-range-input js-price-min-output"
+                name="{{ filter.min_value.param_name }}"
+                id="Filter-{{ filter.label | escape }}-{{ forloop.index }}"
+                {%- if filter.min_value.value -%}
+                  {%- if uses_comma_decimals -%}
+                    value="{{ filter.min_value.value | money_without_currency | replace: '.', '' | replace: ',', '.' }}"
+                  {%- else -%}
+                    value="{{ filter.min_value.value | money_without_currency | replace: ',', '' }}"
+                  {% endif %}
+                {%- endif -%}
+                type="number"
+                placeholder="{{ 'collections.filters.from' | t }}"
+                min="0"
+                max="{{ filter.range_max | money_without_currency | replace: ',', '' }}">
+
+            </div>
+            <div class="filter-range__field">
+              <label class="filter-range__field__label visually-hidden" for="Filter-{{ filter.label | escape }}-{{ forloop.index }}">{{ 'collections.filters.to' | t }}</label>
+              <span class="filter-range__field__currency">{{ cart.currency.symbol }}</span>
+              <input class="filter-range__field__input js-filter-range-input js-price-max-output"
+                name="{{ filter.max_value.param_name }}"
+                id="Filter-{{ filter.label | escape }}-{{ forloop.index }}"
+                {%- if filter.max_value.value -%}
+                  {%- if uses_comma_decimals -%}
+                    value="{{ filter.max_value.value | money_without_currency | replace: '.', '' | replace: ',', '.' }}"
+                  {%- else -%}
+                    value="{{ filter.max_value.value | money_without_currency | replace: ',', '' }}"
+                  {% endif %}
+                {%- endif -%}
+                type="number"
+                placeholder="{{ 'collections.filters.to' | t }}"
+                min="0"
+                max="{{ filter.range_max | money_without_currency | replace: ',', '' }}">
+
+            </div>
+
+            <div class="filter-range__slider--wrapper">
+              <input class="filter-range__slider--input"
+                {%- if filter.min_value.value -%}
+                  {%- if uses_comma_decimals -%}
+                    value="{{ filter.min_value.value | money_without_currency | replace: '.', '' | replace: ',', '.' }}"
+                  {%- else -%}
+                    value="{{ filter.min_value.value | money_without_currency | replace: ',', '' }}"
+                  {% endif %}
+                {%- else -%}
+                  value="0"
+                {%- endif -%}
+                min="0"
+                max="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
+                step="1.00"
+                type="range"/>
+              <input class="filter-range__slider--input"
+                {%- if filter.max_value.value -%}
+                  {%- if uses_comma_decimals -%}
+                    value="{{ filter.max_value.value | money_without_currency | replace: '.', '' | replace: ',', '.' }}"
+                  {%- else -%}
+                    value="{{ filter.max_value.value | money_without_currency | replace: ',', '' }}"
+                  {% endif %}
+                {%- else -%}
+                  value="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
+                {%- endif -%}
+                min="0"
+                max="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
+                step="1.00"
+                type="range"/>
+            </div>
+          </div>
+        </div>
+      {% endcapture %}
+  {% endcase %}
+
+  <li>
+    <details
+      class="details details--fade"
+      {% if open_by_default %}
+        open
+      {% endif %}
+      {{ block.shopify_attributes }}
+  >
+    <summary class="details__summary">
+      <h3 class="details__title">{{ accordion_heading_capture }}</h3>
+      <div class="details__icon">
+        {% render 'snip-icons',
+          wrapper: '',
+          type: 'apollo',
+          icon: 'down-carrot',
+          classes: 'details__svg vib-center',
+          size: '6px',
+          fill: 'var(--accordion-color)',
+          hover: 'var(--accordion-color)'
+        %}
+        </div>
+      </summary>
+      <div
+        class="details__content"
+        data-accordion-context="{{ block.id }}"
+      >
+        {{ accordion_content_capture }}
+      </div>
+    </details>
+  </li>
+{%- endfor -%}

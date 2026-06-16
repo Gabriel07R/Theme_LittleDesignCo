@@ -1,0 +1,121 @@
+{% comment %}
+snippets/collection-sidebar.liqiud
+
+Collection sidebar
+Render collection sidebar filters.
+
+Accepts:
+- collection: {Object} Collection Liquid object (required)
+
+Usage:
+{% render 'collection-sidebar', collection: collection %}
+
+{% endcomment %}
+
+<div id="collection-sidebar">
+  <form id="CollectionSidebarFiltersForm" data-collection-sidebar>
+    {% if collection.current_vendor or collection.current_type %}
+      <input type="hidden" name="q" value="{{ collection.current_vendor }}{{ collection.current_type }}">
+    {% endif %}
+    <div class="sidebar-filters js-sidebar-filters">
+
+      {% assign unique_id = section.id | slice: 0, 7 %}
+
+      <ul data-accordion-family="collection-sidebar" data-accordion-allow-multiple>
+
+        {% for block in section.blocks %}
+
+          {% assign accordion_content_class = 'c-accordion__panel--' %}
+          {% assign accordion_content_id = accordion_content_class | append: unique_id | append: '-' | append: forloop.index %}
+
+          {% if block.type == 'menu' %}
+              {% assign defaultOpen = false %}
+              {% capture accordion_heading_capture %}
+                {{ block.settings.header }}
+              {% endcapture %}
+              {% capture accordion_content_capture %}
+
+                {% render 'collection-sidebar-menu', block: block, sidenav: block.settings.side_nav %}
+
+              {% endcapture %}
+          {% endif %}
+
+          {% if block.type == 'sidebar_filter' %}
+            {%- if collection.all_products_count < 5000 -%}
+              {%
+                render 'sidebar-filter',
+                block: block,
+                accordion_content_class: accordion_content_class,
+                unique_id: unique_id
+              %}
+            {%- endif -%}
+          {% endif %}
+
+          {% if block.type == 'sort_by' %}
+            {%
+              render 'sidebar-sortby',
+              block: block,
+              accordion_content_class: accordion_content_class,
+              unique_id: unique_id
+            %}
+          {% endif %}
+
+          {% comment %}
+          render blocks
+          if block type is image, then render image other wise render block within accordion markup.
+          {% endcomment %}
+          {% unless block.type == 'featured_image'%}
+            {% if block.type == 'image' %}
+              <div class="sidebar-image" {{ block.shopify_attributes }}>
+                {% if block.settings.link != blank %}<a href="{{ block.settings.link }}">{% endif %}
+                  {% if block.settings.image != blank %}
+                    {% render 'basic-responsive-image',
+                      type: block.settings.image,
+                      width: 500
+                    %}
+                  {% else %}
+                    <div class="onboard">
+                      {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+                    </div>
+                  {% endif %}
+                {% if block.settings.link != blank %}</a>{% endif %}
+              </div>
+            {% elsif block.type == 'sidebar_filter' or block.type == 'sort_by' %}
+              {% continue %}
+            {% else %}
+
+              <li>
+                <details
+                  class="details details--fade"
+                  {{ block.shopify_attributes }}
+                >
+                  <summary class="details__summary">
+                    <h3 class="details__title">{{ accordion_heading_capture }}</h3>
+                    <div class="details__icon">
+                      {% render 'snip-icons',
+                        wrapper: '',
+                        type: 'apollo',
+                        icon: 'down-carrot',
+                        classes: 'details__svg vib-center',
+                        size: '6px',
+                        fill: 'var(--accordion-color)',
+                        hover: 'var(--accordion-color)'
+                      %}
+                    </div>
+                  </summary>
+                  <div
+                    class="details__content"
+                    data-accordion-context="{{ block.id }}"
+                  >
+                    {{ accordion_content_capture }}
+                  </div>
+                </details>
+              </li>
+            {% endif %}
+          {% endunless %}
+        {% endfor %}
+
+      </ul><!-- /.c-accordion -->
+    </div><!-- /.sidebar-filters.tablet-6.mobile-3 -->
+  </form><!-- /#CollectionSidebarFiltersForm -->
+</div><!-- /#collection-sidebar -->

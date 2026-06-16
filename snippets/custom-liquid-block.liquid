@@ -1,0 +1,11 @@
+{% comment %}
+  snippets/custom-liquid-block.liquid
+
+  Custom Liquid Block
+
+  Usage:
+  {% include 'custom-liquid-block', block: block %}
+{% endcomment %}
+<div class="product__section--custom_liquid product__section--element {{ block.shopify_attributes }}">
+  {{ block.settings.custom_liquid }}
+</div>

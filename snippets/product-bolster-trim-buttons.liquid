@@ -1,0 +1,82 @@
+{% comment %}
+  Renders product buttons.
+
+  Accepts:
+  - product: {Liquid} the product Liquid object
+  - current_variant: {Liquid} the current_variant Liquid object.
+  - call_to_action: {String} the call to action text.
+  - id: {String} the product form's Id.
+  - product_form_config: {Object} the JSON Object with form configurations.
+  - show_gift_card_recipient: {Boolean} show recipient information form for gift card products
+
+  Usage:
+  {%
+    render 'product-buttons',
+    product: product,
+    current_variant: current_variant,
+    call_to_action: call_to_action,
+    id: product_form_id,
+    product_form_config: product_form_config,
+    show_gift_card_recipient: block.settings.show_gift_card_recipient
+  %}
+{% endcomment %}
+{% form 'product',
+  product,
+  id: product_form_id,
+  class: 'product_form js-prod-form-submit',
+  data-product-form: product_form_config,
+  data-product-id: product.id
+%}
+  <div class="product-add clearfix">
+    {% if show_gift_card_recipient and product.gift_card? %}
+      {%- render 'gift-card-recipient-form', product: product, form: form, section: section -%}
+    {%- endif -%}
+
+    <input class="formQty" type="hidden" name="quantity" value="1">
+    <input class="formVariantId" name="" type="hidden" value="{{ product.selected_or_first_available_variant.id }}">
+
+    {% assign qty_name = 'name="quantity"'%}
+    {% if settings.plus_add_insert == true %}
+      {% liquid
+        assign context = 'input'
+        render 'plus-add-insert', context: context
+        assign qty_name = 'name="items[0][quantity]"'
+      %}
+    {% endif%}
+    <input class="formQty" type="hidden" {{qty_name}} value="1" />
+    <input class="formVariantId" name="" type="hidden" value="{{ product.selected_or_first_available_variant.id }}">
+
+
+    <div
+      class="note note-success mt3 js-added-msg"
+      style="display: none"
+      role="alert"
+    >
+      {{ 'products.product.success_note_html' | t: cart_url: routes.cart_url, all_products_collection_url: routes.all_products_collection_url }}
+    </div>
+
+    <div
+      class="note note-error js-error-msg"
+      style="display: none"
+      role="alert"
+    >
+      {{ 'products.product.error_note_html' | t }}
+    </div>
+
+    <input
+      type="submit"
+      name="button"
+      class="add clearfix mb10 AddtoCart js-ajax-submit {% if settings.show_payment_button and product.selling_plan_groups.size == 0 %} secondary-button{% endif %}"
+      value="{{ call_to_action }}"
+      {% unless current_variant.available %}
+        disabled
+      {% endunless %}
+    >
+
+    {% if settings.show_payment_button %}
+      {{ form | payment_button }}
+    {% endif %}
+  </div>
+{% endform %}
+
+{{ 'zeke-bolster-trim.js' | asset_url | script_tag }}

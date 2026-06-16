@@ -1,0 +1,88 @@
+{%- liquid
+
+  case settings.product_image_size
+    when 'natural'
+      assign aspect_ratio = 'natural'
+    when 'square'
+      assign aspect_ratio = 'square'
+    when 'landscape'
+      assign aspect_ratio = 'landscape'
+    when 'portrait'
+      assign aspect_ratio = 'portrait'
+  endcase
+
+-%}
+
+<div class="prod-container">
+   <div class="prod-image image_{{ aspect_ratio }} js-product-image">
+     <a href="{{ product.url }}" title="{{ product.title | escape }}">
+       <div class="reveal">
+
+        {%- if product.media.size < 1 -%}
+
+          <div class="box-ratio" style="padding-bottom: 100%;">
+            {% capture current %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
+            {{ 'product-' | append: current | placeholder_svg_tag: 'placeholder-svg' }}
+          </div>
+
+        {%- else -%}
+
+            {%
+              render 'basic-responsive-image',
+                type: product.featured_media,
+                width: 300
+            %}
+
+        {%- endif -%}
+       </div>
+     </a>
+   </div>
+
+   {% if settings.quickview %}
+    <div class="product__grid--buttons">
+      {% if settings.quickview %}
+        <button class="quick-view-{{ product.id }} product-listing__quickview-trigger js-modal-open js-quickview-trigger" type="button" name="button" data-wau-modal-target="quickview" data-product-url="/products/{{ product.handle }}?view=quick">
+          {% render 'snip-icons',
+             wrapper: '.product-listing__quickview-trigger',
+             type: 'vantage-theme',
+             icon: 'search',
+             size: '14px',
+             fill: 'var(--directional-color)',
+             hover: 'var(--directional-color)' %}
+        </button>
+      {% endif %}
+    </div>
+  {% endif %}
+
+</div>
+
+<div class="product-info">
+  <div class="product-info-inner">
+    <a href="{{ product.url }}">
+      {% if settings.vendor %}
+        <p class="product__vendor">{{ product.vendor }}</p>
+      {% endif %}
+      <h3 class="product-title h5">{{ product.title }}</h3>
+    </a>
+    {% render 'product-price-listing', product: product %}
+    {% if show_quickadd and product.available %}
+      {% render 'product-grid-add'
+        product: product,
+        color_swatch_style: settings.color_swatch_style,
+        show_quickview: show_quickview,
+        show_sizes: false,
+        show_swatches: false %}
+    {% endif %}
+    {% if show_quickview %}
+      {% if product.available %}
+        <a href="{{ product.url }}" class="button link--to_product">
+          {{ 'products.product.details' | t }}
+        </a>
+      {% else %}
+        <span class="button link--to_product">
+          {{ 'products.product.sold_out' | t }}
+        </span>
+      {% endif %}
+    {% endif %}
+  </div>
+</div>

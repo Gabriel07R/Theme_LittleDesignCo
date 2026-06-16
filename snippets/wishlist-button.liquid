@@ -1,0 +1,45 @@
+{%- liquid
+  assign wishlist_variant = current_variant | default: product.selected_or_first_available_variant
+  assign wishlist_image = ''
+  if product.featured_media
+    assign wishlist_image = product.featured_media | image_url: width: 600
+  endif
+  assign wishlist_variant_image = ''
+  if wishlist_variant.featured_image
+    assign wishlist_variant_image = wishlist_variant.featured_image | image_url: width: 600
+  endif
+  assign wishlist_preorder = false
+  if product.template_suffix == 'pre-order' or product.tags contains 'PRE-ORDER' or product.tags contains 'BACKORDER' or product.tags contains 'BLOSSOM'
+    assign wishlist_preorder = true
+  endif
+-%}
+
+<button
+  type="button"
+  class="wishlist-button {{ class }}"
+  data-wishlist-button
+  data-product-id="{{ product.id }}"
+  data-product-handle="{{ product.handle | escape }}"
+  data-product-title="{{ product.title | escape }}"
+  data-product-url="{{ product.url }}"
+  data-product-image="{{ wishlist_image }}"
+  data-variant-image="{{ wishlist_variant_image }}"
+  data-product-price="{{ product.price | money | strip_html | escape }}"
+  data-variant-id="{{ wishlist_variant.id }}"
+  data-variant-title="{{ wishlist_variant.title | escape }}"
+  data-product-available="{{ product.available }}"
+  data-product-preorder="{{ wishlist_preorder }}"
+  data-product-preorder-label="{{ 'products.product.pre_order' | t | escape }}"
+  aria-pressed="false"
+>
+  {% render 'snip-icons',
+    wrapper: '.wishlist-button',
+    type: 'vantage-theme',
+    icon: 'black-heart',
+    classes: 'wishlist-button__icon',
+    size: '18px',
+    fill: 'currentColor',
+    hover: 'currentColor'
+  %}
+  <span class="wishlist-button__label" data-wishlist-label>Add to favorites</span>
+</button>

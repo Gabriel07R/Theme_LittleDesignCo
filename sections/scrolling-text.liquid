@@ -1,0 +1,547 @@
+{%- liquid
+
+  assign speed = section.settings.speed
+
+  assign section_padding = ''
+  if section.settings.section_padding == 'top'
+    assign section_padding = 'mb0 pb0'
+  elsif section.settings.section_padding == 'bottom'
+    assign section_padding = 'mt0 pt0'
+  elsif section.settings.section_padding == 'none'
+    assign section_padding = 'mt0 mb0 pt0 pb0'
+  endif
+
+-%}
+
+{% style %}
+  #shopify-section-{{ section.id }} {
+    --font-size:  {{ section.settings.text_size }}px;
+    --background: {{ section.settings.background }};
+  }
+  @media screen and (max-width: 740px) {
+    #shopify-section-{{ section.id }} {
+      --font-size:  calc({{ section.settings.text_size }}px - ({{ section.settings.text_size }}px * 0.15));
+    }
+  }
+  .scrolling__text-section {
+    padding: 20px 0;
+  }
+  .scrolling__text-section.section-{{ section.id }} .scrolling__text--content {
+    animation: marquee {{ speed }}s linear infinite;
+  }
+  @media screen and (max-width: 740px) {
+    .scrolling__text-section.section-{{ section.id }} .scrolling__text--content {
+      animation: marquee {{ speed | divided_by: 2 }}s linear infinite;
+    }
+  }
+  {% for block in section.blocks %}
+    #shopify-section-{{ section.id }} .block-{{ block.id }} {
+      --text-color: {{ block.settings.color }};
+    }
+  {% endfor %}
+{% endstyle %}
+
+<div
+  class="global__section {{ section_padding }}">
+
+  <section
+    id="global__section-{{ section.id }}"
+    class="scrolling__text-section mt0 mb0 section-{{ section.id }}{% if settings.animation != 'none' %} animate {{ settings.animation }}{% endif %}"
+    data-section-id="{{ section.id }}"
+    data-section-loaded="false"
+    data-section-type="scrolling-text">
+
+      <div class="scrolling__text--wrapper grid__wrapper edge">
+        <div class="scrolling__text--content scmq-{{ section.id }} span-12 auto">
+          {% for repeat_index in (1..10) %}
+            {% for block in section.blocks %}
+
+              {% liquid
+
+                assign has_text = false
+                if block.settings.scrolling_text != blank
+                  assign scrolling_text = block.settings.scrolling_text
+                  assign has_text = true
+                endif
+
+                assign has_image = false
+                if block.settings.image != blank
+                  assign image = block.settings.image
+                  assign has_image = true
+                endif
+
+                assign has_icon = false
+                if block.settings.icon != 'none'
+                assign has_icon = true
+                assign icon = block.settings.icon
+                  case block.settings.icon
+                    when 'checkmark' or 'circle-minus' or 'circle-minus-focus' or 'circle-plus' or 'circle-plus-focus' or 'error' or 'forward' or 'home' or 'minus' or 'plus' or 'share' or 'wish' or 'wish-focus'
+                      assign type = 'apollo'
+                    else
+                      assign type = 'vantage-theme'
+                  endcase
+                endif
+
+                assign icon_both_sides = false
+                if block.settings.icon_both_sides
+                  assign icon_both_sides = true
+                endif
+
+              %}
+
+              <span class="scrolling__text--item item-{{ forloop.index }} block-{{ block.id }}"{% unless forloop.first %} aria-hidden="true"{% endunless %} {{ block.shopify_attributes }}>
+                {% capture chosen_icon %}
+                  {% if has_image or has_icon %}
+                    <span class="scrolling--image{% if has_image == false %} no--image{% endif %}">
+                      {% if has_image %}
+                        {% liquid
+                          if section.index == 1
+                            assign fetchpriority = 'high'
+                            assign loading = 'eager'
+                          endif
+                        %}
+                        {%
+                          render 'basic-responsive-image',
+                          type: image,
+                          loading: loading,
+                          fetchpriority: fetchpriority,
+                          width: 120
+                        %}
+                      {% elsif has_icon %}
+                        {% assign icon_height = section.settings.icon_height | append: 'px' %}
+                        {% render 'snip-icons',
+                          wrapper: '.scrolling__text-icon',
+                          type: type,
+                          icon: icon,
+                          size: icon_height,
+                          fill: block.settings.color %}
+                      {% endif %}
+                    </span>
+                  {% endif %}
+                {% endcapture %}
+                  {{ chosen_icon }}
+                {% if has_text %}
+                  <span class="scrolling--text style--{{ block.settings.text_style }}">
+                    {{ scrolling_text }}
+                  </span>
+                {% endif %}
+                {% if icon_both_sides %}
+                  {{ chosen_icon }}
+                {% endif %}
+              </span>
+
+            {% endfor %}
+          {% endfor %}
+        </div>
+      </div>
+
+  </section>
+</div>
+
+{% schema %}
+{
+  "name": "Scrolling text",
+  "max_blocks":10,
+  "blocks": [{
+    "type": "text",
+    "name": "Text",
+    "settings": [
+      {
+        "type": "richtext",
+        "id": "scrolling_text",
+        "label": "Text",
+        "default": "<p>Scrolling text</p>"
+      },
+      {
+        "type": "select",
+        "id": "text_style",
+        "label": "Text style",
+        "default": "filled",
+        "options": [{
+            "value": "filled",
+            "label": "Filled"
+          },
+          {
+            "value": "outlined",
+            "label": "Outlined (large bold text)"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "icon",
+        "label": "Choose an icon",
+        "options": [
+          {
+            "label":"--No icon--",
+            "value": "none"
+          },
+          {
+            "label":"Accessible",
+            "value": "accessible"
+          },
+          {
+            "label": "Bag",
+            "value": "bag"
+          },
+          {
+            "label": "Burger",
+            "value": "burger"
+          },
+          {
+            "label":"Calendar",
+            "value": "calendar"
+          },
+          {
+            "label": "Cart",
+            "value": "cart"
+          },
+          {
+            "label":"Check",
+            "value": "check"
+          },
+          {
+            "label": "Checkmark",
+            "value": "checkmark"
+          },
+          {
+            "label": "Circle minus",
+            "value": "circle-minus"
+          },
+          {
+            "label": "Circle minus focus",
+            "value": "circle-minus-focus"
+          },
+          {
+            "label": "Circle plus",
+            "value": "circle-plus"
+          },
+          {
+            "label": "Circle plus focus",
+            "value": "circle-plus-focus"
+          },
+          {
+            "label":"Clean hands",
+            "value": "clean-hands"
+          },
+          {
+            "label": "Clock",
+            "value": "clock"
+          },
+          {
+            "label":"Cookie",
+            "value": "cookie"
+          },
+          {
+            "label":"Coronavirus",
+            "value": "coronavirus"
+          },
+          {
+            "label": "Credit card",
+            "value": "credit-card"
+          },
+          {
+            "label":"Cruelty free",
+            "value": "cruelty-free"
+          },
+          {
+            "label":"Diamond",
+            "value": "diamond"
+          },
+          {
+            "label":"Eco",
+            "value": "eco"
+          },
+          {
+            "label": "Error",
+            "value": "error"
+          },
+          {
+            "label":"Explore",
+            "value": "explore"
+          },
+          {
+            "label":"Finger print",
+            "value": "fingerprint"
+          },
+          {
+            "label":"Flower",
+            "value": "flower"
+          },
+          {
+            "label":"Forest",
+            "value": "forest"
+          },
+          {
+            "label": "Forward",
+            "value": "forward"
+          },
+          {
+            "label":"Gift",
+            "value": "gift"
+          },
+          {
+            "label":"Globe",
+            "value": "globe"
+          },
+          {
+            "label":"Hand shake",
+            "value": "handshake"
+          },
+          {
+            "label":"Health",
+            "value": "health"
+          },
+          {
+            "label":"Heart",
+            "value": "heart"
+          },
+          {
+            "label":"Help",
+            "value": "help"
+          },
+          {
+            "label": "Home",
+            "value": "home"
+          },
+          {
+            "label":"Info",
+            "value": "info"
+          },
+          {
+            "label":"Laundry",
+            "value": "laundry"
+          },
+          {
+            "label":"Lightning",
+            "value": "lightning"
+          },
+          {
+            "label":"Mail",
+            "value": "mail"
+          },
+          {
+            "label":"Map",
+            "value": "map"
+          },
+          {
+            "label": "Minus",
+            "value": "minus"
+          },
+          {
+            "label":"Nature",
+            "value": "nature"
+          },
+          {
+            "label":"Notification",
+            "value": "notification"
+          },
+          {
+            "label":"Payment",
+            "value": "payment"
+          },
+          {
+            "label":"Pets",
+            "value": "pets"
+          },
+          {
+            "label":"Phone",
+            "value": "phone"
+          },
+          {
+            "label":"Pin drop",
+            "value": "pin-drop"
+          },
+          {
+            "label": "Plus",
+            "value": "plus"
+          },
+          {
+            "label":"Recycle",
+            "value": "recycle"
+          },
+          {
+            "label":"Restaurant",
+            "value": "restaurant"
+          },
+          {
+            "label": "Sale tag",
+            "value": "sale-tag"
+          },
+          {
+            "label":"Satisfied",
+            "value": "satisfied"
+          },
+          {
+            "label": "Search",
+            "value": "search"
+          },
+          {
+            "label": "Secure",
+            "value": "secure"
+          },
+          {
+            "label":"Send",
+            "value": "send"
+          },
+          {
+            "label":"Settings",
+            "value": "settings"
+          },
+          {
+            "label": "Share",
+            "value": "share"
+          },
+          {
+            "label": "Shipping truck",
+            "value": "shipping"
+          },
+          {
+            "label": "Star",
+            "value": "star"
+          },
+          {
+            "label":"Star outline",
+            "value": "star-outline"
+          },
+          {
+            "label":"Support",
+            "value": "support"
+          },
+          {
+            "label":"Takeout",
+            "value": "takeout"
+          },
+          {
+            "label":"Verified",
+            "value": "verified"
+          },
+          {
+            "label":"Warning",
+            "value": "warning"
+          },
+          {
+            "label":"Wine",
+            "value": "wine"
+          },
+          {
+            "label": "Wish",
+            "value": "wish"
+          },
+          {
+            "label": "Wish focus",
+            "value": "wish-focus"
+          },
+          {
+            "label":"World",
+            "value": "world"
+          }
+        ],
+        "default":"world"
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Or add an image",
+        "info": "100px x 100px recommended"
+      },
+      {
+        "type":"checkbox",
+        "label":"Icon both sides of text",
+        "id":"icon_both_sides"
+      },
+      {
+        "type":"color",
+        "label":"Text color",
+        "id":"color",
+        "default":"#000"
+      }
+    ]
+  }],
+  "settings": [
+    {
+      "type": "range",
+      "id": "text_size",
+      "min": 13,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "label": "Text size",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "speed",
+      "min": 5,
+      "max": 25,
+      "step": 1,
+      "unit":"sec",
+      "label": "Scroll speed",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "icon_height",
+      "min": 20,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "label": "Icon height",
+      "default": 20
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "select",
+      "id": "section_padding",
+      "label": "Section spacing",
+      "options": [
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        },
+        {
+          "value": "both",
+          "label": "Both"
+        },
+        {
+          "value": "none",
+          "label": "None"
+        }
+      ],
+      "default": "both",
+      "visible_if": "{{ settings.index_padding > 0 }}"
+    }
+  ],
+  "disabled_on": {
+    "groups": [
+      "header",
+      "aside"
+    ]
+  },
+  "presets": [
+    {
+    "name": "Scrolling text",
+    "blocks": [
+        {
+          "type": "text"
+        },
+        {
+          "type": "text"
+        },
+        {
+          "type": "text"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
