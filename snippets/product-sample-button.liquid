@@ -41,15 +41,28 @@
       data-tooltip="Add sample"
       aria-label="Add {{ sample_label | escape }} sample for {{ product.title | escape }} to cart"
     >
-      {% render 'snip-icons',
-        wrapper: '.product-sample-button',
-        type: 'vantage-theme',
-        icon: 'sample',
-        classes: 'product-sample-button__icon',
-        size: '18px',
-        fill: 'currentColor',
-        hover: 'currentColor'
-      %}
+      <span class="product-sample-button__icon product-sample-button__icon--default">
+        {% render 'snip-icons',
+          wrapper: '.product-sample-button',
+          type: 'vantage-theme',
+          icon: 'white-sample',
+          classes: '',
+          size: '18px',
+          fill: 'currentColor',
+          hover: 'currentColor'
+        %}
+      </span>
+      <span class="product-sample-button__icon product-sample-button__icon--hover">
+        {% render 'snip-icons',
+          wrapper: '.product-sample-button',
+          type: 'vantage-theme',
+          icon: 'black-sample',
+          classes: '',
+          size: '18px',
+          fill: 'currentColor',
+          hover: 'currentColor'
+        %}
+      </span>
       <span class="visually-hidden">Add sample to cart</span>
     </button>
   </form>
