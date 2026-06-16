@@ -26,6 +26,12 @@
   <form class="product-sample-form product-sample-form--card" action="/cart/add" method="post">
     <input class="formVariantId" type="hidden" name="items[0][id]" value="{{ sample_variant_id }}">
     <input class="formQty" type="hidden" name="items[0][quantity]" value="1">
+    <div class="note note-success js-added-msg" style="display: none">
+      <strong>{{ 'products.product.added' | t }}</strong>
+    </div>
+    <div class="note note-error js-error-msg" style="display: none">
+      <strong>{{ 'cart.general.cart_error' | t }}</strong> {{ 'cart.general.update_qty_error' | t }}
+    </div>
     <button
       type="submit"
       class="product-sample-button product-sample-button--card AddtoCart js-ajax-submit"

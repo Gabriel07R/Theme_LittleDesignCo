@@ -1925,7 +1925,7 @@ Shopify.theme.ajaxCart = {
 
         checkInsert();
         var addToCartForm = this.closest('form');
-        var isQuickAdd = event.target.hasAttribute('data-quick-add');
+        var isQuickAdd = this.hasAttribute('data-quick-add') || !!e.target.closest('[data-quick-add]');
         Shopify.theme.ajaxCart.addToCart(addToCartForm, element.parentNode, config, false, isQuickAdd);
 
         return false;
