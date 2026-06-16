@@ -1,13 +1,15 @@
 {%- liquid
   assign sample_label = 'Sample 4" X 4"'
+  assign alternate_sample_label = '4" X 4" Sample'
   assign sample_label_downcase = sample_label | downcase
+  assign alternate_sample_label_downcase = alternate_sample_label | downcase
   assign sample_variant_id = ''
 
   for variant in product.variants
     if variant.available
       for option_value in variant.options
         assign option_value_downcase = option_value | downcase
-        if option_value_downcase == sample_label_downcase
+        if option_value_downcase == sample_label_downcase or option_value_downcase == alternate_sample_label_downcase
           assign sample_variant_id = variant.id
           break
         endif
@@ -22,8 +24,8 @@
 
 {%- if sample_variant_id != '' -%}
   <form class="product-sample-form product-sample-form--card" action="/cart/add" method="post">
-    <input type="hidden" name="id" value="{{ sample_variant_id }}">
-    <input type="hidden" name="quantity" value="1">
+    <input class="formVariantId" type="hidden" name="items[0][id]" value="{{ sample_variant_id }}">
+    <input class="formQty" type="hidden" name="items[0][quantity]" value="1">
     <button
       type="submit"
       class="product-sample-button product-sample-button--card AddtoCart js-ajax-submit"
