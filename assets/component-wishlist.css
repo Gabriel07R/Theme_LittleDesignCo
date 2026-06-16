@@ -173,6 +173,11 @@
   position: relative;
 }
 
+.section--carousel .featured__collection-product:has(.wishlist-button--card[data-tooltip]),
+.section--carousel .featured__collection-product:has(.product-sample-button--card[data-tooltip]) {
+  padding-top: 20px;
+}
+
 @media (hover: hover) {
   .prod-image > .wishlist-button--card,
   .prod-image > .product-sample-form--card {
