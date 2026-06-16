@@ -73,14 +73,21 @@
   letter-spacing: .05em;
   line-height: 1;
   min-height: 40px;
-  padding: 0 14px;
+  padding: 0;
   text-transform: uppercase;
+  width: 40px;
 }
 
 .product-sample-button--card:hover,
 .product-sample-button--card:focus {
   background: #fff !important;
   border-color: var(--text-color);
+}
+
+.product-sample-button--card svg {
+  display: block;
+  height: 18px;
+  width: 18px;
 }
 
 .prod-image {

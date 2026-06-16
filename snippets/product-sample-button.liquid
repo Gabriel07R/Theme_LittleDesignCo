@@ -34,7 +34,16 @@
       data-quick-add
       aria-label="Add {{ sample_label | escape }} sample for {{ product.title | escape }} to cart"
     >
-      Sample
+      {% render 'snip-icons',
+        wrapper: '.product-sample-button',
+        type: 'vantage-theme',
+        icon: 'sample',
+        classes: 'product-sample-button__icon',
+        size: '18px',
+        fill: 'currentColor',
+        hover: 'currentColor'
+      %}
+      <span class="visually-hidden">Add sample to cart</span>
     </button>
   </form>
 {%- endif -%}
