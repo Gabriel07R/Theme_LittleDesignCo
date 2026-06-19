@@ -109,6 +109,22 @@
   z-index: 3;
 }
 
+.product-sample-picker--card {
+  width: max-content;
+}
+
+.product-sample-picker--card[open] {
+  z-index: 5;
+}
+
+.product-sample-picker--card > summary {
+  list-style: none;
+}
+
+.product-sample-picker--card > summary::-webkit-details-marker {
+  display: none;
+}
+
 .product-sample-button--card {
   align-items: center;
   background: var(--background, #fff);
@@ -129,6 +145,162 @@
   position: relative;
   text-transform: uppercase;
   width: 40px;
+}
+
+.product-sample-options {
+  background: var(--background, #fff);
+  border: 1px solid var(--dotted-color, #ddd);
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, .12);
+  display: grid;
+  gap: 6px;
+  grid-template-columns: repeat(4, 28px);
+  left: 0;
+  max-height: 104px;
+  overflow-y: auto;
+  padding: 8px;
+  position: absolute;
+  top: calc(100% + 8px);
+  z-index: 30;
+}
+
+.product-sample-options__title {
+  color: var(--text-color, #000);
+  font-family: 'sweet-sans-pro', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  grid-column: 1 / -1;
+  letter-spacing: .03em;
+  line-height: 1.2;
+  margin: 0 0 2px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.product-sample-option-form {
+  margin: 0;
+}
+
+.product-sample-option {
+  align-items: center;
+  background: var(--background, #fff);
+  border: 1px solid var(--dotted-color, #ddd);
+  border-radius: 50% !important;
+  color: var(--text-color, #000);
+  cursor: pointer;
+  display: flex;
+  font-family: 'sweet-sans-pro', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  height: 28px;
+  justify-content: center;
+  line-height: 1;
+  padding: 0;
+  position: relative;
+  width: 28px;
+}
+
+.product-sample-option:hover,
+.product-sample-option:focus-visible {
+  background: #fff !important;
+  border-color: var(--text-color);
+}
+
+.product-sample-option[data-colorway-tooltip]::after {
+  display: none;
+}
+
+.product-sample-option[data-colorway-tooltip]:hover::after,
+.product-sample-option[data-colorway-tooltip]:focus-visible::after {
+  display: none;
+}
+
+.product-sample-colorway-tooltip {
+  background: var(--text-color, #000);
+  border-radius: 3px;
+  color: var(--background, #fff);
+  font-family: 'sweet-sans-pro', sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  left: 0;
+  line-height: 1;
+  opacity: 0;
+  padding: 6px 8px;
+  pointer-events: none;
+  position: fixed;
+  text-transform: none;
+  top: 0;
+  transform: translate(-50%, calc(-100% - 7px));
+  white-space: nowrap;
+  z-index: 9999;
+}
+
+.product-sample-colorway-tooltip::after {
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid var(--text-color, #000);
+  content: "";
+  left: 50%;
+  position: absolute;
+  top: 100%;
+  transform: translateX(-50%);
+}
+
+.product-sample-colorway-tooltip.is-visible {
+  opacity: 1;
+}
+
+.product-sample-cart-toast {
+  background: var(--text-color, #000);
+  border: 1px solid rgba(255, 255, 255, .2);
+  border-radius: 4px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .18);
+  color: var(--background, #fff);
+  font-family: 'sweet-sans-pro', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .02em;
+  line-height: 1;
+  opacity: 0;
+  padding: 12px 16px;
+  pointer-events: none;
+  position: fixed;
+  right: 18px;
+  text-transform: uppercase;
+  top: 18px;
+  transform: translateY(-10px);
+  transition: opacity .2s ease, transform .2s ease;
+  white-space: nowrap;
+  z-index: 10000;
+}
+
+.product-sample-cart-toast.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media screen and (max-width: 740px) {
+  .product-sample-cart-toast {
+    left: 16px;
+    right: 16px;
+    text-align: center;
+    top: 16px;
+    white-space: normal;
+  }
+}
+
+.product-sample-option__swatch {
+  background-color: #fff;
+  background-position: center center;
+  background-size: cover;
+  border-radius: 50%;
+  display: block;
+  height: 20px;
+  width: 20px;
+}
+
+.product-sample-option__swatch--self {
+  background-size: 320%;
 }
 
 .product-sample-button--card:hover,
