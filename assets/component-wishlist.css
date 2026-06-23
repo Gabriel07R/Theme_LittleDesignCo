@@ -287,6 +287,24 @@
     top: 16px;
     white-space: normal;
   }
+
+  .product-index:has(.product-sample-picker--card[open]),
+  .featured__collection-product:has(.product-sample-picker--card[open]),
+  .product-index-inner:has(.product-sample-picker--card[open]),
+  .prod-image:has(.product-sample-picker--card[open]) {
+    overflow: visible;
+    z-index: 50;
+  }
+
+  .product-sample-picker--card[open] {
+    z-index: 60;
+  }
+
+  .product-sample-options {
+    left: -58px;
+    max-width: calc(100vw - 24px);
+    z-index: 70;
+  }
 }
 
 .product-sample-option__swatch {

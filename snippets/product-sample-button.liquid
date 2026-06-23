@@ -8,6 +8,7 @@
   assign color_option_index = ''
   assign has_plain_edge_finish_option = false
   assign has_colorway_option = false
+  assign force_single_sample_button = false
   assign color_swatch_options = settings.swatch_option_names | downcase | replace: ' ,', ',' | replace: ', ', ',' | split: ','
   assign sample_options_title = 'Reverse Colorway'
   assign product_title_downcase = product.title | downcase
@@ -17,7 +18,7 @@
   endif
 
   if product_title_downcase contains 'fringe'
-    assign sample_options_title = 'Fringe Colorway'
+    assign force_single_sample_button = true
   endif
 
   for option in product.options
@@ -25,6 +26,8 @@
 
     if option_downcase == 'edge finish'
       assign has_plain_edge_finish_option = true
+    elsif option_downcase == 'fringe'
+      assign force_single_sample_button = true
     elsif option_downcase contains 'reverse' or option_downcase contains 'colorway' or option_downcase contains 'color'
       assign has_colorway_option = true
     endif
@@ -58,7 +61,9 @@
     endif
   endfor
 
-  if has_plain_edge_finish_option and has_colorway_option == false and sample_variant_count > 0
+  if force_single_sample_button and sample_variant_count > 0
+    assign sample_variant_count = 1
+  elsif has_plain_edge_finish_option and has_colorway_option == false and sample_variant_count > 0
     assign sample_variant_count = 1
   endif
 -%}
@@ -124,29 +129,23 @@
               assign sample_option_label = variant.options[color_option_index]
             endif
             assign sample_color_label = sample_option_label | strip
-            assign sample_color_label = sample_color_label | remove: 'Sample 4" X 4" / Butterfly Flange /'
-            assign sample_color_label = sample_color_label | remove: 'Sample 4" X 4" / Cording /'
-            assign sample_color_label = sample_color_label | remove: 'SAMPLE 4" X 4" / BUTTERFLY FLANGE /'
-            assign sample_color_label = sample_color_label | remove: 'SAMPLE 4" X 4" / CORDING /'
-            assign sample_color_label = sample_color_label | remove: 'Sample 4" X 4" /'
-            assign sample_color_label = sample_color_label | remove: 'SAMPLE 4" X 4" /'
-            assign sample_color_label = sample_color_label | remove: '4" X 4" Sample /'
-            assign sample_color_label = sample_color_label | remove: '4" X 4" SAMPLE /'
-            assign sample_color_label = sample_color_label | remove: 'Fringe'
-            assign sample_color_label = sample_color_label | remove: 'FRINGE /'
-            assign sample_color_label = sample_color_label | remove: 'NATURAL'
-            assign sample_color_label = sample_color_label | remove: '/ 2 pieces (Parallel)'
-            assign sample_color_label = sample_color_label | remove: '/ 1 pieces (Centered)'
-            assign sample_color_label = sample_color_label | remove: '/ 2 Pieces (Parallel)'
-            assign sample_color_label = sample_color_label | remove: '/ 1 Pieces (Centered)'
-            assign sample_color_label = sample_color_label | remove: '/ 1 piece (Centered)'
-            assign sample_color_label = sample_color_label | remove: '/ 1 Piece (Centered)'
-            assign sample_color_label = sample_color_label | remove: '/ 2 PIECES (PARALLEL)'
-            assign sample_color_label = sample_color_label | remove: '/ 1 PIECES (CENTERED)'
-            assign sample_color_label = sample_color_label | remove: '/ 1 PIECE (CENTERED)'
+            assign sample_label_parts = sample_color_label | split: ' / '
+            assign sample_label_parts_size = sample_label_parts | size
+
+            if sample_label_parts_size > 1
+              assign color_part_index = sample_label_parts_size | minus: 1
+              assign trailing_part_downcase = sample_label_parts[color_part_index] | strip | downcase
+
+              if trailing_part_downcase contains 'piece' or trailing_part_downcase contains 'parallel' or trailing_part_downcase contains 'centered'
+                assign color_part_index = color_part_index | minus: 1
+              endif
+
+              assign sample_color_label = sample_label_parts[color_part_index] | strip
+            endif
+
             assign sample_color_label = sample_color_label | replace: 'Rosé Pink', 'Rose Pink' | strip
             assign sample_color_label_downcase = sample_color_label | downcase
-            assign sample_option_key = '|' | append: sample_color_label | append: '|'
+            assign sample_option_key = '|' | append: sample_color_label_downcase | append: '|'
             assign image_name = sample_color_label | replace: ' ', '_' | prepend: 'CL_' | append: '.png'
             assign image_url = image_name | file_url
             assign bg_image_rule = ''
