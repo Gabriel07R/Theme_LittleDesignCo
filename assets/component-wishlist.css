@@ -321,6 +321,10 @@
   background-size: 320%;
 }
 
+.product-sample-option__swatch--no-trim {
+  background-size: 420%;
+}
+
 .product-sample-button--card:hover,
 .product-sample-button--card:focus {
   background: #fff !important;

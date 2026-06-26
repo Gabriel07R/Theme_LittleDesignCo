@@ -144,9 +144,24 @@
             endif
 
             assign sample_color_label = sample_color_label | replace: 'Rosé Pink', 'Rose Pink' | strip
+            assign sample_color_label_raw_downcase = sample_color_label | downcase
+            unless sample_color_label_raw_downcase == 'no trim'
+              assign sample_color_label = sample_color_label | remove: ' Trim' | remove: ' TRIM' | remove: ' trim' | strip
+            endunless
+            assign sample_image_label = sample_color_label | remove: 'BACKORDER ' | remove: 'Backorder ' | remove: 'backorder ' | strip
             assign sample_color_label_downcase = sample_color_label | downcase
             assign sample_option_key = '|' | append: sample_color_label_downcase | append: '|'
-            assign image_name = sample_color_label | replace: ' ', '_' | prepend: 'CL_' | append: '.png'
+            assign image_prefix = 'CL_'
+            if product_title_downcase contains 'outdoor'
+              assign image_prefix = 'OD_'
+            elsif product_title_downcase contains 'tape trim'
+              assign image_prefix = 'TT_'
+            elsif product_title_downcase contains 'greek trim'
+              assign image_prefix = 'GT_'
+            elsif product_title_downcase contains 'trim'
+              assign image_prefix = 'GT_'
+            endif
+            assign image_name = sample_image_label | replace: ' ', '_' | prepend: image_prefix | append: '.png'
             assign image_url = image_name | file_url
             assign bg_image_rule = ''
             assign swatch_class = 'product-sample-option__swatch'
@@ -154,6 +169,12 @@
               assign image_url = product.featured_image | image_url: width: 160
               assign bg_image_rule = 'background-image: url(' | append: image_url | append: ');'
               assign swatch_class = swatch_class | append: ' product-sample-option__swatch--self'
+            elsif sample_color_label_raw_downcase == 'no trim'
+              if variant.image != blank
+                assign image_url = variant.image | image_url: width: 160
+                assign bg_image_rule = 'background-image: url(' | append: image_url | append: ');'
+                assign swatch_class = swatch_class | append: ' product-sample-option__swatch--self product-sample-option__swatch--no-trim'
+              endif
             elsif settings.color_swatch_style == 'custom-image' and image_url != blank
               assign bg_image_rule = 'background-image: url(' | append: image_url | append: ');'
             endif
