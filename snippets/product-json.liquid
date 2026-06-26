@@ -1,3 +1,16 @@
+{%- liquid
+  assign product_json_trade_customer = false
+  if customer
+    if customer.tags contains 'TRADE20'
+      assign product_json_trade_customer = true
+    elsif customer.tags contains 'RETAILER20'
+      assign product_json_trade_customer = true
+    elsif customer.tags contains 'RETAILER30'
+      assign product_json_trade_customer = true
+    endif
+  endif
+-%}
+
 <script class="product-json" type="application/json">
   {
       "id": {{ product.id | json }},
@@ -19,6 +32,19 @@
       "compare_at_price_max": {{ product.compare_at_price_max | json }},
       "compare_at_price_varies": {{ product.compare_at_price_varies | json }},
       "variants": [{% for variant in product.variants %}
+        {%- liquid
+          assign variant_original_price = ''
+          if product_json_trade_customer and variant.metafields.custom.original_price != blank
+            assign variant_original_price = variant.metafields.custom.original_price | times: 100 | money
+          endif
+          assign insert_original_price = ''
+          if product_json_trade_customer and variant.metafields.custom.add_an_insert != blank
+            assign insert_variant = variant.metafields.custom.add_an_insert.value
+            if insert_variant.metafields.custom.original_price != blank
+              assign insert_original_price = insert_variant.metafields.custom.original_price | times: 100 | money
+            endif
+          endif
+        -%}
         {
           "id": {{ variant.id | json }},
           "title": {{ variant.title | json }},
@@ -40,6 +66,8 @@
           "available": {{ variant.available | json }},
           "options": {{ variant.options | json }},
           "insertVariant": {{ variant.metafields.custom.add_an_insert.value | json }},
+          "insertOriginalPrice": {{ insert_original_price | json }},
+          "originalPrice": {{ variant_original_price | json }},
           "price": {{ variant.price | json }},
           "unit_price_measurement": {
             "measured_type": {{ variant.unit_price_measurement.measured_type | json }},

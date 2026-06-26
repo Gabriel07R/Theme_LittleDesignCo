@@ -1,5 +1,27 @@
 {%- liquid
   assign wishlist_variant = current_variant | default: product.selected_or_first_available_variant
+  assign wishlist_trade_customer = false
+  if customer
+    if customer.tags contains 'TRADE20'
+      assign wishlist_trade_customer = true
+    elsif customer.tags contains 'RETAILER20'
+      assign wishlist_trade_customer = true
+    elsif customer.tags contains 'RETAILER30'
+      assign wishlist_trade_customer = true
+    endif
+  endif
+  assign wishlist_original_price = ''
+  if wishlist_trade_customer and wishlist_variant.metafields.custom.original_price != blank
+    assign wishlist_original_price = wishlist_variant.metafields.custom.original_price | times: 100
+  endif
+  assign wishlist_insert = false
+  assign wishlist_insert_original_price = ''
+  if wishlist_variant.metafields.custom.add_an_insert != blank
+    assign wishlist_insert = wishlist_variant.metafields.custom.add_an_insert.value
+    if wishlist_trade_customer and wishlist_insert.metafields.custom.original_price != blank
+      assign wishlist_insert_original_price = wishlist_insert.metafields.custom.original_price | times: 100
+    endif
+  endif
   assign wishlist_image = ''
   if product.featured_media
     assign wishlist_image = product.featured_media | image_url: width: 600
@@ -24,13 +46,17 @@
   data-product-url="{{ product.url }}"
   data-product-image="{{ wishlist_image }}"
   data-variant-image="{{ wishlist_variant_image }}"
-  data-product-price="{{ product.price | money | strip_html | escape }}"
+  data-product-price="{{ wishlist_variant.price | money | strip_html | escape }}"
+  data-product-original-price="{% if wishlist_original_price != blank %}{{ wishlist_original_price | money | strip_html | escape }}{% endif %}"
   data-variant-id="{{ wishlist_variant.id }}"
   data-variant-title="{{ wishlist_variant.title | escape }}"
+  data-insert-variant-id="{% if wishlist_insert %}{{ wishlist_insert.id }}{% endif %}"
+  data-insert-variant-title="{% if wishlist_insert %}{{ wishlist_insert.title | escape }}{% endif %}"
+  data-insert-variant-price="{% if wishlist_insert %}{{ wishlist_insert.price | money | strip_html | escape }}{% endif %}"
+  data-insert-variant-original-price="{% if wishlist_insert_original_price != blank %}{{ wishlist_insert_original_price | money | strip_html | escape }}{% endif %}"
   data-product-available="{{ product.available }}"
   data-product-preorder="{{ wishlist_preorder }}"
   data-product-preorder-label="{{ 'products.product.pre_order' | t | escape }}"
-  data-tooltip="Add to favorites"
   aria-pressed="false"
 >
   {% render 'snip-icons',
