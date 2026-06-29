@@ -140,6 +140,11 @@
     return isDefaultGroup(group) ? 'Favorites' : group.name;
   }
 
+  function isWishlistItemSortGroupActive(groupId) {
+    return activeWishlistItemSortGroupId !== null &&
+      String(activeWishlistItemSortGroupId) === String(groupId || ungroupedId);
+  }
+
   function findFormVariantId(button) {
     var form = getAssociatedForm(button);
     if (!form) return button.dataset.variantId;
@@ -868,7 +873,7 @@
 
   function renderWishlistGroup(container, group, groups, showBackButton) {
     var section = document.createElement('section');
-    var isSorting = String(activeWishlistItemSortGroupId || '') === String(group.id || '');
+    var isSorting = isWishlistItemSortGroupActive(group.id);
 
     section.className = 'wishlist-group' + (isSorting ? ' is-sorting' : '');
     section.dataset.wishlistGroup = group.id;
@@ -1051,7 +1056,7 @@
     var backButton = showBackButton
       ? '<button type="button" class="text-button wishlist-group__back" data-wishlist-close-group>Back to Groups</button>'
       : '';
-    var isSorting = String(activeWishlistItemSortGroupId || '') === String(group.id || '');
+    var isSorting = isWishlistItemSortGroupActive(group.id);
     var sortButton = '<button type="button" data-wishlist-toggle-item-sort>' + (isSorting ? 'Done sorting' : 'Sort') + '</button>';
 
     if (isDefaultGroup(group)) {
@@ -2314,7 +2319,7 @@
       var sortGroupEl = sortItemsButton.closest('[data-wishlist-group]');
       var sortGroupId = sortGroupEl ? sortGroupEl.dataset.wishlistGroup : ungroupedId;
 
-      activeWishlistItemSortGroupId = String(activeWishlistItemSortGroupId || '') === String(sortGroupId || '')
+      activeWishlistItemSortGroupId = isWishlistItemSortGroupActive(sortGroupId)
         ? null
         : sortGroupId;
       closeGroupMenus();

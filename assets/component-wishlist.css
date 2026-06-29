@@ -843,9 +843,13 @@
   pointer-events: none;
   position: absolute !important;
   right: 0 !important;
-  top: 40px !important;
+  top: 5px !important;
   width: 100%;
   z-index: 6;
+}
+
+.wishlist-group.is-sorting .wishlist-card > .bss_pl_img {
+  top: 40px !important;
 }
 
 .wishlist-card__image > .bss_pl_img {
