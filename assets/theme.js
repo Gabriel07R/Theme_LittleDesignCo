@@ -1895,8 +1895,12 @@ Shopify.theme.ajaxCart = {
         elements[i].disabled = true;
       }
     }
-    function checkInsert(){
-      let id = document.querySelector('.formVariantId').value;
+    function checkInsert(formContext){
+      let variantIdInput = (formContext || document).querySelector('.formVariantId');
+      if (!variantIdInput) {
+        return false;
+      }
+      let id = variantIdInput.value;
       let checkboxWrap = document.querySelector(`[data-variant-id="${id}"]`);
       if (!checkboxWrap) {
        return false;
@@ -1923,14 +1927,92 @@ Shopify.theme.ajaxCart = {
       element.addEventListener('click', function (e) {
         e.preventDefault();
 
-        checkInsert();
         var addToCartForm = this.closest('form');
-        var isQuickAdd = event.target.hasAttribute('data-quick-add');
+        checkInsert(addToCartForm);
+        var isQuickAdd = this.hasAttribute('data-quick-add') || !!e.target.closest('[data-quick-add]');
         Shopify.theme.ajaxCart.addToCart(addToCartForm, element.parentNode, config, false, isQuickAdd);
 
         return false;
       });
     });
+
+    if (document.body && document.body.dataset.sampleTooltipBound !== '1') {
+      document.body.dataset.sampleTooltipBound = '1';
+
+      var sampleTooltip = document.createElement('div');
+      var activeSampleTooltipTrigger = null;
+      sampleTooltip.className = 'product-sample-colorway-tooltip';
+      sampleTooltip.setAttribute('role', 'tooltip');
+      document.body.appendChild(sampleTooltip);
+
+      function positionSampleTooltip(trigger) {
+        if (!trigger || !sampleTooltip.classList.contains('is-visible')) return;
+
+        var triggerRect = trigger.getBoundingClientRect();
+        var tooltipWidth = sampleTooltip.offsetWidth;
+        var tooltipHeight = sampleTooltip.offsetHeight;
+        var viewportPadding = 8;
+        var left = triggerRect.left + (triggerRect.width / 2);
+        var minLeft = viewportPadding + (tooltipWidth / 2);
+        var maxLeft = window.innerWidth - viewportPadding - (tooltipWidth / 2);
+        var top = Math.max(tooltipHeight + viewportPadding + 7, triggerRect.top);
+
+        sampleTooltip.style.left = Math.min(Math.max(left, minLeft), maxLeft) + 'px';
+        sampleTooltip.style.top = top + 'px';
+      }
+
+      function showSampleTooltip(trigger) {
+        var tooltipText = trigger && trigger.getAttribute('data-colorway-tooltip');
+        if (!tooltipText) return;
+
+        activeSampleTooltipTrigger = trigger;
+        sampleTooltip.textContent = tooltipText;
+        sampleTooltip.classList.add('is-visible');
+        positionSampleTooltip(trigger);
+      }
+
+      function hideSampleTooltip() {
+        activeSampleTooltipTrigger = null;
+        sampleTooltip.classList.remove('is-visible');
+      }
+
+      document.addEventListener('mouseover', function(e) {
+        var trigger = e.target.closest && e.target.closest('.product-sample-option[data-colorway-tooltip]');
+        if (trigger) {
+          showSampleTooltip(trigger);
+        }
+      });
+
+      document.addEventListener('mouseout', function(e) {
+        var trigger = e.target.closest && e.target.closest('.product-sample-option[data-colorway-tooltip]');
+        var isStillInsideTrigger = e.relatedTarget instanceof Node && trigger && trigger.contains(e.relatedTarget);
+        if (trigger && !isStillInsideTrigger) {
+          hideSampleTooltip();
+        }
+      });
+
+      document.addEventListener('focusin', function(e) {
+        var trigger = e.target.closest && e.target.closest('.product-sample-option[data-colorway-tooltip]');
+        if (trigger) {
+          showSampleTooltip(trigger);
+        }
+      });
+
+      document.addEventListener('focusout', function(e) {
+        var trigger = e.target.closest && e.target.closest('.product-sample-option[data-colorway-tooltip]');
+        if (trigger) {
+          hideSampleTooltip();
+        }
+      });
+
+      document.addEventListener('scroll', function() {
+        positionSampleTooltip(activeSampleTooltipTrigger);
+      }, true);
+
+      window.addEventListener('resize', function() {
+        positionSampleTooltip(activeSampleTooltipTrigger);
+      });
+    }
 
     // Update cart page on load
     if (document.querySelector('body').classList.contains('template-cart')) {
@@ -2373,12 +2455,34 @@ Shopify.theme.ajaxCart = {
 
     if (theme.ProductProperties.checkLineItemProperties(addToCartForm) === false) return;
 
+    function showSampleCartNotification(message) {
+      var notification = document.querySelector('.product-sample-cart-toast');
+
+      if (!notification) {
+        notification = document.createElement('div');
+        notification.className = 'product-sample-cart-toast';
+        notification.setAttribute('role', 'status');
+        notification.setAttribute('aria-live', 'polite');
+        document.body.appendChild(notification);
+      }
+
+      notification.textContent = message || 'Sample added to cart';
+      notification.classList.add('is-visible');
+
+      clearTimeout(notification.sampleToastTimer);
+      notification.sampleToastTimer = setTimeout(function() {
+        notification.classList.remove('is-visible');
+      }, 2500);
+    }
+
     // Disable add to cart button temporarily]
     context.querySelector(selectors.addToCart).value = config.adding_to_cart;
     context.querySelector(selectors.addToCart).classList.add('disabled');
     context.querySelector(selectors.addToCart).setAttribute('disabled', 'disabled');
 
     Shopify.theme.cart.addItemFromForm(addToCartForm).then(item => {
+      var sampleNotificationTrigger = addToCartForm.querySelector('[data-sample-cart-notification]');
+
       // Re-enable add to cart button
       context.querySelector(selectors.addToCart).value = config.added_to_cart;
       context.querySelector(selectors.addToCart).classList.remove('disabled');
@@ -2387,6 +2491,10 @@ Shopify.theme.ajaxCart = {
       setTimeout(function(){
         context.querySelector(selectors.addToCart).value = config.add_to_cart;
       }, 3000);
+
+      if (sampleNotificationTrigger) {
+        showSampleCartNotification(sampleNotificationTrigger.getAttribute('data-sample-cart-notification'));
+      }
 
       Shopify.theme.cart.getCart().then(Cart => {
 
