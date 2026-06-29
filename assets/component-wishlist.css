@@ -845,7 +845,7 @@
   right: 0 !important;
   top: 5px !important;
   width: 100%;
-  z-index: 6;
+  z-index: 4;
 }
 
 .wishlist-group.is-sorting .wishlist-card > .bss_pl_img {
