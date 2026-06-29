@@ -2103,6 +2103,8 @@ Shopify.theme.ajaxCart = {
       cartDrawerQty: '[data-item-qty]',
       cartDrawerQtyDecrease: '[data-ajax-qty-decrease]',
       cartDrawerQtyIncrease: '[data-ajax-qty-increase]',
+      // Mini-cart add insert button paused.
+      // cartAddInsert: '[data-cart-add-insert]',
       cartNote: '.js-cart-note'
     };
 
@@ -2185,6 +2187,42 @@ Shopify.theme.ajaxCart = {
         return insertElement;
       }
     }
+
+    /*
+    Mini-cart add insert button paused.
+    document.querySelectorAll(selectors.cartAddInsert).forEach((element, i) => {
+      element.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        var insertId = Number(this.dataset.insertId);
+        var pillowVariantId = this.dataset.pillowVariantId;
+        var quantity = Number(this.dataset.quantity || 1);
+        var originalText = this.textContent;
+
+        if (!insertId || !pillowVariantId) return false;
+
+        this.disabled = true;
+        this.textContent = 'Adding...';
+
+        Shopify.theme.cart.addItem(insertId, {
+          quantity: quantity,
+          properties: {
+            _insertPillowId: pillowVariantId
+          }
+        }).then(() => {
+          return Shopify.theme.cart.getCart();
+        }).then((state) => {
+          Shopify.theme.ajaxCart.updateView(config, state);
+        }).catch(() => {
+          this.disabled = false;
+          this.textContent = originalText || 'Add insert';
+        });
+
+        return false;
+      });
+    });
+    */
+
     document.querySelectorAll(selectors.cartDrawerRemove).forEach((element, i) => {
       element.addEventListener('click', function (e) {
         e.preventDefault();
