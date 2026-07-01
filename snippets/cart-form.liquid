@@ -8,11 +8,23 @@
       {% liquid
         # Plus add an insert
         assign has_pillow = false
+        assign has_linked_insert = false
+        assign current_variant_id = item.variant.id | append: ''
         for p in item.properties
           if p.first contains '_insertPillowId'
             assign pillow_id = p.last
             assign has_pillow = true
           endif
+        endfor
+        for cart_item in cart.items
+          for p in cart_item.properties
+            assign linked_pillow_id = p.last | append: ''
+            if p.first contains '_insertPillowId'
+              if linked_pillow_id == current_variant_id
+                assign has_linked_insert = true
+              endif
+            endif
+          endfor
         endfor
       %}
       <ul class="item_{{ item.id }}-{{ forloop.index }} ajax-cart__cart-item grid__wrapper edge">
@@ -124,6 +136,27 @@
                 </p>
               {% endif %}
             </div>
+            {% comment %}
+              Mini-cart add insert button paused.
+              {% if settings.plus_add_insert == true %}
+                {% unless has_pillow %}
+                  {% unless has_linked_insert %}
+                    {% if item.variant.metafields.custom.add_an_insert != blank %}
+                      <button
+                        type="button"
+                        class="ajax-cart__add-insert"
+                        data-cart-add-insert
+                        data-insert-id="{{ item.variant.metafields.custom.add_an_insert.value.id }}"
+                        data-pillow-variant-id="{{ item.variant.id }}"
+                        data-quantity="{{ item.quantity }}"
+                      >
+                        Add insert
+                      </button>
+                    {% endif %}
+                  {% endunless %}
+                {% endunless %}
+              {% endif %}
+            {% endcomment %}
           </div>
         </li>
         <li class="ajax-cart__item-price v-center">

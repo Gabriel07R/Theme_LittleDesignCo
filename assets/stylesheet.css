@@ -1538,6 +1538,9 @@ input[type="button"].secondary-button:hover {
 .mb20 {
   margin-bottom: 20px;
 }
+.ml20 {
+  margin-left: 20px;
+}
 .pb20 {
   padding-bottom: 20px;
 }
@@ -10705,6 +10708,30 @@ e.g. when user taps to toggle visibility of controls
 .ajax-cart__cart-item:last-child {
   border-bottom: 1px solid var(--dotted-color);
 }
+/*
+Mini-cart add insert button paused.
+.ajax-cart__add-insert {
+  background: transparent;
+  border: 1px solid var(--dotted-color);
+  box-sizing: border-box;
+  color: var(--text-color);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  letter-spacing: inherit;
+  line-height: 1;
+  margin: 8px 0 5px;
+  padding: 6px 8px;
+  text-transform: uppercase;
+  width: 100px;
+}
+.ajax-cart__add-insert:disabled {
+  cursor: progress;
+  opacity: .6;
+}
+*/
 .ajax-cart__item-remove--js {
   position: absolute;
   top: 10px;
@@ -14593,6 +14620,12 @@ p.plus-line-item-property__field {
   margin-left: 50px;
 }
 
+.com-dimension-separator {
+  align-self: center;
+  font-weight: 700;
+  margin: 22px 0 0 20px;
+}
+
 .message {
   font-size: 25px;
 }
@@ -14604,6 +14637,11 @@ p.plus-line-item-property__field {
 
 input.plus-line-item-property__input {
   border: 1px solid black;
+}
+
+.com-input__field {
+  max-width: 250px;
+  
 }
 
 @media screen and (max-width: 900px) {
@@ -14621,6 +14659,10 @@ input.plus-line-item-property__input {
 }
 
 @media screen and (max-width: 700px) {
+  .com-dimension-separator {
+    margin-left: 30px;
+  }
+
   p.plus-line-item-property__field {
     width: 300px;
   }

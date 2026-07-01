@@ -1,3 +1,16 @@
+{%- liquid
+  assign wishlist_trade_customer = false
+  if customer
+    if customer.tags contains 'TRADE20'
+      assign wishlist_trade_customer = true
+    elsif customer.tags contains 'RETAILER20'
+      assign wishlist_trade_customer = true
+    elsif customer.tags contains 'RETAILER30'
+      assign wishlist_trade_customer = true
+    endif
+  endif
+-%}
+
 <div class="row grid__wrapper">
   <div id="wishlist-page" class="span-12 auto main__section main__wishlist-section">
     <header class="wishlist-page__header">
@@ -9,7 +22,7 @@
       {% endif %}
     </header>
 
-    <div class="wishlist-page" data-wishlist-page>
+    <div class="wishlist-page" data-wishlist-page data-wishlist-trade-pricing="{{ wishlist_trade_customer }}">
       <form class="wishlist-groups__form" data-wishlist-group-form>
         <label for="wishlist-group-name">Create a favorites group</label>
         <div class="wishlist-groups__form-row">
@@ -28,7 +41,7 @@
 
       <div class="wishlist-page__empty" data-wishlist-empty hidden>
         <p>Your favorites are empty.</p>
-        <a class="button" href="{{ routes.all_products_collection_url }}">Continue shopping</a>
+        <a class="button" href="{{ routes.root_url }}">Continue shopping</a>
       </div>
 
       <div class="wishlist-page__groups" data-wishlist-items aria-live="polite"></div>
