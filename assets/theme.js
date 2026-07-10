@@ -1917,24 +1917,253 @@ Shopify.theme.ajaxCart = {
       }
     }
 
-    // Override add to cart form
-    document.querySelectorAll(selectors.addToCart).forEach((element, i) => {
+    function showSampleLookupError(form) {
+      var errorMessage = form && form.querySelector('.js-error-msg');
+      if (!errorMessage) return;
 
-      // Prevent multiple bindings if init() runs again
-      if (element.dataset.ajaxBound === '1') return;
-      element.dataset.ajaxBound = '1';
+      if (theme.Helpers && typeof theme.Helpers.fadeIn === 'function') {
+        theme.Helpers.fadeIn(errorMessage);
+      } else {
+        errorMessage.style.display = 'block';
+      }
+    }
 
-      element.addEventListener('click', function (e) {
-        e.preventDefault();
+    var sampleVariantLookupRequests = {};
+    var sampleVariantOptionsRequests = {};
 
-        var addToCartForm = this.closest('form');
-        checkInsert(addToCartForm);
-        var isQuickAdd = this.hasAttribute('data-quick-add') || !!e.target.closest('[data-quick-add]');
-        Shopify.theme.ajaxCart.addToCart(addToCartForm, element.parentNode, config, false, isQuickAdd);
+    function getShopifyRouteRoot() {
+      if (window.Shopify && window.Shopify.routes && window.Shopify.routes.root) {
+        return window.Shopify.routes.root;
+      }
 
+      return '/';
+    }
+
+    function buildSampleLookupUrl(productHandle, page) {
+      var routeRoot = getShopifyRouteRoot();
+      if (routeRoot.charAt(routeRoot.length - 1) !== '/') {
+        routeRoot += '/';
+      }
+
+      return routeRoot + 'products/' + encodeURIComponent(productHandle) + '?section_id=sample-variant-lookup&page=' + page;
+    }
+
+    function parseSampleLookupResponse(html) {
+      var doc = new DOMParser().parseFromString(html, 'text/html');
+      var lookupNode = doc.querySelector('[data-sample-variant-lookup]');
+
+      if (!lookupNode) {
+        return {
+          id: '',
+          currentPage: 1,
+          pages: 1,
+          options: []
+        };
+      }
+
+      var optionForms = Array.prototype.map.call(
+        doc.querySelectorAll('[data-sample-variant-options] .product-sample-option-form'),
+        function(form) {
+          return {
+            key: form.getAttribute('data-sample-option-key') || '',
+            html: form.outerHTML
+          };
+        }
+      );
+
+      return {
+        id: lookupNode.getAttribute('data-sample-variant-id') || '',
+        currentPage: parseInt(lookupNode.getAttribute('data-current-page'), 10) || 1,
+        pages: parseInt(lookupNode.getAttribute('data-pages'), 10) || 1,
+        options: optionForms
+      };
+    }
+
+    function fetchSampleVariantIdPage(productHandle, page) {
+      return fetch(buildSampleLookupUrl(productHandle, page), {
+        credentials: 'same-origin',
+        headers: {
+          Accept: 'text/html',
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      }).then(function(response) {
+        if (!response.ok) throw response;
+        return response.text();
+      }).then(function(html) {
+        var lookup = parseSampleLookupResponse(html);
+
+        if (lookup.id) {
+          return lookup.id;
+        }
+
+        if (lookup.currentPage < lookup.pages) {
+          return fetchSampleVariantIdPage(productHandle, lookup.currentPage + 1);
+        }
+
+        return '';
+      });
+    }
+
+    function fetchSampleVariantId(productHandle) {
+      if (!sampleVariantLookupRequests[productHandle]) {
+        sampleVariantLookupRequests[productHandle] = fetchSampleVariantIdPage(productHandle, 1);
+      }
+
+      return sampleVariantLookupRequests[productHandle];
+    }
+
+    function fetchSampleVariantOptionsPage(productHandle, page, seenOptions, sampleOptions) {
+      return fetch(buildSampleLookupUrl(productHandle, page), {
+        credentials: 'same-origin',
+        headers: {
+          Accept: 'text/html',
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      }).then(function(response) {
+        if (!response.ok) throw response;
+        return response.text();
+      }).then(function(html) {
+        var lookup = parseSampleLookupResponse(html);
+        lookup.options.forEach(function(option) {
+          var optionKey = option.key || option.html;
+          if (!seenOptions[optionKey]) {
+            seenOptions[optionKey] = true;
+            sampleOptions.push(option.html);
+          }
+        });
+
+        if (lookup.currentPage < lookup.pages) {
+          return fetchSampleVariantOptionsPage(productHandle, lookup.currentPage + 1, seenOptions, sampleOptions);
+        }
+
+        return sampleOptions;
+      });
+    }
+
+    function fetchSampleVariantOptions(productHandle) {
+      if (!sampleVariantOptionsRequests[productHandle]) {
+        sampleVariantOptionsRequests[productHandle] = fetchSampleVariantOptionsPage(productHandle, 1, {}, []);
+      }
+
+      return sampleVariantOptionsRequests[productHandle];
+    }
+
+    function loadSampleOptions(optionsContainer) {
+      if (!optionsContainer || optionsContainer.dataset.sampleOptionsLoaded === '1' || optionsContainer.dataset.sampleOptionsLoading === '1') {
+        return;
+      }
+
+      var productHandle = optionsContainer.getAttribute('data-sample-product-handle');
+      var loadingMessage = optionsContainer.querySelector('[data-sample-options-loading]');
+      if (!productHandle) {
+        if (loadingMessage) loadingMessage.textContent = 'Unable to load swatches';
+        return;
+      }
+
+      optionsContainer.dataset.sampleOptionsLoading = '1';
+
+      fetchSampleVariantOptions(productHandle).then(function(sampleOptions) {
+        if (loadingMessage) loadingMessage.remove();
+
+        if (!sampleOptions.length) {
+          var emptyMessage = document.createElement('p');
+          emptyMessage.className = 'product-sample-options__loading';
+          emptyMessage.textContent = 'No swatches found';
+          optionsContainer.appendChild(emptyMessage);
+          optionsContainer.dataset.sampleOptionsLoaded = '1';
+          return;
+        }
+
+        optionsContainer.insertAdjacentHTML('beforeend', sampleOptions.join(''));
+        optionsContainer.dataset.sampleOptionsLoaded = '1';
+        bindAjaxAddToCart(optionsContainer);
+      }).catch(function(error) {
+        console.error('Sample options lookup failed:', error);
+        if (loadingMessage) loadingMessage.textContent = 'Unable to load swatches';
+      }).finally(function() {
+        delete optionsContainer.dataset.sampleOptionsLoading;
+      });
+    }
+
+    function bindSampleOptionsLookup(container) {
+      (container || document).querySelectorAll('[data-sample-options-lookup]').forEach(function(optionsContainer) {
+        var details = optionsContainer.closest('details');
+        if (!details || details.dataset.sampleOptionsLookupBound === '1') return;
+
+        details.dataset.sampleOptionsLookupBound = '1';
+        details.addEventListener('toggle', function() {
+          if (details.open) {
+            loadSampleOptions(optionsContainer);
+          }
+        });
+      });
+    }
+
+    function resolveSampleVariantId(button, form) {
+      if (!button || !button.hasAttribute('data-sample-lookup')) {
+        return Promise.resolve(true);
+      }
+
+      var variantInput = form && form.querySelector('.formVariantId');
+      if (variantInput && variantInput.value) {
+        return Promise.resolve(true);
+      }
+
+      var productHandle = button.getAttribute('data-sample-product-handle');
+      if (!productHandle || !variantInput) {
+        showSampleLookupError(form);
+        return Promise.resolve(false);
+      }
+
+      button.setAttribute('disabled', 'disabled');
+
+      return fetchSampleVariantId(productHandle).then(function(sampleVariantId) {
+        if (!sampleVariantId) {
+          showSampleLookupError(form);
+          button.removeAttribute('disabled');
+          return false;
+        }
+
+        variantInput.value = sampleVariantId;
+        button.removeAttribute('data-sample-lookup');
+        button.removeAttribute('disabled');
+        return true;
+      }).catch(function(error) {
+        console.error('Sample variant lookup failed:', error);
+        showSampleLookupError(form);
+        button.removeAttribute('disabled');
         return false;
       });
-    });
+    }
+
+    function bindAjaxAddToCart(container) {
+      (container || document).querySelectorAll(selectors.addToCart).forEach((element, i) => {
+
+        // Prevent multiple bindings if init() runs again
+        if (element.dataset.ajaxBound === '1') return;
+        element.dataset.ajaxBound = '1';
+
+        element.addEventListener('click', function (e) {
+          e.preventDefault();
+
+          var addToCartForm = this.closest('form');
+          var isQuickAdd = this.hasAttribute('data-quick-add') || !!e.target.closest('[data-quick-add]');
+
+          resolveSampleVariantId(this, addToCartForm).then(function(variantResolved) {
+            if (!variantResolved) return;
+
+            checkInsert(addToCartForm);
+            Shopify.theme.ajaxCart.addToCart(addToCartForm, element.parentNode, config, false, isQuickAdd);
+          });
+
+          return false;
+        });
+      });
+    }
+
+    // Override add to cart form
+    bindAjaxAddToCart(document);
+    bindSampleOptionsLookup(document);
 
     if (document.body && document.body.dataset.sampleTooltipBound !== '1') {
       document.body.dataset.sampleTooltipBound = '1';

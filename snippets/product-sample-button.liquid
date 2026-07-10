@@ -7,6 +7,9 @@
   assign fabric_swatch_label_downcase = fabric_swatch_label | downcase
   assign sample_variant_id = ''
   assign sample_variant_count = 0
+  assign visible_variant_count = product.variants | size
+  assign needs_sample_lookup = false
+  assign sample_picker_needed = false
   assign color_option_index = ''
   assign has_plain_edge_finish_option = false
   assign has_colorway_option = false
@@ -47,8 +50,8 @@
 
     if variant.available
       for option_value in variant.options
-        assign option_value_downcase = option_value | downcase
-        if option_value_downcase == sample_label_downcase or option_value_downcase == alternate_sample_label_downcase or option_value_downcase == fabric_swatch_label_downcase
+        assign option_value_downcase = option_value | downcase | strip
+        if option_value_downcase == sample_label_downcase or option_value_downcase == alternate_sample_label_downcase or option_value_downcase == fabric_swatch_label_downcase or option_value_downcase contains sample_label_downcase or option_value_downcase contains alternate_sample_label_downcase or option_value_downcase contains fabric_swatch_label_downcase
           assign is_sample_variant = true
           break
         endif
@@ -68,9 +71,21 @@
   elsif has_plain_edge_finish_option and has_colorway_option == false and sample_variant_count > 0
     assign sample_variant_count = 1
   endif
+
+  if product.variants_count > visible_variant_count
+    if sample_variant_id == '' or has_colorway_option
+      assign needs_sample_lookup = true
+    endif
+  endif
+
+  if sample_variant_count > 1
+    assign sample_picker_needed = true
+  elsif needs_sample_lookup and has_colorway_option and force_single_sample_button == false
+    assign sample_picker_needed = true
+  endif
 -%}
 
-{%- if sample_variant_id != '' -%}
+{%- if sample_variant_id != '' or needs_sample_lookup -%}
   {%- capture sample_button_icon -%}
       <span class="product-sample-button__icon product-sample-button__icon--default">
         {% render 'snip-icons',
@@ -97,7 +112,7 @@
       <span class="visually-hidden">Add sample to cart</span>
   {%- endcapture -%}
 
-  {%- if sample_variant_count > 1 -%}
+  {%- if sample_picker_needed -%}
     <details class="product-sample-form product-sample-form--card product-sample-picker--card">
       <summary
         class="product-sample-button product-sample-button--card"
@@ -107,113 +122,125 @@
         {{ sample_button_icon }}
       </summary>
 
-      <div class="product-sample-options" role="list" aria-label="Sample color options">
+      <div
+        class="product-sample-options"
+        role="list"
+        aria-label="Sample color options"
+        {% if needs_sample_lookup %}
+          data-sample-options-lookup
+          data-sample-product-handle="{{ product.handle }}"
+        {% endif %}
+      >
         <p class="product-sample-options__title">{{ sample_options_title }}</p>
-        {%- liquid
-          assign rendered_sample_options = ''
-        -%}
-        {%- for variant in product.variants -%}
+        {%- if needs_sample_lookup -%}
+          <p class="product-sample-options__loading" data-sample-options-loading>Loading...</p>
+        {%- else -%}
           {%- liquid
-            assign is_sample_variant = false
-
-            if variant.available
-              for option_value in variant.options
-                assign option_value_downcase = option_value | downcase
-                if option_value_downcase == sample_label_downcase or option_value_downcase == alternate_sample_label_downcase or option_value_downcase == fabric_swatch_label_downcase
-                  assign is_sample_variant = true
-                  break
-                endif
-              endfor
-            endif
-
-            assign sample_option_label = variant.title
-            if color_option_index != ''
-              assign sample_option_label = variant.options[color_option_index]
-            endif
-            assign sample_color_label = sample_option_label | strip
-            assign sample_label_parts = sample_color_label | split: ' / '
-            assign sample_label_parts_size = sample_label_parts | size
-
-            if sample_label_parts_size > 1
-              assign color_part_index = sample_label_parts_size | minus: 1
-              assign trailing_part_downcase = sample_label_parts[color_part_index] | strip | downcase
-
-              if trailing_part_downcase contains 'piece' or trailing_part_downcase contains 'parallel' or trailing_part_downcase contains 'centered'
-                assign color_part_index = color_part_index | minus: 1
-              endif
-
-              assign sample_color_label = sample_label_parts[color_part_index] | strip
-            endif
-
-            assign sample_color_label = sample_color_label | replace: 'Rosé Pink', 'Rose Pink' | strip
-            assign sample_color_label_raw_downcase = sample_color_label | downcase
-            unless sample_color_label_raw_downcase == 'no trim'
-              assign sample_color_label = sample_color_label | remove: ' Trim' | remove: ' TRIM' | remove: ' trim' | strip
-            endunless
-            assign sample_image_label = sample_color_label | remove: 'BACKORDER ' | remove: 'Backorder ' | remove: 'backorder ' | strip
-            assign sample_color_label_downcase = sample_color_label | downcase
-            assign sample_option_key = '|' | append: sample_color_label_downcase | append: '|'
-            assign image_prefix = 'CL_'
-            if product_title_downcase contains 'outdoor'
-              assign image_prefix = 'OD_'
-            elsif product_title_downcase contains 'tape trim'
-              assign image_prefix = 'TT_'
-            elsif product_title_downcase contains 'greek trim'
-              assign image_prefix = 'GT_'
-            elsif product_title_downcase contains 'trim'
-              assign image_prefix = 'GT_'
-            endif
-            assign image_name = sample_image_label | replace: ' ', '_' | prepend: image_prefix | append: '.png'
-            assign image_url = image_name | file_url
-            assign bg_image_rule = ''
-            assign swatch_class = 'product-sample-option__swatch'
-            if sample_color_label_downcase == 'self' and product.featured_image != blank
-              assign image_url = product.featured_image | image_url: width: 160
-              assign bg_image_rule = 'background-image: url(' | append: image_url | append: ');'
-              assign swatch_class = swatch_class | append: ' product-sample-option__swatch--self'
-            elsif sample_color_label_raw_downcase == 'no trim'
-              if variant.image != blank
-                assign image_url = variant.image | image_url: width: 160
-                assign bg_image_rule = 'background-image: url(' | append: image_url | append: ');'
-                assign swatch_class = swatch_class | append: ' product-sample-option__swatch--self product-sample-option__swatch--no-trim'
-              endif
-            elsif settings.color_swatch_style == 'custom-image' and image_url != blank
-              assign bg_image_rule = 'background-image: url(' | append: image_url | append: ');'
-            endif
+            assign rendered_sample_options = ''
           -%}
-          {%- if is_sample_variant -%}
-            {%- unless rendered_sample_options contains sample_option_key -%}
-              <form class="product-sample-option-form" action="/cart/add" method="post">
-                <input class="formVariantId" type="hidden" name="items[0][id]" value="{{ variant.id }}">
-                <input class="formQty" type="hidden" name="items[0][quantity]" value="1">
-                <div class="note note-success js-added-msg" style="display: none">
-                  <strong>{{ 'products.product.added' | t }}</strong>
-                </div>
-                <div class="note note-error js-error-msg" style="display: none">
-                  <strong>{{ 'cart.general.cart_error' | t }}</strong> {{ 'cart.general.update_qty_error' | t }}
-                </div>
-                <button
-                  type="submit"
-                  class="product-sample-option AddtoCart js-ajax-submit"
-                  name="button"
-                  value="{{ sample_color_label | escape }}"
-                  data-quick-add
-                  data-sample-cart-notification="Sample added to cart"
-                  data-colorway-tooltip="{{ sample_color_label | escape }}"
-                  aria-label="Add {{ sample_color_label | escape }} sample for {{ product.title | escape }} to cart"
-                >
-                  <span
-                    class="{{ swatch_class }}"
-                    style="{{ bg_image_rule }}"
-                    aria-hidden="true"
-                  ></span>
-                  <span class="visually-hidden">{{ sample_color_label }}</span>
-                </button>
-              </form>
-              {%- assign rendered_sample_options = rendered_sample_options | append: sample_option_key -%}
-            {%- endunless -%}
-          {%- endif -%}
-        {%- endfor -%}
+          {%- for variant in product.variants -%}
+            {%- liquid
+              assign is_sample_variant = false
+
+              if variant.available
+                for option_value in variant.options
+                  assign option_value_downcase = option_value | downcase | strip
+                  if option_value_downcase == sample_label_downcase or option_value_downcase == alternate_sample_label_downcase or option_value_downcase == fabric_swatch_label_downcase or option_value_downcase contains sample_label_downcase or option_value_downcase contains alternate_sample_label_downcase or option_value_downcase contains fabric_swatch_label_downcase
+                    assign is_sample_variant = true
+                    break
+                  endif
+                endfor
+              endif
+
+              assign sample_option_label = variant.title
+              if color_option_index != ''
+                assign sample_option_label = variant.options[color_option_index]
+              endif
+              assign sample_color_label = sample_option_label | strip
+              assign sample_label_parts = sample_color_label | split: ' / '
+              assign sample_label_parts_size = sample_label_parts | size
+
+              if sample_label_parts_size > 1
+                assign color_part_index = sample_label_parts_size | minus: 1
+                assign trailing_part_downcase = sample_label_parts[color_part_index] | strip | downcase
+
+                if trailing_part_downcase contains 'piece' or trailing_part_downcase contains 'parallel' or trailing_part_downcase contains 'centered'
+                  assign color_part_index = color_part_index | minus: 1
+                endif
+
+                assign sample_color_label = sample_label_parts[color_part_index] | strip
+              endif
+
+              assign sample_color_label = sample_color_label | replace: 'Rosé Pink', 'Rose Pink' | strip
+              assign sample_color_label_raw_downcase = sample_color_label | downcase
+              unless sample_color_label_raw_downcase == 'no trim'
+                assign sample_color_label = sample_color_label | remove: ' Trim' | remove: ' TRIM' | remove: ' trim' | strip
+              endunless
+              assign sample_image_label = sample_color_label | remove: 'BACKORDER ' | remove: 'Backorder ' | remove: 'backorder ' | strip
+              assign sample_color_label_downcase = sample_color_label | downcase
+              assign sample_option_key = '|' | append: sample_color_label_downcase | append: '|'
+              assign image_prefix = 'CL_'
+              if product_title_downcase contains 'outdoor'
+                assign image_prefix = 'OD_'
+              elsif product_title_downcase contains 'tape trim'
+                assign image_prefix = 'TT_'
+              elsif product_title_downcase contains 'greek trim'
+                assign image_prefix = 'GT_'
+              elsif product_title_downcase contains 'trim'
+                assign image_prefix = 'GT_'
+              endif
+              assign image_name = sample_image_label | replace: ' ', '_' | prepend: image_prefix | append: '.png'
+              assign image_url = image_name | file_url
+              assign bg_image_rule = ''
+              assign swatch_class = 'product-sample-option__swatch'
+              if sample_color_label_downcase == 'self' and product.featured_image != blank
+                assign image_url = product.featured_image | image_url: width: 160
+                assign bg_image_rule = 'background-image: url(' | append: image_url | append: ');'
+                assign swatch_class = swatch_class | append: ' product-sample-option__swatch--self'
+              elsif sample_color_label_raw_downcase == 'no trim'
+                if variant.image != blank
+                  assign image_url = variant.image | image_url: width: 160
+                  assign bg_image_rule = 'background-image: url(' | append: image_url | append: ');'
+                  assign swatch_class = swatch_class | append: ' product-sample-option__swatch--self product-sample-option__swatch--no-trim'
+                endif
+              elsif settings.color_swatch_style == 'custom-image' and image_url != blank
+                assign bg_image_rule = 'background-image: url(' | append: image_url | append: ');'
+              endif
+            -%}
+            {%- if is_sample_variant -%}
+              {%- unless rendered_sample_options contains sample_option_key -%}
+                <form class="product-sample-option-form" action="/cart/add" method="post" data-sample-option-key="{{ sample_color_label_downcase | escape }}">
+                  <input class="formVariantId" type="hidden" name="items[0][id]" value="{{ variant.id }}">
+                  <input class="formQty" type="hidden" name="items[0][quantity]" value="1">
+                  <div class="note note-success js-added-msg" style="display: none">
+                    <strong>{{ 'products.product.added' | t }}</strong>
+                  </div>
+                  <div class="note note-error js-error-msg" style="display: none">
+                    <strong>{{ 'cart.general.cart_error' | t }}</strong> {{ 'cart.general.update_qty_error' | t }}
+                  </div>
+                  <button
+                    type="submit"
+                    class="product-sample-option AddtoCart js-ajax-submit"
+                    name="button"
+                    value="{{ sample_color_label | escape }}"
+                    data-quick-add
+                    data-sample-cart-notification="Sample added to cart"
+                    data-colorway-tooltip="{{ sample_color_label | escape }}"
+                    aria-label="Add {{ sample_color_label | escape }} sample for {{ product.title | escape }} to cart"
+                  >
+                    <span
+                      class="{{ swatch_class }}"
+                      style="{{ bg_image_rule }}"
+                      aria-hidden="true"
+                    ></span>
+                    <span class="visually-hidden">{{ sample_color_label }}</span>
+                  </button>
+                </form>
+                {%- assign rendered_sample_options = rendered_sample_options | append: sample_option_key -%}
+              {%- endunless -%}
+            {%- endif -%}
+          {%- endfor -%}
+        {%- endif -%}
       </div>
     </details>
   {%- else -%}
@@ -234,6 +261,10 @@
         data-quick-add
         data-sample-cart-notification="Sample added to cart"
         data-tooltip="Add Fabric Swatch"
+        {% if needs_sample_lookup %}
+          data-sample-lookup
+          data-sample-product-handle="{{ product.handle }}"
+        {% endif %}
         aria-label="Add {{ sample_label | escape }} sample for {{ product.title | escape }} to cart"
       >
         {{ sample_button_icon }}
