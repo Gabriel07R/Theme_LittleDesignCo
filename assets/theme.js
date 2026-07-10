@@ -2695,7 +2695,7 @@ Shopify.theme.ajaxCart = {
         document.body.appendChild(notification);
       }
 
-      notification.textContent = message || 'Sample added to cart';
+      notification.textContent = message || 'Fabric Swatch added to cart';
       notification.classList.add('is-visible');
 
       clearTimeout(notification.sampleToastTimer);
