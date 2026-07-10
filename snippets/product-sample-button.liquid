@@ -1,8 +1,10 @@
 {%- liquid
   assign sample_label = 'Sample 4" X 4"'
   assign alternate_sample_label = '4" X 4" Sample'
+  assign fabric_swatch_label = 'Fabric Swatch 4" X 4"'
   assign sample_label_downcase = sample_label | downcase
   assign alternate_sample_label_downcase = alternate_sample_label | downcase
+  assign fabric_swatch_label_downcase = fabric_swatch_label | downcase
   assign sample_variant_id = ''
   assign sample_variant_count = 0
   assign color_option_index = ''
@@ -46,7 +48,7 @@
     if variant.available
       for option_value in variant.options
         assign option_value_downcase = option_value | downcase
-        if option_value_downcase == sample_label_downcase or option_value_downcase == alternate_sample_label_downcase
+        if option_value_downcase == sample_label_downcase or option_value_downcase == alternate_sample_label_downcase or option_value_downcase == fabric_swatch_label_downcase
           assign is_sample_variant = true
           break
         endif
@@ -99,7 +101,7 @@
     <details class="product-sample-form product-sample-form--card product-sample-picker--card">
       <summary
         class="product-sample-button product-sample-button--card"
-        data-tooltip="Add sample"
+        data-tooltip="Add Fabric Swatch"
         aria-label="Choose a sample color for {{ product.title | escape }}"
       >
         {{ sample_button_icon }}
@@ -117,7 +119,7 @@
             if variant.available
               for option_value in variant.options
                 assign option_value_downcase = option_value | downcase
-                if option_value_downcase == sample_label_downcase or option_value_downcase == alternate_sample_label_downcase
+                if option_value_downcase == sample_label_downcase or option_value_downcase == alternate_sample_label_downcase or option_value_downcase == fabric_swatch_label_downcase
                   assign is_sample_variant = true
                   break
                 endif
@@ -231,7 +233,7 @@
         value="Sample"
         data-quick-add
         data-sample-cart-notification="Sample added to cart"
-        data-tooltip="Add sample"
+        data-tooltip="Add Fabric Swatch"
         aria-label="Add {{ sample_label | escape }} sample for {{ product.title | escape }} to cart"
       >
         {{ sample_button_icon }}
