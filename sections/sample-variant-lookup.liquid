@@ -1,10 +1,10 @@
 {%- liquid
   assign sample_label = 'Sample 4" X 4"'
   assign alternate_sample_label = '4" X 4" Sample'
-  assign fabric_swatch_label = 'Fabric Swatch 4" X 4"'
+  assign swatch_label = 'Swatch 4" X 4"'
   assign sample_label_downcase = sample_label | downcase
   assign alternate_sample_label_downcase = alternate_sample_label | downcase
-  assign fabric_swatch_label_downcase = fabric_swatch_label | downcase
+  assign swatch_label_downcase = swatch_label | downcase
   assign sample_variant_id = ''
   assign color_option_index = ''
   assign color_swatch_options = settings.swatch_option_names | downcase | replace: ' ,', ',' | replace: ', ', ',' | split: ','
@@ -28,7 +28,7 @@
       if variant.available
         for option_value in variant.options
           assign option_value_downcase = option_value | downcase | strip
-          if option_value_downcase == sample_label_downcase or option_value_downcase == alternate_sample_label_downcase or option_value_downcase == fabric_swatch_label_downcase or option_value_downcase contains sample_label_downcase or option_value_downcase contains alternate_sample_label_downcase or option_value_downcase contains fabric_swatch_label_downcase
+          if option_value_downcase == sample_label_downcase or option_value_downcase == alternate_sample_label_downcase or option_value_downcase == swatch_label_downcase or option_value_downcase contains sample_label_downcase or option_value_downcase contains alternate_sample_label_downcase or option_value_downcase contains swatch_label_downcase
             assign is_sample_variant = true
             break
           endif
@@ -50,7 +50,7 @@
         if variant.available
           for option_value in variant.options
             assign option_value_downcase = option_value | downcase | strip
-            if option_value_downcase == sample_label_downcase or option_value_downcase == alternate_sample_label_downcase or option_value_downcase == fabric_swatch_label_downcase or option_value_downcase contains sample_label_downcase or option_value_downcase contains alternate_sample_label_downcase or option_value_downcase contains fabric_swatch_label_downcase
+            if option_value_downcase == sample_label_downcase or option_value_downcase == alternate_sample_label_downcase or option_value_downcase == swatch_label_downcase or option_value_downcase contains sample_label_downcase or option_value_downcase contains alternate_sample_label_downcase or option_value_downcase contains swatch_label_downcase
               assign is_sample_variant = true
               break
             endif
