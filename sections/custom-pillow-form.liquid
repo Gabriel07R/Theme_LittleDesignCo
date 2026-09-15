@@ -1,0 +1,2803 @@
+{%- liquid
+  assign section_padding = ''
+  if section.settings.section_padding == 'top'
+    assign section_padding = 'pb0'
+  elsif section.settings.section_padding == 'bottom'
+    assign section_padding = 'mt0'
+  elsif section.settings.section_padding == 'none'
+    assign section_padding = 'mt0 pb0'
+  endif
+-%}
+
+<div class="global__section custom-pillow-form-section {{ section_padding }}">
+  <section
+    data-section-loaded="false"
+    data-section-type="custom-pillow-form-section"
+    class="row section-{{ section.id }}{% if settings.animation != 'none' %} animate {{ settings.animation }}{% endif %}"
+    data-section-id="{{ section.id }}"
+  >
+    {% if section.settings.heading != blank %}
+      <h2 class="section-title">{{ section.settings.heading }}</h2>
+    {% endif %}
+
+    <form
+      method="post"
+      action="/apps/wishlist-1/custom-pillow-form"
+      class="custom-pillow-form span-12 auto"
+      data-custom-pillow-form-id="{{ section.id }}"
+      data-custom-pillow-draft-enabled="{% if customer %}true{% else %}false{% endif %}"
+      {% if customer %}
+        data-custom-pillow-customer-id="{{ customer.id }}"
+      {% endif %}
+    >
+      <input type="hidden" name="return_to" value="{{ request.path | escape }}">
+      <input type="hidden" name="contact[Form]" value="CUSTOM PILLOW REQUEST">
+      <input type="hidden" data-custom-pillow-summary name="contact[Custom Pillow Items]" value="">
+
+      <div
+        data-custom-pillow-success
+        class="custom-pillow-form__success-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="customPillowSuccessTitle--{{ section.id }}"
+        hidden
+      >
+        <div class="custom-pillow-form__success-dialog">
+          <button type="button" data-custom-pillow-success-close class="custom-pillow-form__success-close">
+            CLOSE
+          </button>
+          <h3 id="customPillowSuccessTitle--{{ section.id }}">COM REQUEST RECEIVED</h3>
+          <p>Please allow 1-2 business days for our team to review and get back to you with a quote and yardage amounts.</p>
+        </div>
+      </div>
+
+      <div data-custom-pillow-error class="errorForm feedback" hidden>
+        <p>SORRY, YOUR CUSTOM PILLOW REQUEST COULD NOT BE SENT. PLEASE TRY AGAIN.</p>
+      </div>
+
+      <div data-custom-pillow-validation-error class="errorForm feedback" hidden aria-live="assertive">
+        <div data-custom-pillow-validation-error-text></div>
+      </div>
+
+      {% if customer %}
+        <div data-custom-pillow-draft-feedback class="custom-pillow-form__draft-feedback" hidden aria-live="polite">
+          <span data-custom-pillow-draft-feedback-text></span>
+          <button type="button" data-custom-pillow-draft-feedback-close aria-label="Close draft notification">CLOSE</button>
+        </div>
+      {% endif %}
+
+      <div class="custom-pillow-form__contact grid__wrapper">
+        <div class="custom-pillow-form__field span-6 sm-span-12 auto">
+          <label for="customPillowName--{{ section.id }}">NAME</label>
+          <input id="customPillowName--{{ section.id }}" type="text" name="contact[name]" autocomplete="name">
+        </div>
+
+        <div class="custom-pillow-form__field span-6 sm-span-12 auto">
+          <label for="customPillowEmail--{{ section.id }}">EMAIL</label>
+          <input id="customPillowEmail--{{ section.id }}" type="email" name="contact[email]" autocomplete="email" required>
+        </div>
+
+        <div class="custom-pillow-form__field span-12 auto">
+          <label for="customPillowSidemark--{{ section.id }}">SIDEMARK</label>
+          <input id="customPillowSidemark--{{ section.id }}" type="text" name="contact[Sidemark]">
+        </div>
+      </div>
+
+      <div data-custom-pillow-items class="custom-pillow-form__items">
+        <div data-custom-pillow-item class="custom-pillow-form__item">
+          <div class="custom-pillow-form__item-header">
+            <h3>ITEM <span data-custom-pillow-item-number>1</span></h3>
+            <button type="button" data-remove-custom-pillow-item class="custom-pillow-form__remove button-as-link" hidden>
+              REMOVE
+            </button>
+          </div>
+
+          <input
+            type="hidden"
+            data-custom-pillow-email-item-heading
+            name="contact[---------- ITEM 1 ----------]"
+            value="NO PRODUCT TYPE SELECTED"
+          >
+
+          <p
+            data-custom-pillow-bolster-disclaimer
+            class="custom-pillow-form__bolster-disclaimer"
+            style="display: none;"
+            aria-hidden="true"
+          >
+            *ALL BOLSTERS INCLUDE A FIRM FOAM INSERT*
+          </p>
+
+          <p
+            data-custom-pillow-ottoman-disclaimer
+            class="custom-pillow-form__bolster-disclaimer"
+            style="display: none;"
+            aria-hidden="true"
+          >
+            *IF A CUSTOM HEIGHT IS NEEDED PLEASE LEAVE A NOTE*
+          </p>
+
+          <p
+            data-custom-pillow-ball-pillow-disclaimer
+            class="custom-pillow-form__bolster-disclaimer"
+            style="display: none;"
+            aria-hidden="true"
+          >
+            *GIVEN THE FLEXIBILITY OF THE FABRIC THE BALL PILLOW CAN RANGE FROM 10-12 INCHES IN DIAMETER*
+          </p>
+
+          <div class="custom-pillow-form__item-fields custom-pillow-form__product-type-row">
+            <div class="custom-pillow-form__field">
+              <label data-custom-pillow-label for="customPillowProductType--{{ section.id }}--1">PRODUCT TYPE</label>
+              <select
+                id="customPillowProductType--{{ section.id }}--1"
+                data-field-id="customPillowProductType--{{ section.id }}"
+                data-custom-pillow-field
+                data-custom-pillow-product-type-select
+                data-field-label="PRODUCT TYPE"
+              >
+                <option value="">SELECT PRODUCT TYPE</option>
+                <option value="PILLOW (STANDARD SIZES)">PILLOW (STANDARD SIZES)</option>
+                <option value="PILLOW (CUSTOM SIZES)">PILLOW (CUSTOM SIZES)</option>
+                <option value="BOLSTER">BOLSTER</option>
+                <option value="OTTOMAN">OTTOMAN</option>
+                <option value="BALL PILLOW">BALL PILLOW</option>
+                <option value='XL LUMBAR 14" X 48"'>XL LUMBAR 14" X 48"</option>
+                <option value="SKITTLE">SKITTLE</option>
+              </select>
+            </div>
+          </div>
+
+          <div
+            data-custom-pillow-product-details
+            class="custom-pillow-form__product-details"
+            style="display: none;"
+            aria-hidden="true"
+          >
+            <div class="custom-pillow-form__item-fields">
+              <div class="custom-pillow-form__field">
+                <label data-custom-pillow-label for="customPillowQuantity--{{ section.id }}--1">QUANTITY</label>
+                <input
+                  id="customPillowQuantity--{{ section.id }}--1"
+                  data-field-id="customPillowQuantity--{{ section.id }}"
+                  data-custom-pillow-field
+                  data-field-label="QUANTITY"
+                  type="number"
+                  min="1"
+                  step="1"
+                  inputmode="numeric"
+                  value="1"
+                >
+              </div>
+
+              <div
+                data-custom-pillow-standard-intended-use-field
+                class="custom-pillow-form__field"
+                style="display: none;"
+                aria-hidden="true"
+              >
+                <label data-custom-pillow-label for="customPillowStandardIntendedUse--{{ section.id }}--1">INTENDED USE</label>
+                <select
+                  id="customPillowStandardIntendedUse--{{ section.id }}--1"
+                  data-field-id="customPillowStandardIntendedUse--{{ section.id }}"
+                  data-custom-pillow-field
+                  data-field-label="INTENDED USE"
+                  disabled
+                >
+                  <option value="">SELECT INTENDED USE</option>
+                  <option value="INDOOR">INDOOR</option>
+                  <option value="OUTDOOR">OUTDOOR</option>
+                </select>
+              </div>
+
+            <div
+              data-custom-pillow-bolster-length-field
+              class="custom-pillow-form__field"
+              style="display: none;"
+              aria-hidden="true"
+            >
+              <label data-custom-pillow-label for="customPillowBolsterLength--{{ section.id }}--1">LENGTH</label>
+              <input
+                id="customPillowBolsterLength--{{ section.id }}--1"
+                data-field-id="customPillowBolsterLength--{{ section.id }}"
+                data-custom-pillow-field
+                data-field-label="LENGTH"
+                type="number"
+                min="18"
+                max="52"
+                step="1"
+                inputmode="numeric"
+                placeholder="INCHES"
+                disabled
+              >
+            </div>
+
+            <div
+              data-custom-pillow-bolster-intented-use-field
+              class="custom-pillow-form__field"
+              style="display: none;"
+              aria-hidden="true"
+            >
+              <label data-custom-pillow-label for="customPillowBolsterIntentedUse--{{ section.id }}--1">INTENDED USE</label>
+              <select
+                id="customPillowBolsterIntentedUse--{{ section.id }}--1"
+                data-field-id="customPillowBolsterIntentedUse--{{ section.id }}"
+                data-custom-pillow-field
+                data-field-label="INTENDED USE"
+                disabled
+              >
+                <option value="">SELECT INTENDED USE</option>
+                <option value="INDOOR">INDOOR</option>
+                <option value="OUTDOOR">OUTDOOR</option>
+              </select>
+            </div>
+
+            <div
+              data-custom-pillow-ottoman-type-field
+              class="custom-pillow-form__field"
+              style="display: none;"
+              aria-hidden="true"
+            >
+              <label data-custom-pillow-label for="customPillowOttomanType--{{ section.id }}--1">OTTOMAN TYPE</label>
+              <select
+                id="customPillowOttomanType--{{ section.id }}--1"
+                data-field-id="customPillowOttomanType--{{ section.id }}"
+                data-custom-pillow-field
+                data-field-label="OTTOMAN TYPE"
+                disabled
+              >
+                <option value="">SELECT OTTOMAN TYPE</option>
+                <option value='SKIRTED OTTOMAN 18" L X 18" W X 19" H ($700)'>SKIRTED OTTOMAN 18" L X 18" W X 19" H ($700)</option>
+                <option value='TIGHT ROUND 17" D X 19" H ($500)'>TIGHT ROUND 17" D X 19" H ($500)</option>
+                <option value='TIGHT SQUARE 18" L X 18" W X 19" H ($700)'>TIGHT SQUARE 18" L X 18" W X 19" H ($700)</option>
+              </select>
+            </div>
+
+            <div class="custom-pillow-form__field">
+              <label data-custom-pillow-label data-custom-pillow-size-label for="customPillowSize--{{ section.id }}--1">SIZE</label>
+              <select
+                id="customPillowSize--{{ section.id }}--1"
+                data-field-id="customPillowSize--{{ section.id }}"
+                data-custom-pillow-field
+                data-custom-pillow-size-select
+                data-field-label="SIZE"
+              >
+                <option value="">SELECT SIZE</option>
+                <option value='20" X 20"'>20" X 20"</option>
+                <option value='22" X 22"'>22" X 22"</option>
+                <option value='24" X 24"'>24" X 24"</option>
+                <option value='26" X 26"'>26" X 26"</option>
+                <option value='LITTLE LUMBAR 12" X 18"'>LITTLE LUMBAR 12" X 18"</option>
+                <option value='14" X 24"'>14" X 24"</option>
+                <option value='14" X 30"'>14" X 30"</option>
+                <option value='14" X 36"'>14" X 36"</option>
+                <option value='XL LUMBAR 14" X 48"'>XL LUMBAR 14" X 48"</option>
+                <option value='15" X 22"'>15" X 22"</option>
+                <option value='20" X 26" STANDARD SHAM'>20" X 26" STANDARD SHAM</option>
+                <option value='20" X 30" QUEEN SHAM'>20" X 30" QUEEN SHAM</option>
+                <option value='20" X 36" KING SHAM'>20" X 36" KING SHAM</option>
+              </select>
+            </div>
+
+            <div
+              data-custom-pillow-custom-height-field
+              class="custom-pillow-form__field"
+              style="display: none;"
+              aria-hidden="true"
+            >
+              <label data-custom-pillow-label for="customPillowCustomHeight--{{ section.id }}--1">
+                HEIGHT
+                <span
+                  class="custom-pillow-form__field-hint"
+                  tabindex="0"
+                  aria-label="Only whole numbers"
+                  data-tooltip="Only whole numbers"
+                >?</span>
+              </label>
+              <input
+                id="customPillowCustomHeight--{{ section.id }}--1"
+                data-field-id="customPillowCustomHeight--{{ section.id }}"
+                data-custom-pillow-field
+                data-custom-pillow-whole-number="true"
+                data-field-label="HEIGHT"
+                type="number"
+                min="1"
+                step="1"
+                inputmode="numeric"
+                placeholder="INCHES"
+                disabled
+              >
+            </div>
+
+            <div
+              data-custom-pillow-custom-width-field
+              class="custom-pillow-form__field"
+              style="display: none;"
+              aria-hidden="true"
+            >
+              <label data-custom-pillow-label for="customPillowCustomWidth--{{ section.id }}--1">
+                WIDTH
+                <span
+                  class="custom-pillow-form__field-hint"
+                  tabindex="0"
+                  aria-label="Only whole numbers"
+                  data-tooltip="Only whole numbers"
+                >?</span>
+              </label>
+              <input
+                id="customPillowCustomWidth--{{ section.id }}--1"
+                data-field-id="customPillowCustomWidth--{{ section.id }}"
+                data-custom-pillow-field
+                data-custom-pillow-whole-number="true"
+                data-field-label="WIDTH"
+                type="number"
+                min="1"
+                step="1"
+                inputmode="numeric"
+                placeholder="INCHES"
+                disabled
+              >
+            </div>
+
+            <div data-custom-pillow-edge-finish-field class="custom-pillow-form__field">
+              <label data-custom-pillow-label for="customPillowEdgeFinish--{{ section.id }}--1">EDGE FINISH</label>
+              <select
+                id="customPillowEdgeFinish--{{ section.id }}--1"
+                data-field-id="customPillowEdgeFinish--{{ section.id }}"
+                data-custom-pillow-field
+                data-custom-pillow-edge-finish-select
+                data-field-label="EDGE FINISH"
+              >
+                <option value="">SELECT EDGE FINISH</option>
+                <option value="KNIFE EDGE ($65)">KNIFE EDGE ($65)</option>
+                <option value="SELF CORD ($90)">SELF CORD ($90)</option>
+                <option value="CONTRAST CORD ($90)">CONTRAST CORD ($90)</option>
+                <option value="SELF BUTTERFLY ($90)">SELF BUTTERFLY ($90)</option>
+                <option value="CONTRAST BUTTERFLY ($90)">CONTRAST BUTTERFLY ($90)</option>
+                <option value="FRINGE / TASSEL ($90)">FRINGE / TASSEL ($90)</option>
+                <option value="SELF MITER FLANGE ($90)">SELF MITER FLANGE ($90)</option>
+                <option value="CONTRAST MITER FLANGE ($90)">CONTRAST MITER FLANGE ($90)</option>
+              </select>
+            </div>
+
+            <div
+              data-custom-pillow-add-insert-field
+              class="custom-pillow-form__field"
+              style="display: none;"
+              aria-hidden="true"
+            >
+              <label data-custom-pillow-label for="customPillowAddInsert--{{ section.id }}--1">
+                ADD INSERT
+                <span
+                  data-custom-pillow-custom-insert-hint
+                  class="custom-pillow-form__field-hint"
+                  tabindex="0"
+                  aria-label="Please allow additional 2-3 weeks for custom inserts"
+                  data-tooltip="Please allow additional 2-3 weeks for custom inserts"
+                  hidden
+                >?</span>
+              </label>
+              <select
+                id="customPillowAddInsert--{{ section.id }}--1"
+                data-field-id="customPillowAddInsert--{{ section.id }}"
+                data-custom-pillow-field
+                data-custom-pillow-add-insert-select
+                data-field-label="ADD INSERT"
+                disabled
+              >
+                <option value="">SELECT OPTION</option>
+                <option value="NO">NO</option>
+                <option value="YES">YES</option>
+              </select>
+            </div>
+
+            <div
+              data-custom-pillow-insert-type-field
+              class="custom-pillow-form__field"
+              style="display: none;"
+              aria-hidden="true"
+            >
+              <label data-custom-pillow-label for="customPillowInsertType--{{ section.id }}--1">INSERT TYPE</label>
+              <select
+                id="customPillowInsertType--{{ section.id }}--1"
+                data-field-id="customPillowInsertType--{{ section.id }}"
+                data-custom-pillow-field
+                data-custom-pillow-insert-type-select
+                data-field-label="INSERT TYPE"
+                disabled
+              >
+                <option value="">SELECT INSERT TYPE</option>
+                <option value="FEATHER DOWN">FEATHER DOWN</option>
+                <option value="DOWN ALTERNATIVE">DOWN ALTERNATIVE</option>
+              </select>
+            </div>
+          </div>
+
+          <p
+            data-custom-pillow-skittle-knife-edge-disclaimer
+            class="custom-pillow-form__bolster-disclaimer"
+            style="display: none;"
+            aria-hidden="true"
+          >
+            *KNIFE EDGE WILL INCLUDE A POLY DOWN INSERT*
+          </p>
+
+          <p
+            data-custom-pillow-skittle-box-band-disclaimer
+            class="custom-pillow-form__bolster-disclaimer"
+            style="display: none;"
+            aria-hidden="true"
+          >
+            *BOX BAND WILL INCLUDE A FIRM FOAM INSERT*
+          </p>
+
+          <p
+            data-custom-pillow-xl-lumbar-disclaimer
+            class="custom-pillow-form__bolster-disclaimer"
+            style="display: none;"
+            aria-hidden="true"
+          >
+            *THE XL LUMBAR INCLUDES AN DOWN ALTERNATIVE INSERT*
+          </p>
+
+          <div class="custom-pillow-form__item-fields">
+            <div class="custom-pillow-form__field">
+              <label data-custom-pillow-label for="customPillowMainFabricName--{{ section.id }}--1">FABRIC NAME & COLORWAY</label>
+              <input
+                id="customPillowMainFabricName--{{ section.id }}--1"
+                data-field-id="customPillowMainFabricName--{{ section.id }}"
+                data-custom-pillow-field
+                data-field-label="FABRIC NAME & COLORWAY"
+                type="text"
+              >
+            </div>
+
+            <div class="custom-pillow-form__field">
+              <label data-custom-pillow-label for="customPillowFaceFabricLink--{{ section.id }}--1">FABRIC LINK</label>
+              <input
+                id="customPillowFaceFabricLink--{{ section.id }}--1"
+                data-field-id="customPillowFaceFabricLink--{{ section.id }}"
+                data-custom-pillow-field
+                data-field-label="FABRIC LINK"
+                type="url"
+                placeholder="https://"
+              >
+            </div>
+          </div>
+
+          <div class="custom-pillow-form__item-fields">
+            <div
+              data-custom-pillow-ottoman-trimming-field
+              class="custom-pillow-form__field"
+              style="display: none;"
+              aria-hidden="true"
+            >
+              <label data-custom-pillow-label for="customPillowOttomanTrimming--{{ section.id }}--1">TRIMMING</label>
+              <select
+                id="customPillowOttomanTrimming--{{ section.id }}--1"
+                data-field-id="customPillowOttomanTrimming--{{ section.id }}"
+                data-custom-pillow-field
+                data-field-label="TRIMMING"
+                disabled
+              >
+                <option value="">SELECT TRIMMING</option>
+                <option value="NO BULLION">NO BULLION</option>
+                <option value="BULLION">BULLION</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="custom-pillow-form__item-fields">
+            <div
+              data-custom-pillow-ottoman-trimming-fabric-name-field
+              class="custom-pillow-form__field"
+              style="display: none;"
+              aria-hidden="true"
+            >
+              <label data-custom-pillow-label for="customPillowOttomanTrimmingFabricName--{{ section.id }}--1">TRIMMING FABRIC NAME & COLORWAY</label>
+              <input
+                id="customPillowOttomanTrimmingFabricName--{{ section.id }}--1"
+                data-field-id="customPillowOttomanTrimmingFabricName--{{ section.id }}"
+                data-custom-pillow-field
+                data-field-label="TRIMMING FABRIC NAME & COLORWAY"
+                type="text"
+                disabled
+              >
+            </div>
+
+            <div
+              data-custom-pillow-ottoman-trimming-fabric-link-field
+              class="custom-pillow-form__field"
+              style="display: none;"
+              aria-hidden="true"
+            >
+              <label data-custom-pillow-label for="customPillowOttomanTrimmingFabricLink--{{ section.id }}--1">TRIMMING FABRIC LINK</label>
+              <input
+                id="customPillowOttomanTrimmingFabricLink--{{ section.id }}--1"
+                data-field-id="customPillowOttomanTrimmingFabricLink--{{ section.id }}"
+                data-custom-pillow-field
+                data-field-label="TRIMMING FABRIC LINK"
+                type="url"
+                placeholder="https://"
+                disabled
+              >
+            </div>
+          </div>
+
+          <div
+            data-custom-pillow-same-side-wrapper
+            class="custom-pillow-form__same-side-row"
+            style="display: none;"
+            aria-hidden="true"
+          >
+            <div class="custom-pillow-form__field custom-pillow-form__checkbox-field">
+              <input
+                id="customPillowSameSide--{{ section.id }}--1"
+                data-field-id="customPillowSameSide--{{ section.id }}"
+                data-custom-pillow-field
+                data-custom-pillow-same-side-checkbox
+                data-field-label="SAME SIDED"
+                type="checkbox"
+                value="YES"
+                disabled
+              >
+              <label data-custom-pillow-label for="customPillowSameSide--{{ section.id }}--1">SAME SIDED</label>
+            </div>
+          </div>
+
+          <div data-custom-pillow-reverse-fabric-fields class="custom-pillow-form__item-fields">
+            <div class="custom-pillow-form__field">
+              <label data-custom-pillow-label data-custom-pillow-reverse-fabric-name-label for="customPillowReverseFabricName--{{ section.id }}--1">REVERSE FABRIC NAME & COLORWAY</label>
+              <input
+                id="customPillowReverseFabricName--{{ section.id }}--1"
+                data-field-id="customPillowReverseFabricName--{{ section.id }}"
+                data-custom-pillow-field
+                data-custom-pillow-reverse-fabric-name-field
+                data-field-label="REVERSE FABRIC NAME & COLORWAY"
+                type="text"
+              >
+            </div>
+
+            <div class="custom-pillow-form__field">
+              <label data-custom-pillow-label data-custom-pillow-reverse-fabric-link-label for="customPillowReverseFabricLink--{{ section.id }}--1">REVERSE FABRIC LINK</label>
+              <input
+                id="customPillowReverseFabricLink--{{ section.id }}--1"
+                data-field-id="customPillowReverseFabricLink--{{ section.id }}"
+                data-custom-pillow-field
+                data-custom-pillow-reverse-fabric-link-field
+                data-field-label="REVERSE FABRIC LINK"
+                type="url"
+                placeholder="https://"
+              >
+            </div>
+          </div>
+
+          <div
+            data-custom-pillow-edge-finish-fields
+            class="custom-pillow-form__item-fields custom-pillow-form__conditional-fields"
+            style="display: none;"
+            aria-hidden="true"
+          >
+            <div class="custom-pillow-form__field">
+              <label data-custom-pillow-label for="customPillowEdgeFinishFabricMaterial--{{ section.id }}--1">EDGE FINISH FABRIC/MATERIAL</label>
+              <input
+                id="customPillowEdgeFinishFabricMaterial--{{ section.id }}--1"
+                data-field-id="customPillowEdgeFinishFabricMaterial--{{ section.id }}"
+                data-custom-pillow-field
+                data-field-label="EDGE FINISH FABRIC/MATERIAL"
+                type="text"
+                disabled
+              >
+            </div>
+
+            <div class="custom-pillow-form__field">
+              <label data-custom-pillow-label for="customPillowEdgeFinishFabricMaterialLink--{{ section.id }}--1">EDGE FINISH FABRIC/MATERIAL LINK</label>
+              <input
+                id="customPillowEdgeFinishFabricMaterialLink--{{ section.id }}--1"
+                data-field-id="customPillowEdgeFinishFabricMaterialLink--{{ section.id }}"
+                data-custom-pillow-field
+                data-field-label="EDGE FINISH FABRIC/MATERIAL LINK"
+                type="url"
+                placeholder="https://"
+                disabled
+              >
+            </div>
+
+            <div data-custom-pillow-ruffle-length-field class="custom-pillow-form__field" style="display: none;" aria-hidden="true">
+              <label data-custom-pillow-label for="customPillowRuffleWidth--{{ section.id }}--1">RUFFLE WIDTH</label>
+              <select
+                id="customPillowRuffleWidth--{{ section.id }}--1"
+                data-field-id="customPillowRuffleWidth--{{ section.id }}"
+                data-custom-pillow-field
+                data-field-label="RUFFLE WIDTH"
+                disabled
+              >
+                <option value="">SELECT RUFFLE WIDTH</option>
+                <option value='1"'>1"</option>
+                <option value='2"'>2"</option>
+              </select>
+            </div>
+          </div>
+
+          <div
+            data-custom-pillow-skittle-box-band-width-field
+            class="custom-pillow-form__item-fields custom-pillow-form__conditional-fields"
+            style="display: none;"
+            aria-hidden="true"
+          >
+            <div class="custom-pillow-form__field">
+              <label data-custom-pillow-label for="customPillowSkittleBoxBandWidth--{{ section.id }}--1">BOX BAND WIDTH</label>
+              <select
+                id="customPillowSkittleBoxBandWidth--{{ section.id }}--1"
+                data-field-id="customPillowSkittleBoxBandWidth--{{ section.id }}"
+                data-custom-pillow-field
+                data-field-label="BOX BAND WIDTH"
+                disabled
+              >
+                <option value="">SELECT BOX BAND WIDTH</option>
+                <option value='2"'>2"</option>
+                <option value='3"'>3"</option>
+              </select>
+            </div>
+          </div>
+
+          <div data-custom-pillow-tape-trim-row class="custom-pillow-form__item-fields">
+            <div class="custom-pillow-form__field">
+              <label data-custom-pillow-label for="customPillowTapeTrim--{{ section.id }}--1">TAPE TRIM</label>
+              <select
+                id="customPillowTapeTrim--{{ section.id }}--1"
+                data-field-id="customPillowTapeTrim--{{ section.id }}"
+                data-custom-pillow-field
+                data-custom-pillow-tape-trim-select
+                data-field-label="TAPE TRIM"
+              >
+                <option value="">CHOOSE ONE</option>
+                <option value="NO TRIM">NO TRIM</option>
+                <option value="CENTER TRIM [FRONT] (+$10)">CENTER TRIM [FRONT] (+$10)</option>
+                <option value="CENTER TRIM [FRONT &amp; BACK] (+$10)">CENTER TRIM [FRONT &amp; BACK] (+$10)</option>
+                <option value="PARALLEL TRIM [FRONT] (+$20)">PARALLEL TRIM [FRONT] (+$20)</option>
+                <option value="PARALLEL TRIM [FRONT &amp; BACK] (+$20)">PARALLEL TRIM [FRONT &amp; BACK] (+$20)</option>
+              </select>
+            </div>
+          </div>
+
+          <div
+            data-custom-pillow-tape-trim-fields
+            class="custom-pillow-form__item-fields custom-pillow-form__conditional-fields"
+            style="display: none;"
+            aria-hidden="true"
+          >
+            <div class="custom-pillow-form__field">
+              <label data-custom-pillow-label for="customPillowTrimName--{{ section.id }}--1">TRIM NAME</label>
+              <input
+                id="customPillowTrimName--{{ section.id }}--1"
+                data-field-id="customPillowTrimName--{{ section.id }}"
+                data-custom-pillow-field
+                data-field-label="TRIM NAME"
+                type="text"
+                disabled
+              >
+            </div>
+
+            <div class="custom-pillow-form__field">
+              <label data-custom-pillow-label for="customPillowTrimLink--{{ section.id }}--1">TRIM LINK</label>
+              <input
+                id="customPillowTrimLink--{{ section.id }}--1"
+                data-field-id="customPillowTrimLink--{{ section.id }}"
+                data-custom-pillow-field
+                data-field-label="TRIM LINK"
+                type="url"
+                placeholder="https://"
+                disabled
+              >
+            </div>
+
+            <div data-custom-pillow-parallel-trim-field class="custom-pillow-form__field" style="display: none;" aria-hidden="true">
+              <label data-custom-pillow-label for="customPillowInsetFromEdge--{{ section.id }}--1">INSET FROM EDGE</label>
+              <input
+                id="customPillowInsetFromEdge--{{ section.id }}--1"
+                data-field-id="customPillowInsetFromEdge--{{ section.id }}"
+                data-custom-pillow-field
+                data-field-label="INSET FROM EDGE"
+                type="number"
+                min="0"
+                step="0.25"
+                inputmode="decimal"
+                placeholder="INCHES"
+                disabled
+              >
+            </div>
+          </div>
+
+          <div data-custom-pillow-box-band-row class="custom-pillow-form__item-fields">
+            <div class="custom-pillow-form__field">
+              <label data-custom-pillow-label for="customPillowBoxBand--{{ section.id }}--1">BOX BAND</label>
+              <select
+                id="customPillowBoxBand--{{ section.id }}--1"
+                data-field-id="customPillowBoxBand--{{ section.id }}"
+                data-custom-pillow-field
+                data-custom-pillow-box-band-select
+                data-field-label="BOX BAND"
+              >
+                <option value="">CHOOSE ONE</option>
+                <option value="NO BOX BAND">NO BOX BAND</option>
+                <option value="BOX BAND SELF (+$25)">BOX BAND SELF (+$25)</option>
+                <option value="CONTRAST BOX BAND (+$25)">CONTRAST BOX BAND (+$25)</option>
+                <option value="TAPE TRIM AS BOX BAND (+$35)">TAPE TRIM AS BOX BAND (+$35)</option>
+              </select>
+            </div>
+          </div>
+
+          <div
+            data-custom-pillow-box-band-fields
+            class="custom-pillow-form__item-fields custom-pillow-form__conditional-fields"
+            style="display: none;"
+            aria-hidden="true"
+          >
+            <div class="custom-pillow-form__field">
+              <label data-custom-pillow-label for="customPillowBoxBandFabricName--{{ section.id }}--1">BOX BAND FABRIC NAME & COLORWAY</label>
+              <input
+                id="customPillowBoxBandFabricName--{{ section.id }}--1"
+                data-field-id="customPillowBoxBandFabricName--{{ section.id }}"
+                data-custom-pillow-field
+                data-field-label="BOX BAND FABRIC NAME & COLORWAY"
+                type="text"
+                disabled
+              >
+            </div>
+
+            <div class="custom-pillow-form__field">
+              <label data-custom-pillow-label for="customPillowBoxBandFabricLink--{{ section.id }}--1">BOX BAND FABRIC LINK</label>
+              <input
+                id="customPillowBoxBandFabricLink--{{ section.id }}--1"
+                data-field-id="customPillowBoxBandFabricLink--{{ section.id }}"
+                data-custom-pillow-field
+                data-field-label="BOX BAND FABRIC LINK"
+                type="url"
+                placeholder="https://"
+                disabled
+              >
+            </div>
+
+            <div class="custom-pillow-form__field">
+              <label data-custom-pillow-label for="customPillowBoxBandWidth--{{ section.id }}--1">BOX BAND WIDTH</label>
+              <input
+                id="customPillowBoxBandWidth--{{ section.id }}--1"
+                data-field-id="customPillowBoxBandWidth--{{ section.id }}"
+                data-custom-pillow-field
+                data-field-label="BOX BAND WIDTH"
+                type="number"
+                min="0"
+                step="0.25"
+                inputmode="decimal"
+                placeholder="INCHES"
+                disabled
+              >
+            </div>
+          </div>
+
+          <div class="custom-pillow-form__field">
+            <label data-custom-pillow-label for="customPillowItemSidemark--{{ section.id }}--1">SIDEMARK</label>
+            <input
+              id="customPillowItemSidemark--{{ section.id }}--1"
+              data-field-id="customPillowItemSidemark--{{ section.id }}"
+              data-custom-pillow-field
+              data-field-label="SIDEMARK"
+              type="text"
+            >
+          </div>
+
+          <div data-custom-pillow-item-notes-field class="custom-pillow-form__field custom-pillow-form__item-notes">
+            <label data-custom-pillow-label for="customPillowItemNotes--{{ section.id }}--1">NOTES</label>
+            <textarea
+              id="customPillowItemNotes--{{ section.id }}--1"
+              data-field-id="customPillowItemNotes--{{ section.id }}"
+              data-custom-pillow-field
+              data-field-label="NOTES"
+              placeholder="Any additional changes can be requested here"
+              rows="4"
+            ></textarea>
+          </div>
+
+          <div data-custom-pillow-estimate class="custom-pillow-form__estimate" aria-live="polite">
+            <span class="custom-pillow-form__estimate-label">ESTIMATED PRICE</span>
+            <strong data-custom-pillow-estimate-text>PRICE TBD</strong>
+            <input
+              type="hidden"
+              id="customPillowEstimatedPrice--{{ section.id }}--1"
+              data-field-id="customPillowEstimatedPrice--{{ section.id }}"
+              data-custom-pillow-field
+              data-custom-pillow-estimate-input
+              data-field-label="ESTIMATED PRICE"
+              value="PRICE TBD"
+            >
+          </div>
+          </div>
+        </div>
+      </div>
+
+      <button type="button" data-add-custom-pillow-item class="custom-pillow-form__add secondary button">
+        ADD MORE ITEM
+      </button>
+
+      {% if customer %}
+        <div class="custom-pillow-form__draft-actions">
+          <button type="button" data-save-custom-pillow-draft class="secondary button">
+            SAVE DRAFT
+          </button>
+          <button type="button" data-clear-custom-pillow-draft class="button-as-link">
+            CLEAR DRAFT
+          </button>
+        </div>
+      {% endif %}
+
+      <div class="custom-pillow-form__field custom-pillow-form__notes">
+        <label for="customPillowNotes--{{ section.id }}">ADDITIONAL NOTES</label>
+        <textarea id="customPillowNotes--{{ section.id }}" rows="6" name="contact[body]"></textarea>
+      </div>
+
+      <div data-custom-pillow-order-estimate class="custom-pillow-form__order-estimate" aria-live="polite">
+        <p>*PRICE IS SUBJECT TO CHANGE UPON APPROVAL*</p>
+        <div class="custom-pillow-form__estimate custom-pillow-form__estimate--order">
+          <span class="custom-pillow-form__estimate-label">ESTIMATED ORDER TOTAL</span>
+          <strong data-custom-pillow-order-estimate-text>PRICE TBD</strong>
+        </div>
+        <input
+          type="hidden"
+          data-custom-pillow-order-estimate-input
+          name="contact[Estimated Order Total]"
+          value="PRICE TBD"
+        >
+      </div>
+
+      <input type="submit" class="secondary button" value="{{ section.settings.button_label | escape }}">
+    </form>
+  </section>
+</div>
+
+{% stylesheet %}
+  .custom-pillow-form {
+    width: min(100%, var(--custom-pillow-form-width, 760px));
+    margin: 0 auto;
+  }
+
+  .custom-pillow-form__contact {
+    margin-bottom: 24px;
+  }
+
+  .custom-pillow-form [data-custom-pillow-validation-error-text] {
+    color: #b3261e;
+  }
+
+  .custom-pillow-form [data-custom-pillow-validation-error-text] ul {
+    margin: 8px 0 0 18px;
+    padding: 0;
+  }
+
+  .custom-pillow-form [data-custom-pillow-validation-error-text] li {
+    margin: 3px 0;
+  }
+
+  .custom-pillow-form h3,
+  .custom-pillow-form label,
+  .custom-pillow-form select,
+  .custom-pillow-form button,
+  .custom-pillow-form input[type="submit"],
+  .custom-pillow-form__bolster-disclaimer,
+  .custom-pillow-form .feedback {
+    text-transform: uppercase;
+  }
+
+  .custom-pillow-form__item {
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(0, 0, 0, 0.18);
+    background: rgba(0, 0, 0, 0.035);
+  }
+
+  .custom-pillow-form__item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .custom-pillow-form__item-header h3 {
+    margin: 0;
+    font-size: 18px;
+  }
+
+  .custom-pillow-form__item-fields {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .custom-pillow-form__product-type-row > .custom-pillow-form__field {
+    grid-column: 1 / -1;
+  }
+
+  .custom-pillow-form__conditional-fields {
+    display: none !important;
+  }
+
+  .custom-pillow-form__conditional-fields.custom-pillow-form__conditional-fields--visible {
+    display: grid !important;
+  }
+
+  .custom-pillow-form__same-side-row {
+    display: none;
+    margin-bottom: 18px;
+  }
+
+  .custom-pillow-form__same-side-row.custom-pillow-form__same-side-row--visible {
+    display: block !important;
+  }
+
+  .custom-pillow-form__field {
+    margin-bottom: 18px;
+  }
+
+  .custom-pillow-form__bolster-disclaimer {
+    margin: -4px 0 18px;
+    font-size: 13px;
+    font-style: italic;
+  }
+
+  .custom-pillow-form__estimate {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 0;
+    margin: 4px 0 18px;
+    border-top: 1px solid var(--dotted-color);
+    border-bottom: 1px solid var(--dotted-color);
+    text-transform: uppercase;
+  }
+
+  .custom-pillow-form__estimate-label {
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .custom-pillow-form__estimate strong {
+    font-size: 14px;
+    text-align: right;
+  }
+
+  .custom-pillow-form__order-estimate {
+    margin: 22px 0;
+  }
+
+  .custom-pillow-form__order-estimate p {
+    margin: 0 0 8px;
+    font-size: 13px;
+    font-style: italic;
+    text-transform: uppercase;
+  }
+
+  .custom-pillow-form__estimate--order {
+    margin-bottom: 0;
+  }
+
+  .custom-pillow-form__success-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.45);
+  }
+
+  .custom-pillow-form__success-modal[hidden] {
+    display: none;
+  }
+
+  .custom-pillow-form__success-dialog {
+    width: min(100%, 520px);
+    padding: 32px;
+    border: 1px solid var(--dotted-color);
+    background: var(--background, #fff);
+    color: var(--text-color, #000);
+    text-align: center;
+  }
+
+  .custom-pillow-form__success-dialog h3 {
+    margin: 0 0 14px;
+    font-size: 18px;
+    text-transform: uppercase;
+  }
+
+  .custom-pillow-form__success-dialog p {
+    margin: 0;
+    text-transform: none;
+  }
+
+  .custom-pillow-form__success-close {
+    display: block;
+    margin: 0 0 18px auto;
+    padding: 0;
+    color: #000;
+    border: 0;
+    background: transparent;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .custom-pillow-form__field label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0;
+  }
+
+  .custom-pillow-form__field-hint {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    margin-left: 6px;
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    font-size: 11px;
+    line-height: 1;
+    cursor: help;
+  }
+
+  .custom-pillow-form__field-hint[hidden] {
+    display: none;
+  }
+
+  .custom-pillow-form__field-hint::after {
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 8px);
+    z-index: 2;
+    width: max-content;
+    max-width: 180px;
+    padding: 7px 9px;
+    background: #111;
+    color: #fff;
+    content: attr(data-tooltip);
+    font-size: 11px;
+    line-height: 1.2;
+    opacity: 0;
+    pointer-events: none;
+    text-transform: none;
+    transform: translateX(-50%);
+    transition: opacity 120ms ease;
+  }
+
+  .custom-pillow-form__field-hint:hover::after,
+  .custom-pillow-form__field-hint:focus::after {
+    opacity: 1;
+  }
+
+  .custom-pillow-form__field input,
+  .custom-pillow-form__field select,
+  .custom-pillow-form__field textarea {
+    width: 100%;
+    max-width: none;
+    margin-bottom: 0;
+  }
+
+  .custom-pillow-form__field--error label {
+    color: #b3261e;
+  }
+
+  .custom-pillow-form__field--error input,
+  .custom-pillow-form__field--error select,
+  .custom-pillow-form__field--error textarea {
+    border-color: #b3261e !important;
+    box-shadow: 0 0 0 1px #b3261e;
+  }
+
+  .custom-pillow-form__checkbox-field {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .custom-pillow-form__checkbox-field input {
+    width: auto;
+  }
+
+  .custom-pillow-form__checkbox-field label {
+    margin-bottom: 0;
+  }
+
+  .custom-pillow-form__field select {
+    height: 44px;
+    border: 1px solid var(--dotted-color);
+    background: var(--select-arrow-bg) right no-repeat;
+    appearance: none;
+  }
+
+  .custom-pillow-form__add {
+    margin-bottom: 24px;
+  }
+
+  .custom-pillow-form__draft-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: -8px 0 24px;
+  }
+
+  .custom-pillow-form__draft-feedback {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    max-width: min(360px, calc(100vw - 40px));
+    padding: 16px 18px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: #111;
+    color: #fff;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.22);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.4;
+    text-transform: uppercase;
+    transform: translate(-50%, -50%);
+  }
+
+  .custom-pillow-form__draft-feedback[hidden] {
+    display: none;
+  }
+
+  .custom-pillow-form__draft-feedback button {
+    flex: 0 0 auto;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .custom-pillow-form__notes {
+    margin-top: 4px;
+  }
+
+  @media screen and (max-width: 740px) {
+    .custom-pillow-form__item-fields {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+
+    .custom-pillow-form__estimate {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .custom-pillow-form__estimate strong {
+      text-align: left;
+    }
+
+    .custom-pillow-form__draft-feedback {
+      width: calc(100vw - 32px);
+      max-width: none;
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  const customPillowStandardSizeOptions = [
+    { value: '16" X 16"', label: '16" X 16"' },
+    { value: '18" X 18"', label: '18" X 18"' },
+    { value: '20" X 20"', label: '20" X 20"' },
+    { value: '22" X 22"', label: '22" X 22"' },
+    { value: '24" X 24"', label: '24" X 24"' },
+    { value: '26" X 26"', label: '26" X 26"' },
+    { value: 'LITTLE LUMBAR 12" X 18"', label: 'LITTLE LUMBAR 12" X 18"' },
+    { value: '14" X 24"', label: '14" X 24"' },
+    { value: '14" X 30"', label: '14" X 30"' },
+    { value: '14" X 36"', label: '14" X 36"' },
+    { value: 'XL LUMBAR 14" X 48"', label: 'XL LUMBAR 14" X 48"' },
+    { value: '15" X 22"', label: '15" X 22"' },
+    { value: '20" X 26" STANDARD SHAM', label: '20" X 26" STANDARD SHAM' },
+    { value: '20" X 30" QUEEN SHAM', label: '20" X 30" QUEEN SHAM' },
+    { value: '20" X 36" KING SHAM', label: '20" X 36" KING SHAM' },
+  ];
+  const customPillowStandardOutdoorSizeOptions = [
+    { value: '20" X 20"', label: '20" X 20"' },
+    { value: '22" X 22"', label: '22" X 22"' },
+    { value: 'LITTLE LUMBAR 12" X 18"', label: 'LITTLE LUMBAR 12" X 18"' },
+    { value: '14" X 20" LUMBAR', label: '14" X 20" LUMBAR' },
+  ];
+  const customPillowBolsterSizeOptions = [
+    { value: 'TWIN // 9" X 24"', label: 'TWIN // 9" X 24"' },
+    { value: 'TWIN XL // 9" X 30"', label: 'TWIN XL // 9" X 30"' },
+    { value: 'QUEEN // 9" X 36"', label: 'QUEEN // 9" X 36"' },
+    { value: 'KING // 9" X 48"', label: 'KING // 9" X 48"' },
+  ];
+  const customPillowBolsterOutdoorSizeOptions = [
+    { value: '7" X 16"', label: '7" X 16"' },
+    { value: '7" X 20"', label: '7" X 20"' },
+    { value: '7" X 24"', label: '7" X 24"' },
+  ];
+  const customPillowSkittleSizeOptions = [
+    { value: '12"', label: '12"' },
+    { value: '14"', label: '14"' },
+    { value: '16"', label: '16"' },
+    { value: '18"', label: '18"' },
+  ];
+  const customPillowEdgeFinishOptions = [
+    { value: 'KNIFE EDGE ($65)', label: 'KNIFE EDGE ($65)' },
+    { value: 'SELF CORD ($90)', label: 'SELF CORD ($90)' },
+    { value: 'CONTRAST CORD ($90)', label: 'CONTRAST CORD ($90)' },
+    { value: 'SELF BUTTERFLY ($90)', label: 'SELF BUTTERFLY ($90)' },
+    { value: 'CONTRAST BUTTERFLY ($90)', label: 'CONTRAST BUTTERFLY ($90)' },
+    { value: 'FRINGE / TASSEL ($90)', label: 'FRINGE / TASSEL ($90)' },
+    { value: 'SELF MITER FLANGE ($90)', label: 'SELF MITER FLANGE ($90)' },
+    { value: 'CONTRAST MITER FLANGE ($90)', label: 'CONTRAST MITER FLANGE ($90)' },
+  ];
+  const customPillowCustomEdgeFinishOptions = [
+    { value: 'KNIFE EDGE ($75)', label: 'KNIFE EDGE ($75)' },
+    { value: 'SELF CORD ($100)', label: 'SELF CORD ($100)' },
+    { value: 'CONTRAST CORD ($100)', label: 'CONTRAST CORD ($100)' },
+    { value: 'SELF BUTTERFLY ($100)', label: 'SELF BUTTERFLY ($100)' },
+    { value: 'CONTRAST BUTTERFLY ($100)', label: 'CONTRAST BUTTERFLY ($100)' },
+    { value: 'FRINGE / TASSEL ($100)', label: 'FRINGE / TASSEL ($100)' },
+    { value: 'SELF MITER FLANGE ($100)', label: 'SELF MITER FLANGE ($100)' },
+    { value: 'CONTRAST MITER FLANGE ($100)', label: 'CONTRAST MITER FLANGE ($100)' },
+  ];
+  const customPillowBolsterEdgeFinishOptions = [
+    { value: 'SELF CORD ', label: 'SELF CORD ' },
+    { value: 'CONTRAST CORD ', label: 'CONTRAST CORD ' },
+    { value: 'SELF RUFFLE ($45)', label: 'SELF RUFFLE ($45)' },
+    { value: 'CONTRAST RUFFLE ($45)', label: 'CONTRAST RUFFLE ($45)' },
+    { value: 'FRINGE ', label: 'FRINGE ' },
+    { value: 'TASSEL ', label: 'TASSEL ' },
+    { value: 'TASSLE FRINGE ', label: 'TASSLE FRINGE ' },
+  ];
+  const customPillowSkittleEdgeFinishOptions = [
+    { value: 'KNIFE EDGE', label: 'KNIFE EDGE' },
+    { value: 'SELF BOX BAND (+$25)', label: 'SELF BOX BAND (+$25)' },
+    { value: 'CONTRAST BOX BAND (+$25)', label: 'CONTRAST BOX BAND (+$25)' },
+  ];
+  const customPillowTapeTrimOptions = [
+    { value: 'NO TRIM', label: 'NO TRIM' },
+    { value: 'CENTER TRIM [FRONT] (+$10)', label: 'CENTER TRIM [FRONT] (+$10)' },
+    { value: 'CENTER TRIM [FRONT & BACK] (+$10)', label: 'CENTER TRIM [FRONT & BACK] (+$10)' },
+    { value: 'PARALLEL TRIM [FRONT] (+$20)', label: 'PARALLEL TRIM [FRONT] (+$20)' },
+    { value: 'PARALLEL TRIM [FRONT & BACK] (+$20)', label: 'PARALLEL TRIM [FRONT & BACK] (+$20)' },
+  ];
+  const customPillowBolsterTapeTrimOptions = [
+    { value: 'NO TRIM', label: 'NO TRIM' },
+    { value: 'CENTER TRIM (+$10)', label: 'CENTER TRIM (+$10)' },
+    { value: 'PARALLEL TRIM [2 PIECES] (+$20)', label: 'PARALLEL TRIM [2 PIECES] (+$20)' },
+  ];
+  const customPillowBasePrices = {
+    bolster: 135,
+    'ball pillow': 105,
+    skittle: 105,
+    'xl lumbar': 135,
+    'xl lumbar 14" x 48"': 135,
+  };
+  const customPillowFeatherDownInsertPricesBySize = {
+    '20" X 20"': 49,
+    '22" X 22"': 53,
+    '24" X 24"': 59,
+    '26" X 26"': 64,
+    'LITTLE LUMBAR 12" X 18"': 33,
+    '14" X 24"': 49,
+    '14" X 30"': 55,
+    '14" X 36"': 63,
+    'XL LUMBAR 14" X 48"': 73,
+    '15" X 22"': 45,
+    '20" X 26" STANDARD SHAM': 59,
+    '20" X 30" QUEEN SHAM': 64,
+    '20" X 36" KING SHAM': 69,
+  };
+  const customPillowDownAlternativeInsertPricesBySize = {
+    '20" X 20"': 53,
+    '22" X 22"': 58,
+    '24" X 24"': 63,
+    '26" X 26"': 68,
+    'LITTLE LUMBAR 12" X 18"': 28,
+    '14" X 24"': 48,
+    '14" X 30"': 58,
+    '14" X 36"': 73,
+    'XL LUMBAR 14" X 48"': 88,
+    '15" X 22"': 48,
+    '20" X 26" STANDARD SHAM': 68,
+    '20" X 30" QUEEN SHAM': 88,
+    '20" X 36" KING SHAM': 108,
+  };
+
+  const setCustomPillowSelectOptions = (select, placeholder, options, optionSet, force = false) => {
+    const currentValue = select.value;
+
+    if (!force && select.dataset.customPillowOptionSet === optionSet) return;
+
+    select.innerHTML = '';
+
+    const placeholderOption = document.createElement('option');
+    placeholderOption.value = '';
+    placeholderOption.textContent = placeholder;
+    select.appendChild(placeholderOption);
+
+    options.forEach((option) => {
+      const optionElement = document.createElement('option');
+      optionElement.value = option.value;
+      optionElement.textContent = option.label;
+      select.appendChild(optionElement);
+    });
+
+    select.dataset.customPillowOptionSet = optionSet;
+    select.value = options.some((option) => option.value === currentValue) ? currentValue : '';
+  };
+
+  const toggleCustomPillowProductTypeFields = (item) => {
+    const productTypeSelect = item.querySelector('[data-custom-pillow-product-type-select]');
+    const productDetails = item.querySelector('[data-custom-pillow-product-details]');
+    const sizeSelect = item.querySelector('[data-custom-pillow-size-select]');
+    const sizeField = sizeSelect?.closest('.custom-pillow-form__field');
+    const sizeLabel = item.querySelector('[data-custom-pillow-size-label]');
+    const customHeightField = item.querySelector('[data-custom-pillow-custom-height-field]');
+    const customWidthField = item.querySelector('[data-custom-pillow-custom-width-field]');
+    const edgeFinishField = item.querySelector('[data-custom-pillow-edge-finish-field]');
+    const edgeFinishSelect = item.querySelector('[data-custom-pillow-edge-finish-select]');
+    const tapeTrimRow = item.querySelector('[data-custom-pillow-tape-trim-row]');
+    const tapeTrimSelect = item.querySelector('[data-custom-pillow-tape-trim-select]');
+    const standardIntendedUseField = item.querySelector('[data-custom-pillow-standard-intended-use-field]');
+    const standardIntendedUseSelect = standardIntendedUseField?.querySelector('[data-custom-pillow-field]');
+    const reverseFabricNameLabel = item.querySelector('[data-custom-pillow-reverse-fabric-name-label]');
+    const reverseFabricNameField = item.querySelector('[data-custom-pillow-reverse-fabric-name-field]');
+    const reverseFabricLinkLabel = item.querySelector('[data-custom-pillow-reverse-fabric-link-label]');
+    const reverseFabricLinkField = item.querySelector('[data-custom-pillow-reverse-fabric-link-field]');
+    const bolsterLengthField = item.querySelector('[data-custom-pillow-bolster-length-field]');
+    const bolsterIntentedUseField = item.querySelector('[data-custom-pillow-bolster-intented-use-field]');
+    const bolsterIntentedUseSelect = bolsterIntentedUseField?.querySelector('[data-custom-pillow-field]');
+    const ottomanTypeField = item.querySelector('[data-custom-pillow-ottoman-type-field]');
+    const ottomanTrimmingField = item.querySelector('[data-custom-pillow-ottoman-trimming-field]');
+    const ottomanTrimmingSelect = ottomanTrimmingField?.querySelector('[data-custom-pillow-field]');
+    const ottomanTrimmingFabricNameField = item.querySelector('[data-custom-pillow-ottoman-trimming-fabric-name-field]');
+    const ottomanTrimmingFabricLinkField = item.querySelector('[data-custom-pillow-ottoman-trimming-fabric-link-field]');
+    const bolsterDisclaimer = item.querySelector('[data-custom-pillow-bolster-disclaimer]');
+    const ottomanDisclaimer = item.querySelector('[data-custom-pillow-ottoman-disclaimer]');
+    const ballPillowDisclaimer = item.querySelector('[data-custom-pillow-ball-pillow-disclaimer]');
+    const xlLumbarDisclaimer = item.querySelector('[data-custom-pillow-xl-lumbar-disclaimer]');
+    const addInsertField = item.querySelector('[data-custom-pillow-add-insert-field]');
+    const addInsertSelect = item.querySelector('[data-custom-pillow-add-insert-select]');
+    const customInsertHint = item.querySelector('[data-custom-pillow-custom-insert-hint]');
+    const insertTypeField = item.querySelector('[data-custom-pillow-insert-type-field]');
+    const insertTypeSelect = item.querySelector('[data-custom-pillow-insert-type-select]');
+    const boxBandRow = item.querySelector('[data-custom-pillow-box-band-row]');
+    const boxBandSelect = item.querySelector('[data-custom-pillow-box-band-select]');
+    const itemNotesField = item.querySelector('[data-custom-pillow-item-notes-field]');
+
+    if (!productTypeSelect || !sizeSelect || !sizeLabel) return;
+
+    const productTypeValue = (productTypeSelect.value || '').trim().toLowerCase();
+    const productTypeChanged = item.dataset.customPillowProductType !== productTypeValue;
+    const hasProductType = productTypeValue !== '';
+    const isBolster = productTypeValue === 'bolster';
+    const isOttoman = productTypeValue === 'ottoman';
+    const isBallPillow = productTypeValue === 'ball pillow';
+    const isSkittle = productTypeValue === 'skittle';
+    const isXlLumbar = productTypeValue === 'xl lumbar' || productTypeValue === 'xl lumbar 14" x 48"';
+    const isStandardPillow = productTypeValue === 'pillow' || productTypeValue === 'pillow (standard)' || productTypeValue === 'pillow (standard sizes)';
+    const isCustomPillow = productTypeValue === 'pillow (custom)' || productTypeValue === 'pillow (custom sizes)';
+    const standardIntendedUseValue = (standardIntendedUseSelect?.value || '').trim().toLowerCase();
+    const isOutdoorPillow = (isStandardPillow || isCustomPillow) && standardIntendedUseValue === 'outdoor';
+    const isPillowWithInsertOption = isStandardPillow || isCustomPillow;
+
+    item.dataset.customPillowProductType = productTypeValue;
+
+    if (productDetails) {
+      productDetails.style.display = hasProductType ? 'block' : 'none';
+      productDetails.setAttribute('aria-hidden', hasProductType ? 'false' : 'true');
+
+      productDetails.querySelectorAll('[data-custom-pillow-field]').forEach((field) => {
+        field.disabled = !hasProductType;
+
+        if (!hasProductType) {
+          if (field.type === 'checkbox') {
+            field.checked = false;
+          } else if (field.dataset.fieldLabel === 'QUANTITY') {
+            field.value = '1';
+          } else {
+            field.value = '';
+          }
+        }
+      });
+    }
+
+    if (!hasProductType) {
+      return false;
+    }
+
+    sizeLabel.textContent = 'SIZE';
+    sizeSelect.dataset.fieldLabel = 'SIZE';
+
+    if (reverseFabricNameLabel) {
+      reverseFabricNameLabel.textContent = 'REVERSE FABRIC NAME & COLORWAY';
+    }
+
+    if (reverseFabricNameField) {
+      reverseFabricNameField.dataset.fieldLabel = 'REVERSE FABRIC NAME & COLORWAY';
+    }
+
+    if (reverseFabricLinkLabel) {
+      reverseFabricLinkLabel.textContent = 'REVERSE FABRIC LINK';
+    }
+
+    if (reverseFabricLinkField) {
+      reverseFabricLinkField.dataset.fieldLabel = 'REVERSE FABRIC LINK';
+    }
+
+    if (sizeField) {
+      sizeField.style.display = isOttoman || isBallPillow || isXlLumbar || isCustomPillow ? 'none' : 'block';
+      sizeField.setAttribute('aria-hidden', isOttoman || isBallPillow || isXlLumbar || isCustomPillow ? 'true' : 'false');
+    }
+
+    sizeSelect.disabled = isOttoman || isBallPillow || isXlLumbar || isCustomPillow;
+
+    if (isOttoman || isBallPillow || isXlLumbar || isCustomPillow) {
+      sizeSelect.value = '';
+    }
+
+    [
+      standardIntendedUseField,
+      customHeightField,
+      customWidthField
+    ].forEach((fieldWrapper) => {
+      if (!fieldWrapper) return;
+
+      const showField = fieldWrapper === standardIntendedUseField ? isStandardPillow || isCustomPillow || isXlLumbar : isCustomPillow;
+
+      fieldWrapper.style.display = showField ? 'block' : 'none';
+      fieldWrapper.setAttribute('aria-hidden', showField ? 'false' : 'true');
+
+      fieldWrapper.querySelectorAll('[data-custom-pillow-field]').forEach((field) => {
+        field.disabled = !showField;
+
+        if (!showField) {
+          field.value = '';
+        }
+      });
+    });
+
+    if (isBolster) {
+      const intendedUseValue = (bolsterIntentedUseSelect?.value || '').trim().toLowerCase();
+
+      if (intendedUseValue === 'outdoor') {
+        setCustomPillowSelectOptions(sizeSelect, 'SELECT SIZE', customPillowBolsterOutdoorSizeOptions, 'bolster-outdoor-size', productTypeChanged);
+      } else {
+        setCustomPillowSelectOptions(sizeSelect, 'SELECT SIZE', customPillowBolsterSizeOptions, 'bolster-size', productTypeChanged);
+      }
+    } else if (isSkittle) {
+      setCustomPillowSelectOptions(sizeSelect, 'SELECT SIZE', customPillowSkittleSizeOptions, 'skittle-size', productTypeChanged);
+    } else if (isStandardPillow) {
+      if (standardIntendedUseValue === 'outdoor') {
+        setCustomPillowSelectOptions(sizeSelect, 'SELECT SIZE', customPillowStandardOutdoorSizeOptions, 'standard-outdoor-size', productTypeChanged);
+      } else {
+        setCustomPillowSelectOptions(sizeSelect, 'SELECT SIZE', customPillowStandardSizeOptions, 'standard-size', productTypeChanged);
+      }
+    } else if (!isOttoman && !isBallPillow && !isXlLumbar && !isCustomPillow) {
+      setCustomPillowSelectOptions(sizeSelect, 'SELECT SIZE', customPillowStandardSizeOptions, 'standard-size', productTypeChanged);
+    }
+
+    if (edgeFinishSelect) {
+      if (isBolster) {
+        setCustomPillowSelectOptions(edgeFinishSelect, 'SELECT EDGE FINISH', customPillowBolsterEdgeFinishOptions, 'bolster-edge-finish', productTypeChanged);
+      } else if (isSkittle) {
+        setCustomPillowSelectOptions(edgeFinishSelect, 'SELECT EDGE FINISH', customPillowSkittleEdgeFinishOptions, 'skittle-edge-finish', productTypeChanged);
+      } else if (isCustomPillow) {
+        setCustomPillowSelectOptions(edgeFinishSelect, 'SELECT EDGE FINISH', customPillowCustomEdgeFinishOptions, 'custom-pillow-edge-finish', productTypeChanged);
+      } else {
+        setCustomPillowSelectOptions(edgeFinishSelect, 'SELECT EDGE FINISH', customPillowEdgeFinishOptions, 'pillow-edge-finish', productTypeChanged);
+      }
+    }
+
+    if (edgeFinishField) {
+      edgeFinishField.style.display = isOttoman || isBallPillow ? 'none' : 'block';
+      edgeFinishField.setAttribute('aria-hidden', isOttoman || isBallPillow ? 'true' : 'false');
+    }
+
+    if (edgeFinishSelect) {
+      edgeFinishSelect.disabled = isOttoman || isBallPillow;
+
+      if (isOttoman || isBallPillow) {
+        edgeFinishSelect.value = '';
+      }
+    }
+
+    if (addInsertField) {
+      addInsertField.style.display = isPillowWithInsertOption ? 'block' : 'none';
+      addInsertField.setAttribute('aria-hidden', isPillowWithInsertOption ? 'false' : 'true');
+    }
+
+    if (customInsertHint) {
+      customInsertHint.hidden = !isCustomPillow;
+    }
+
+    if (addInsertSelect) {
+      addInsertSelect.disabled = !isPillowWithInsertOption;
+      addInsertSelect.required = isPillowWithInsertOption;
+
+      if (!isPillowWithInsertOption) {
+        addInsertSelect.value = '';
+      } else if (productTypeChanged) {
+        addInsertSelect.value = '';
+      }
+    }
+
+    const showInsertTypeField = isPillowWithInsertOption && !isOutdoorPillow && (addInsertSelect?.value || '').trim().toLowerCase() === 'yes';
+
+    if (insertTypeField) {
+      insertTypeField.style.display = showInsertTypeField ? 'block' : 'none';
+      insertTypeField.setAttribute('aria-hidden', showInsertTypeField ? 'false' : 'true');
+    }
+
+    if (insertTypeSelect) {
+      insertTypeSelect.disabled = !showInsertTypeField;
+      insertTypeSelect.required = showInsertTypeField;
+
+      if (!showInsertTypeField) {
+        insertTypeSelect.value = '';
+      }
+    }
+
+    if (tapeTrimSelect) {
+      if (isBolster) {
+        setCustomPillowSelectOptions(tapeTrimSelect, 'CHOOSE ONE', customPillowBolsterTapeTrimOptions, 'bolster-tape-trim', productTypeChanged);
+      } else {
+        setCustomPillowSelectOptions(tapeTrimSelect, 'CHOOSE ONE', customPillowTapeTrimOptions, 'pillow-tape-trim', productTypeChanged);
+      }
+    }
+
+    if (tapeTrimRow) {
+      tapeTrimRow.style.display = isOttoman || isBallPillow || isSkittle ? 'none' : 'grid';
+      tapeTrimRow.setAttribute('aria-hidden', isOttoman || isBallPillow || isSkittle ? 'true' : 'false');
+    }
+
+    if (tapeTrimSelect) {
+      tapeTrimSelect.disabled = isOttoman || isBallPillow || isSkittle;
+
+      if (isOttoman || isBallPillow || isSkittle) {
+        tapeTrimSelect.value = '';
+      }
+    }
+
+    if (bolsterLengthField) {
+      bolsterLengthField.style.display = 'none';
+      bolsterLengthField.setAttribute('aria-hidden', 'true');
+
+      bolsterLengthField.querySelectorAll('[data-custom-pillow-field]').forEach((field) => {
+        field.disabled = true;
+        field.value = '';
+      });
+    }
+
+    if (bolsterIntentedUseField) {
+      bolsterIntentedUseField.style.display = isBolster ? 'block' : 'none';
+      bolsterIntentedUseField.setAttribute('aria-hidden', isBolster ? 'false' : 'true');
+
+      bolsterIntentedUseField.querySelectorAll('[data-custom-pillow-field]').forEach((field) => {
+        field.disabled = !isBolster;
+
+        if (!isBolster) {
+          field.value = '';
+        }
+      });
+    }
+
+    [
+      ottomanTypeField,
+      ottomanTrimmingField
+    ].forEach((fieldWrapper) => {
+      if (!fieldWrapper) return;
+
+      fieldWrapper.style.display = isOttoman ? 'block' : 'none';
+      fieldWrapper.setAttribute('aria-hidden', isOttoman ? 'false' : 'true');
+
+      fieldWrapper.querySelectorAll('[data-custom-pillow-field]').forEach((field) => {
+        field.disabled = !isOttoman;
+
+        if (!isOttoman) {
+          field.value = '';
+        }
+      });
+    });
+
+    const showOttomanTrimmingFabricFields = isOttoman && (ottomanTrimmingSelect?.value || '').trim().toLowerCase() === 'bullion';
+
+    [
+      ottomanTrimmingFabricNameField,
+      ottomanTrimmingFabricLinkField
+    ].forEach((fieldWrapper) => {
+      if (!fieldWrapper) return;
+
+      fieldWrapper.style.display = showOttomanTrimmingFabricFields ? 'block' : 'none';
+      fieldWrapper.setAttribute('aria-hidden', showOttomanTrimmingFabricFields ? 'false' : 'true');
+
+      fieldWrapper.querySelectorAll('[data-custom-pillow-field]').forEach((field) => {
+        field.disabled = !showOttomanTrimmingFabricFields;
+
+        if (!showOttomanTrimmingFabricFields) {
+          field.value = '';
+        }
+      });
+    });
+
+    if (bolsterDisclaimer) {
+      bolsterDisclaimer.style.display = isBolster ? 'block' : 'none';
+      bolsterDisclaimer.setAttribute('aria-hidden', isBolster ? 'false' : 'true');
+    }
+
+    if (ottomanDisclaimer) {
+      ottomanDisclaimer.style.display = isOttoman ? 'block' : 'none';
+      ottomanDisclaimer.setAttribute('aria-hidden', isOttoman ? 'false' : 'true');
+    }
+
+    if (ballPillowDisclaimer) {
+      ballPillowDisclaimer.style.display = isBallPillow ? 'block' : 'none';
+      ballPillowDisclaimer.setAttribute('aria-hidden', isBallPillow ? 'false' : 'true');
+    }
+
+    if (xlLumbarDisclaimer) {
+      xlLumbarDisclaimer.style.display = isXlLumbar ? 'block' : 'none';
+      xlLumbarDisclaimer.setAttribute('aria-hidden', isXlLumbar ? 'false' : 'true');
+    }
+
+    if (boxBandRow) {
+      boxBandRow.style.display = isBolster || isOttoman || isBallPillow || isSkittle ? 'none' : 'grid';
+      boxBandRow.setAttribute('aria-hidden', isBolster || isOttoman || isBallPillow || isSkittle ? 'true' : 'false');
+    }
+
+    if (boxBandSelect) {
+      boxBandSelect.disabled = isBolster || isOttoman || isBallPillow || isSkittle;
+
+      if (isBolster || isOttoman || isBallPillow || isSkittle) {
+        boxBandSelect.value = '';
+      }
+    }
+
+    if (itemNotesField) {
+      itemNotesField.style.display = isBallPillow ? 'none' : 'block';
+      itemNotesField.setAttribute('aria-hidden', isBallPillow ? 'true' : 'false');
+
+      itemNotesField.querySelectorAll('[data-custom-pillow-field]').forEach((field) => {
+        field.disabled = isBallPillow;
+
+        if (isBallPillow) {
+          field.value = '';
+        }
+      });
+    }
+
+    return true;
+  };
+
+  const toggleCustomPillowEdgeFinishFields = (item) => {
+    const edgeFinishSelect = item.querySelector('[data-custom-pillow-edge-finish-select]');
+    const edgeFinishFields = item.querySelector('[data-custom-pillow-edge-finish-fields]');
+    const sameSideWrapper = item.querySelector('[data-custom-pillow-same-side-wrapper]');
+    const sameSideCheckbox = item.querySelector('[data-custom-pillow-same-side-checkbox]');
+    const ruffleLengthField = item.querySelector('[data-custom-pillow-ruffle-length-field]');
+    const skittleBoxBandWidthField = item.querySelector('[data-custom-pillow-skittle-box-band-width-field]');
+    const skittleKnifeEdgeDisclaimer = item.querySelector('[data-custom-pillow-skittle-knife-edge-disclaimer]');
+    const skittleBoxBandDisclaimer = item.querySelector('[data-custom-pillow-skittle-box-band-disclaimer]');
+    const productTypeSelect = item.querySelector('[data-custom-pillow-product-type-select]');
+
+    if (!edgeFinishSelect || !edgeFinishFields) return;
+
+    const edgeFinishValue = (edgeFinishSelect.value || '').trim().toLowerCase();
+    const productTypeValue = (productTypeSelect?.value || '').trim().toLowerCase();
+    const isBolster = productTypeValue === 'bolster';
+    const isSkittle = productTypeValue === 'skittle';
+    const isKnifeEdge = edgeFinishValue.startsWith('knife edge');
+    const isBolsterSelfCord = isBolster && edgeFinishValue.startsWith('self cord');
+    const isSkittleSelfBoxBand = isSkittle && edgeFinishValue.startsWith('self box band');
+    const showSameSideField = edgeFinishValue !== '' && !isBolster;
+    const showEdgeFinishFields = edgeFinishValue !== '' && !isKnifeEdge && !isBolsterSelfCord && !isSkittleSelfBoxBand;
+    const showRuffleLengthField = showEdgeFinishFields && edgeFinishValue.includes('ruffle');
+    const showSkittleBoxBandWidthField = isSkittle && edgeFinishValue.includes('box band');
+    const showSkittleKnifeEdgeDisclaimer = isSkittle && isKnifeEdge;
+    const showSkittleBoxBandDisclaimer = showSkittleBoxBandWidthField;
+
+    if (skittleKnifeEdgeDisclaimer) {
+      skittleKnifeEdgeDisclaimer.style.display = showSkittleKnifeEdgeDisclaimer ? 'block' : 'none';
+      skittleKnifeEdgeDisclaimer.setAttribute('aria-hidden', showSkittleKnifeEdgeDisclaimer ? 'false' : 'true');
+    }
+
+    if (skittleBoxBandDisclaimer) {
+      skittleBoxBandDisclaimer.style.display = showSkittleBoxBandDisclaimer ? 'block' : 'none';
+      skittleBoxBandDisclaimer.setAttribute('aria-hidden', showSkittleBoxBandDisclaimer ? 'false' : 'true');
+    }
+
+    if (sameSideWrapper) {
+      sameSideWrapper.style.display = showSameSideField ? 'block' : 'none';
+      sameSideWrapper.setAttribute('aria-hidden', showSameSideField ? 'false' : 'true');
+
+      if (showSameSideField) {
+        sameSideWrapper.classList.add('custom-pillow-form__same-side-row--visible');
+      } else {
+        sameSideWrapper.classList.remove('custom-pillow-form__same-side-row--visible');
+      }
+    }
+
+    if (sameSideCheckbox) {
+      sameSideCheckbox.disabled = !showSameSideField;
+
+      if (!showSameSideField) {
+        sameSideCheckbox.checked = false;
+      }
+    }
+
+    edgeFinishFields.style.display = showEdgeFinishFields ? 'grid' : 'none';
+    edgeFinishFields.setAttribute('aria-hidden', showEdgeFinishFields ? 'false' : 'true');
+
+    if (showEdgeFinishFields) {
+      edgeFinishFields.classList.add('custom-pillow-form__conditional-fields--visible');
+    } else {
+      edgeFinishFields.classList.remove('custom-pillow-form__conditional-fields--visible');
+    }
+
+    edgeFinishFields.querySelectorAll('[data-custom-pillow-field]').forEach((field) => {
+      field.disabled = !showEdgeFinishFields;
+
+      if (!showEdgeFinishFields) {
+        field.value = '';
+      }
+    });
+
+    if (ruffleLengthField) {
+      ruffleLengthField.style.display = showRuffleLengthField ? 'block' : 'none';
+      ruffleLengthField.setAttribute('aria-hidden', showRuffleLengthField ? 'false' : 'true');
+
+      ruffleLengthField.querySelectorAll('[data-custom-pillow-field]').forEach((field) => {
+        field.disabled = !showRuffleLengthField;
+
+        if (!showRuffleLengthField) {
+          field.value = '';
+        }
+      });
+    }
+
+    if (skittleBoxBandWidthField) {
+      skittleBoxBandWidthField.style.display = showSkittleBoxBandWidthField ? 'grid' : 'none';
+      skittleBoxBandWidthField.setAttribute('aria-hidden', showSkittleBoxBandWidthField ? 'false' : 'true');
+
+      if (showSkittleBoxBandWidthField) {
+        skittleBoxBandWidthField.classList.add('custom-pillow-form__conditional-fields--visible');
+      } else {
+        skittleBoxBandWidthField.classList.remove('custom-pillow-form__conditional-fields--visible');
+      }
+
+      skittleBoxBandWidthField.querySelectorAll('[data-custom-pillow-field]').forEach((field) => {
+        field.disabled = !showSkittleBoxBandWidthField;
+
+        if (!showSkittleBoxBandWidthField) {
+          field.value = '';
+        }
+      });
+    }
+  };
+
+  const toggleCustomPillowSameSideFields = (item) => {
+    const sameSideCheckbox = item.querySelector('[data-custom-pillow-same-side-checkbox]');
+    const reverseFabricFields = item.querySelector('[data-custom-pillow-reverse-fabric-fields]');
+    const productTypeSelect = item.querySelector('[data-custom-pillow-product-type-select]');
+    const productTypeValue = (productTypeSelect?.value || '').trim().toLowerCase();
+    const hideReverseFabricFields = productTypeValue === 'bolster' || productTypeValue === 'ottoman' || productTypeValue === 'ball pillow' || (sameSideCheckbox?.checked === true && !sameSideCheckbox.disabled);
+
+    if (!reverseFabricFields) return;
+
+    reverseFabricFields.style.display = hideReverseFabricFields ? 'none' : 'grid';
+    reverseFabricFields.setAttribute('aria-hidden', hideReverseFabricFields ? 'true' : 'false');
+
+    reverseFabricFields.querySelectorAll('[data-custom-pillow-field]').forEach((field) => {
+      field.disabled = hideReverseFabricFields;
+
+      if (hideReverseFabricFields) {
+        field.value = '';
+      }
+    });
+  };
+
+  const toggleCustomPillowTapeTrimFields = (item) => {
+    const tapeTrimSelect = item.querySelector('[data-custom-pillow-tape-trim-select]');
+    const tapeTrimFields = item.querySelector('[data-custom-pillow-tape-trim-fields]');
+
+    if (!tapeTrimSelect || !tapeTrimFields) return;
+
+    const tapeTrimValue = (tapeTrimSelect.value || '').trim().toLowerCase();
+    const showTapeTrimFields = tapeTrimValue !== '' && tapeTrimValue !== 'no trim';
+    const showParallelTrimField = showTapeTrimFields && (tapeTrimValue.includes('parallel') || tapeTrimValue.includes('parrallel'));
+
+    tapeTrimFields.style.display = showTapeTrimFields ? 'grid' : 'none';
+    tapeTrimFields.setAttribute('aria-hidden', showTapeTrimFields ? 'false' : 'true');
+
+    if (showTapeTrimFields) {
+      tapeTrimFields.classList.add('custom-pillow-form__conditional-fields--visible');
+    } else {
+      tapeTrimFields.classList.remove('custom-pillow-form__conditional-fields--visible');
+    }
+
+    tapeTrimFields.querySelectorAll('[data-custom-pillow-field]').forEach((field) => {
+      field.disabled = !showTapeTrimFields;
+
+      if (!showTapeTrimFields) {
+        field.value = '';
+      }
+    });
+
+    tapeTrimFields.querySelectorAll('[data-custom-pillow-parallel-trim-field]').forEach((fieldWrapper) => {
+      fieldWrapper.style.display = showParallelTrimField ? 'block' : 'none';
+      fieldWrapper.setAttribute('aria-hidden', showParallelTrimField ? 'false' : 'true');
+
+      fieldWrapper.querySelectorAll('[data-custom-pillow-field]').forEach((field) => {
+        field.disabled = !showParallelTrimField;
+
+        if (!showParallelTrimField) {
+          field.value = '';
+        }
+      });
+    });
+  };
+
+  const toggleCustomPillowBoxBandFields = (item) => {
+    const boxBandRow = item.querySelector('[data-custom-pillow-box-band-row]');
+    const boxBandSelect = item.querySelector('[data-custom-pillow-box-band-select]');
+    const boxBandFields = item.querySelector('[data-custom-pillow-box-band-fields]');
+
+    if (!boxBandSelect || !boxBandFields) return;
+
+    const boxBandValue = (boxBandSelect.value || '').trim().toLowerCase();
+    const showBoxBandRow = !boxBandSelect.disabled;
+    const showBoxBandFields = showBoxBandRow && boxBandValue !== '' && boxBandValue !== 'no box band';
+
+    if (boxBandRow) {
+      boxBandRow.style.display = showBoxBandRow ? 'grid' : 'none';
+      boxBandRow.setAttribute('aria-hidden', showBoxBandRow ? 'false' : 'true');
+    }
+
+    boxBandFields.style.display = showBoxBandFields ? 'grid' : 'none';
+    boxBandFields.setAttribute('aria-hidden', showBoxBandFields ? 'false' : 'true');
+
+    if (showBoxBandFields) {
+      boxBandFields.classList.add('custom-pillow-form__conditional-fields--visible');
+    } else {
+      boxBandFields.classList.remove('custom-pillow-form__conditional-fields--visible');
+    }
+
+    boxBandFields.querySelectorAll('[data-custom-pillow-field]').forEach((field) => {
+      field.disabled = !showBoxBandFields;
+
+      if (!showBoxBandFields) {
+        field.value = '';
+      }
+    });
+  };
+
+  const getCustomPillowSelectedOptionText = (field) => {
+    if (field.tagName !== 'SELECT') return '';
+
+    const selectedOption = field.options[field.selectedIndex];
+    return selectedOption?.textContent || field.value || '';
+  };
+
+  const getCustomPillowPriceFromText = (text) => {
+    const prices = String(text || '').match(/\$[0-9]+(?:\.[0-9]{1,2})?/g) || [];
+    return prices.reduce((total, price) => total + Number(price.replace('$', '')), 0);
+  };
+
+  const formatCustomPillowPrice = (amount) => {
+    return `$${amount.toLocaleString('en-US', {
+      minimumFractionDigits: Number.isInteger(amount) ? 0 : 2,
+      maximumFractionDigits: 2,
+    })}`;
+  };
+
+  const customPillowOptionalFieldLabels = new Set([
+    'ESTIMATED PRICE',
+    'NOTES',
+    'SAME SIDED',
+    'SIDEMARK',
+  ]);
+
+  const getCustomPillowFieldLabel = (field) => {
+    const label = field.dataset.fieldLabel || field.closest('.custom-pillow-form__field')?.querySelector('label')?.textContent || 'FIELD';
+    return label.trim().replace(/\s+/g, ' ').toUpperCase();
+  };
+
+  const getCustomPillowValidationName = (field) => {
+    const fieldLabel = getCustomPillowFieldLabel(field);
+    const item = field.closest('[data-custom-pillow-item]');
+    const itemNumber = item?.querySelector('[data-custom-pillow-item-number]')?.textContent?.trim();
+
+    return itemNumber ? `ITEM ${itemNumber} - ${fieldLabel}` : fieldLabel;
+  };
+
+  const shouldValidateCustomPillowField = (field) => {
+    if (!field || field.disabled || field.type === 'hidden' || field.type === 'checkbox' || field.type === 'submit') return false;
+    if (field.name === 'contact[Sidemark]' || field.name === 'contact[body]') return false;
+
+    return !customPillowOptionalFieldLabels.has(getCustomPillowFieldLabel(field));
+  };
+
+  const getCustomPillowValidationFields = (form, scope = form) => {
+    const selector = scope === form
+      ? '.custom-pillow-form__contact input, [data-custom-pillow-field]'
+      : '[data-custom-pillow-field]';
+
+    return Array.from(scope.querySelectorAll(selector));
+  };
+
+  const setCustomPillowFieldErrorState = (field, hasError) => {
+    const fieldWrapper = field.closest('.custom-pillow-form__field');
+
+    field.classList.toggle('custom-pillow-form__input--error', hasError);
+    field.setAttribute('aria-invalid', hasError ? 'true' : 'false');
+
+    if (fieldWrapper) {
+      fieldWrapper.classList.toggle('custom-pillow-form__field--error', hasError);
+    }
+  };
+
+  const syncCustomPillowRequiredFields = (form) => {
+    getCustomPillowValidationFields(form).forEach((field) => {
+      field.required = shouldValidateCustomPillowField(field);
+      field.setCustomValidity('');
+      setCustomPillowFieldErrorState(field, false);
+    });
+  };
+
+  const getCustomPillowFieldError = (field) => {
+    if (!shouldValidateCustomPillowField(field)) return '';
+
+    const fieldName = getCustomPillowValidationName(field);
+
+    field.setCustomValidity('');
+
+    if (field.validity.valueMissing) {
+      return `PLEASE COMPLETE ${fieldName}.`;
+    }
+
+    if (field.validity.typeMismatch) {
+      if (field.type === 'email') return `PLEASE ENTER A VALID EMAIL ADDRESS.`;
+      if (field.type === 'url') return `PLEASE ENTER A VALID URL FOR ${fieldName}.`;
+      return `PLEASE ENTER A VALID VALUE FOR ${fieldName}.`;
+    }
+
+    if (field.validity.stepMismatch) {
+      if (field.dataset.customPillowWholeNumber === 'true') {
+        return `PLEASE ENTER A WHOLE NUMBER FOR ${fieldName}.`;
+      }
+
+      return `PLEASE ENTER A VALID VALUE FOR ${fieldName}.`;
+    }
+
+    if (field.validity.rangeUnderflow) {
+      return `PLEASE ENTER A VALUE OF AT LEAST ${field.min} FOR ${fieldName}.`;
+    }
+
+    if (field.validity.rangeOverflow) {
+      return `PLEASE ENTER A VALUE OF ${field.max} OR LESS FOR ${fieldName}.`;
+    }
+
+    return '';
+  };
+
+  const validateCustomPillowForm = (form, showMessage = false, fields = getCustomPillowValidationFields(form)) => {
+    const validationError = form.querySelector('[data-custom-pillow-validation-error]');
+    const validationErrorText = form.querySelector('[data-custom-pillow-validation-error-text]');
+    const fieldStates = fields.map((field) => {
+      const message = getCustomPillowFieldError(field);
+      field.setCustomValidity(message);
+      return { field, message };
+    });
+    const fieldErrors = fieldStates.filter((fieldError) => fieldError.message);
+    const shouldShowMessage = showMessage || (validationError && !validationError.hidden);
+
+    fieldStates.forEach((fieldState) => {
+      setCustomPillowFieldErrorState(fieldState.field, shouldShowMessage && fieldState.message !== '');
+    });
+
+    if (fieldErrors.length && validationError && validationErrorText && shouldShowMessage) {
+      validationErrorText.replaceChildren();
+
+      if (fieldErrors.length === 1) {
+        validationErrorText.textContent = fieldErrors[0].message;
+      } else {
+        const messageIntro = document.createElement('p');
+        const fieldList = document.createElement('ul');
+
+        messageIntro.textContent = 'PLEASE COMPLETE THESE FIELDS:';
+
+        fieldErrors.forEach((fieldError) => {
+          const fieldListItem = document.createElement('li');
+          fieldListItem.textContent = getCustomPillowValidationName(fieldError.field);
+          fieldList.appendChild(fieldListItem);
+        });
+
+        validationErrorText.append(messageIntro, fieldList);
+      }
+
+      validationError.hidden = false;
+    } else if (validationError) {
+      validationErrorText?.replaceChildren();
+      validationError.hidden = true;
+    }
+
+    return {
+      isValid: fieldErrors.length === 0,
+      firstInvalidField: fieldErrors[0]?.field,
+    };
+  };
+
+  const isCustomPillowDraftEnabled = (form) => {
+    return form.dataset.customPillowDraftEnabled === 'true' && form.dataset.customPillowCustomerId;
+  };
+
+  const getCustomPillowDraftKey = (form) => {
+    return `custom-pillow-form-draft:${form.dataset.customPillowCustomerId}:${window.location.pathname}`;
+  };
+
+  const getCustomPillowDraftFormKey = () => {
+    return window.location.pathname;
+  };
+
+  const getCustomPillowDraftBasePath = (form) => {
+    const fallbackPath = '/apps/wishlist-1/custom-pillow-draft';
+    const formAction = form.getAttribute('action') || '';
+
+    try {
+      const actionUrl = new URL(formAction, window.location.origin);
+      return actionUrl.pathname.replace(/\/custom-pillow-form$/, '/custom-pillow-draft') || fallbackPath;
+    } catch (error) {
+      return fallbackPath;
+    }
+  };
+
+  const getCustomPillowDraftEndpoint = (form, path = '') => {
+    const params = new URLSearchParams({
+      form_key: getCustomPillowDraftFormKey(),
+    });
+
+    return `${getCustomPillowDraftBasePath(form)}${path}?${params.toString()}`;
+  };
+
+  const readCustomPillowLocalDraft = (form) => {
+    try {
+      return JSON.parse(window.localStorage.getItem(getCustomPillowDraftKey(form)) || 'null');
+    } catch (error) {
+      window.localStorage.removeItem(getCustomPillowDraftKey(form));
+      return null;
+    }
+  };
+
+  const writeCustomPillowLocalDraft = (form, draftData) => {
+    try {
+      window.localStorage.setItem(getCustomPillowDraftKey(form), JSON.stringify(draftData));
+      return true;
+    } catch (error) {
+      return false;
+    }
+  };
+
+  const removeCustomPillowLocalDraft = (form) => {
+    window.localStorage.removeItem(getCustomPillowDraftKey(form));
+  };
+
+  const fetchCustomPillowServerDraft = async (form) => {
+    if (!isCustomPillowDraftEnabled(form)) return null;
+
+    const response = await window.fetch(getCustomPillowDraftEndpoint(form), {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+      },
+      credentials: 'same-origin',
+    });
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Draft could not be loaded.');
+    }
+
+    return data.draft || null;
+  };
+
+  const saveCustomPillowServerDraft = async (form, draftData) => {
+    if (!isCustomPillowDraftEnabled(form)) return null;
+
+    const response = await window.fetch(getCustomPillowDraftEndpoint(form), {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      credentials: 'same-origin',
+      body: JSON.stringify({
+        formKey: getCustomPillowDraftFormKey(),
+        draft: draftData,
+      }),
+    });
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Draft could not be saved.');
+    }
+
+    return data.draft || draftData;
+  };
+
+  const clearCustomPillowServerDraft = async (form) => {
+    if (!isCustomPillowDraftEnabled(form)) return false;
+
+    const response = await window.fetch(getCustomPillowDraftEndpoint(form, '/clear'), {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      credentials: 'same-origin',
+      body: JSON.stringify({
+        formKey: getCustomPillowDraftFormKey(),
+      }),
+    });
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Draft could not be cleared.');
+    }
+
+    return true;
+  };
+
+  const showCustomPillowDraftFeedback = (form, message) => {
+    const draftFeedback = form.querySelector('[data-custom-pillow-draft-feedback]');
+    const draftFeedbackText = form.querySelector('[data-custom-pillow-draft-feedback-text]');
+    if (!draftFeedback) return;
+
+    if (draftFeedbackText) {
+      draftFeedbackText.textContent = message;
+    } else {
+      draftFeedback.textContent = message;
+    }
+
+    draftFeedback.hidden = false;
+
+    window.clearTimeout(form.customPillowDraftFeedbackTimeout);
+    form.customPillowDraftFeedbackTimeout = window.setTimeout(() => {
+      draftFeedback.hidden = true;
+    }, 3500);
+  };
+
+  const resetCustomPillowItemFields = (item) => {
+    item.querySelectorAll('input, select, textarea').forEach((field) => {
+      field.setCustomValidity?.('');
+      field.removeAttribute('aria-invalid');
+      field.classList.remove('custom-pillow-form__input--error');
+      field.closest('.custom-pillow-form__field')?.classList.remove('custom-pillow-form__field--error');
+
+      if (field.type === 'checkbox') {
+        field.checked = false;
+        field.value = field.getAttribute('value') || 'YES';
+      } else if (field.dataset.fieldLabel === 'QUANTITY') {
+        field.value = '1';
+      } else if (field.type !== 'hidden') {
+        field.value = '';
+      }
+    });
+  };
+
+  const cloneCustomPillowItem = (sourceItem) => {
+    const newItem = sourceItem.cloneNode(true);
+    resetCustomPillowItemFields(newItem);
+    return newItem;
+  };
+
+  const findCustomPillowItemField = (item, fieldId) => {
+    return Array.from(item.querySelectorAll('[data-custom-pillow-field]')).find((field) => {
+      return field.dataset.fieldId === fieldId;
+    });
+  };
+
+  const setCustomPillowFieldValue = (field, fieldData) => {
+    if (!field) return;
+
+    const productTypeDraftValue = String(fieldData.value || '').trim().toUpperCase();
+    const fieldValue = field.dataset.fieldId?.includes('customPillowProductType') && (productTypeDraftValue === 'PILLOW' || productTypeDraftValue === 'PILLOW (STANDARD)')
+      ? 'PILLOW (STANDARD SIZES)'
+      : field.dataset.fieldId?.includes('customPillowProductType') && productTypeDraftValue === 'PILLOW (CUSTOM)'
+        ? 'PILLOW (CUSTOM SIZES)'
+        : fieldData.value || '';
+
+    if (field.type === 'checkbox') {
+      field.checked = Boolean(fieldData.checked);
+      field.value = field.getAttribute('value') || fieldValue || 'YES';
+      return;
+    }
+
+    field.value = fieldValue;
+  };
+
+  const getCustomPillowDraftData = (form) => {
+    const contactFields = Array.from(form.querySelectorAll('[name="contact[name]"], [name="contact[email]"], [name="contact[Sidemark]"], [name="contact[body]"]')).map((field) => {
+      return {
+        name: field.name,
+        value: field.value || '',
+      };
+    });
+    const items = Array.from(form.querySelectorAll('[data-custom-pillow-item]')).map((item) => {
+      return {
+        fields: Array.from(item.querySelectorAll('[data-custom-pillow-field]')).filter((field) => {
+          return !field.hasAttribute('data-custom-pillow-estimate-input');
+        }).map((field) => {
+          return {
+            fieldId: field.dataset.fieldId,
+            value: field.value || '',
+            checked: field.type === 'checkbox' ? field.checked : undefined,
+          };
+        }),
+      };
+    });
+
+    return {
+      savedAt: new Date().toISOString(),
+      contactFields,
+      items,
+    };
+  };
+
+  const saveCustomPillowDraft = async (form) => {
+    if (!isCustomPillowDraftEnabled(form)) return false;
+
+    updateCustomPillowForm(form);
+    const draftData = getCustomPillowDraftData(form);
+    const localDraftSaved = writeCustomPillowLocalDraft(form, draftData);
+
+    try {
+      const syncedDraft = await saveCustomPillowServerDraft(form, draftData);
+
+      if (syncedDraft) {
+        writeCustomPillowLocalDraft(form, syncedDraft);
+      }
+
+      showCustomPillowDraftFeedback(form, 'DRAFT SAVED.');
+      return true;
+    } catch (error) {
+      showCustomPillowDraftFeedback(
+        form,
+        localDraftSaved
+          ? 'DRAFT SAVED ON THIS DEVICE. CROSS-DEVICE SYNC FAILED.'
+          : 'DRAFT COULD NOT BE SAVED.'
+      );
+      return localDraftSaved;
+    }
+  };
+
+  const resetCustomPillowDraftFields = (form) => {
+    form.querySelectorAll('[name="contact[name]"], [name="contact[email]"], [name="contact[Sidemark]"], [name="contact[body]"]').forEach((field) => {
+      field.value = '';
+      field.setCustomValidity?.('');
+      field.removeAttribute('aria-invalid');
+      field.closest('.custom-pillow-form__field')?.classList.remove('custom-pillow-form__field--error');
+    });
+
+    const itemsContainer = form.querySelector('[data-custom-pillow-items]');
+    const firstItem = itemsContainer?.querySelector('[data-custom-pillow-item]');
+
+    if (itemsContainer && firstItem) {
+      itemsContainer.querySelectorAll('[data-custom-pillow-item]').forEach((item, index) => {
+        if (index > 0) item.remove();
+      });
+
+      resetCustomPillowItemFields(firstItem);
+    }
+
+    updateCustomPillowForm(form);
+    validateCustomPillowForm(form);
+  };
+
+  const clearCustomPillowDraft = async (form, showMessage = true, resetFields = true) => {
+    if (!isCustomPillowDraftEnabled(form)) return;
+
+    removeCustomPillowLocalDraft(form);
+
+    if (resetFields) {
+      resetCustomPillowDraftFields(form);
+    }
+
+    try {
+      await clearCustomPillowServerDraft(form);
+
+      if (showMessage) {
+        showCustomPillowDraftFeedback(form, 'DRAFT CLEARED.');
+      }
+    } catch (error) {
+      if (showMessage) {
+        showCustomPillowDraftFeedback(form, 'DRAFT CLEARED ON THIS DEVICE. CROSS-DEVICE CLEAR FAILED.');
+      }
+    }
+  };
+
+  const applyCustomPillowDraft = (form, itemsContainer, draft) => {
+    if (!isCustomPillowDraftEnabled(form)) return;
+
+    if (!draft?.items?.length) return;
+
+    draft.contactFields?.forEach((fieldData) => {
+      const field = Array.from(form.querySelectorAll('[name]')).find((formField) => formField.name === fieldData.name);
+      if (field) field.value = fieldData.value || '';
+    });
+
+    const firstItem = itemsContainer.querySelector('[data-custom-pillow-item]');
+    if (!firstItem) return;
+
+    itemsContainer.querySelectorAll('[data-custom-pillow-item]').forEach((item, index) => {
+      if (index > 0) item.remove();
+    });
+
+    resetCustomPillowItemFields(firstItem);
+
+    while (itemsContainer.querySelectorAll('[data-custom-pillow-item]').length < draft.items.length) {
+      itemsContainer.appendChild(cloneCustomPillowItem(firstItem));
+    }
+
+    const restoredItems = Array.from(itemsContainer.querySelectorAll('[data-custom-pillow-item]'));
+
+    draft.items.forEach((itemData, index) => {
+      const item = restoredItems[index];
+      const productTypeField = itemData.fields.find((fieldData) => {
+        return String(fieldData.fieldId || '').includes('customPillowProductType');
+      });
+
+      if (productTypeField) {
+        setCustomPillowFieldValue(findCustomPillowItemField(item, productTypeField.fieldId), productTypeField);
+      }
+    });
+
+    updateCustomPillowForm(form);
+
+    draft.items.forEach((itemData, index) => {
+      const item = restoredItems[index];
+
+      itemData.fields.forEach((fieldData) => {
+        setCustomPillowFieldValue(findCustomPillowItemField(item, fieldData.fieldId), fieldData);
+      });
+    });
+
+    updateCustomPillowForm(form);
+
+    draft.items.forEach((itemData, index) => {
+      const item = restoredItems[index];
+
+      itemData.fields.forEach((fieldData) => {
+        setCustomPillowFieldValue(findCustomPillowItemField(item, fieldData.fieldId), fieldData);
+      });
+    });
+
+    updateCustomPillowForm(form);
+    validateCustomPillowForm(form);
+  };
+
+  const restoreCustomPillowDraft = async (form, itemsContainer) => {
+    if (!isCustomPillowDraftEnabled(form)) return;
+
+    let draft = null;
+
+    try {
+      draft = await fetchCustomPillowServerDraft(form);
+
+      if (draft?.items?.length) {
+        writeCustomPillowLocalDraft(form, draft);
+      }
+    } catch (error) {
+      draft = readCustomPillowLocalDraft(form);
+    }
+
+    if (!draft?.items?.length) {
+      draft = readCustomPillowLocalDraft(form);
+    }
+
+    if (!draft?.items?.length) return;
+
+    applyCustomPillowDraft(form, itemsContainer, draft);
+    showCustomPillowDraftFeedback(form, 'DRAFT LOADED.');
+  };
+
+  const updateCustomPillowEstimatedPrice = (item) => {
+    const estimateText = item.querySelector('[data-custom-pillow-estimate-text]');
+    const estimateInput = item.querySelector('[data-custom-pillow-estimate-input]');
+    const productTypeSelect = item.querySelector('[data-custom-pillow-product-type-select]');
+    const productTypeValue = (productTypeSelect?.value || '').trim().toLowerCase();
+    const quantityInput = item.querySelector('[data-field-label="QUANTITY"]');
+    const quantity = Math.max(Number(quantityInput?.value || 1) || 1, 1);
+    const basePrice = customPillowBasePrices[productTypeValue] || 0;
+    const sizeSelect = item.querySelector('[data-custom-pillow-size-select]');
+    const addInsertSelect = item.querySelector('[data-custom-pillow-add-insert-select]');
+    const insertTypeSelect = item.querySelector('[data-custom-pillow-insert-type-select]');
+    const addInsertValue = (addInsertSelect?.value || '').trim().toLowerCase();
+    const insertTypeValue = (insertTypeSelect?.value || '').trim().toLowerCase();
+    const isStandardPillow = productTypeValue === 'pillow' || productTypeValue === 'pillow (standard)' || productTypeValue === 'pillow (standard sizes)';
+    const isCustomPillow = productTypeValue === 'pillow (custom)' || productTypeValue === 'pillow (custom sizes)';
+    const isXlLumbar = productTypeValue === 'xl lumbar' || productTypeValue === 'xl lumbar 14" x 48"';
+    const standardIntendedUseSelect = item.querySelector('[data-custom-pillow-standard-intended-use-field] [data-custom-pillow-field]');
+    const standardIntendedUseValue = (standardIntendedUseSelect?.value || '').trim().toLowerCase();
+    const isOutdoorPillow = (isStandardPillow || isCustomPillow || isXlLumbar) && standardIntendedUseValue === 'outdoor';
+    const hasOutdoorInsertEstimate = isOutdoorPillow && ((isStandardPillow || isCustomPillow) ? addInsertValue === 'yes' : isXlLumbar);
+    const insertPricesBySize = insertTypeValue === 'feather down'
+      ? customPillowFeatherDownInsertPricesBySize
+      : customPillowDownAlternativeInsertPricesBySize;
+    const insertPrice = isStandardPillow && !isOutdoorPillow && addInsertValue === 'yes'
+      && (insertTypeValue === 'feather down' || insertTypeValue === 'down alternative')
+      ? insertPricesBySize[sizeSelect?.value] || 0
+      : 0;
+    const optionPrice = Array.from(item.querySelectorAll('select[data-custom-pillow-field]')).reduce((total, field) => {
+      if (field.disabled) return total;
+      return total + getCustomPillowPriceFromText(getCustomPillowSelectedOptionText(field));
+    }, 0);
+    const estimateEach = basePrice + optionPrice + insertPrice;
+    const estimateValue = hasOutdoorInsertEstimate
+      ? 'PRICE TBD'
+      : estimateEach > 0
+      ? `${formatCustomPillowPrice(estimateEach)} EACH${quantity > 1 ? ` / ${formatCustomPillowPrice(estimateEach * quantity)} TOTAL` : ''}`
+      : 'PRICE TBD';
+
+    if (estimateText) {
+      estimateText.textContent = estimateValue;
+    }
+
+    if (estimateInput) {
+      estimateInput.value = estimateValue;
+    }
+
+    return {
+      hasEstimate: !hasOutdoorInsertEstimate && estimateEach > 0,
+      hasUnknownEstimate: hasOutdoorInsertEstimate,
+      total: estimateEach * quantity,
+    };
+  };
+
+  const updateCustomPillowForm = (form) => {
+    const summaryInput = form.querySelector('[data-custom-pillow-summary]');
+    const orderEstimateText = form.querySelector('[data-custom-pillow-order-estimate-text]');
+    const orderEstimateInput = form.querySelector('[data-custom-pillow-order-estimate-input]');
+    const items = Array.from(form.querySelectorAll('[data-custom-pillow-item]'));
+    let hasOrderEstimate = false;
+    let hasUnknownOrderEstimate = false;
+    let orderEstimateTotal = 0;
+
+    items.forEach((item, index) => {
+      const itemNumber = index + 1;
+      const numberElement = item.querySelector('[data-custom-pillow-item-number]');
+      const removeButton = item.querySelector('[data-remove-custom-pillow-item]');
+      const emailItemHeading = item.querySelector('[data-custom-pillow-email-item-heading]');
+      const productTypeSelect = item.querySelector('[data-custom-pillow-product-type-select]');
+
+      if (numberElement) numberElement.textContent = itemNumber;
+      if (removeButton) removeButton.hidden = items.length === 1;
+      if (emailItemHeading) {
+        emailItemHeading.name = `contact[---------- ITEM ${itemNumber} ----------]`;
+        emailItemHeading.value = productTypeSelect?.value || 'NO PRODUCT TYPE SELECTED';
+      }
+
+      const hasProductType = toggleCustomPillowProductTypeFields(item);
+
+      if (hasProductType) {
+        toggleCustomPillowEdgeFinishFields(item);
+        toggleCustomPillowSameSideFields(item);
+        toggleCustomPillowTapeTrimFields(item);
+        toggleCustomPillowBoxBandFields(item);
+      }
+
+      const itemEstimate = updateCustomPillowEstimatedPrice(item);
+
+      if (itemEstimate?.hasUnknownEstimate) {
+        hasUnknownOrderEstimate = true;
+      }
+
+      if (itemEstimate?.hasEstimate) {
+        hasOrderEstimate = true;
+        orderEstimateTotal += itemEstimate.total;
+      }
+
+      item.querySelectorAll('[data-custom-pillow-field]').forEach((field) => {
+        const fieldLabel = field.dataset.fieldLabel || 'Field';
+        field.name = `contact[ITEM ${itemNumber} - ${fieldLabel}]`;
+        const fieldId = `${field.dataset.fieldId}--${itemNumber}`;
+        const label = field.closest('.custom-pillow-form__field')?.querySelector('[data-custom-pillow-label]');
+
+        field.id = fieldId;
+        if (label) label.setAttribute('for', fieldId);
+      });
+    });
+
+    const orderEstimateValue = hasUnknownOrderEstimate
+      ? 'PRICE TBD'
+      : hasOrderEstimate
+      ? formatCustomPillowPrice(orderEstimateTotal)
+      : 'PRICE TBD';
+
+    if (orderEstimateText) {
+      orderEstimateText.textContent = orderEstimateValue;
+    }
+
+    if (orderEstimateInput) {
+      orderEstimateInput.value = orderEstimateValue;
+    }
+
+    syncCustomPillowRequiredFields(form);
+
+    if (!summaryInput) return;
+
+    summaryInput.value = items.map((item, index) => {
+      const details = Array.from(item.querySelectorAll('[data-custom-pillow-field]')).filter((field) => {
+        return !field.disabled;
+      }).map((field) => {
+        if (field.type === 'checkbox') {
+          return `${field.dataset.fieldLabel}: ${field.checked ? 'YES' : 'NO'}`;
+        }
+
+        return `${field.dataset.fieldLabel}: ${field.value || ''}`;
+      });
+
+      return `ITEM ${index + 1}: ${details.join(', ')}`;
+    }).join('\n');
+  };
+
+  const showCustomPillowSubmissionStatus = (form) => {
+    const params = new URLSearchParams(window.location.search);
+    const status = params.get('custom_pillow_form');
+    const successMessage = form.querySelector('[data-custom-pillow-success]');
+    const errorMessage = form.querySelector('[data-custom-pillow-error]');
+
+    if (status === 'success') {
+      clearCustomPillowDraft(form, false, false);
+    }
+
+    if (successMessage) {
+      successMessage.hidden = status !== 'success';
+
+      if (status === 'success') {
+        successMessage.setAttribute('tabindex', '-1');
+        successMessage.focus({ preventScroll: true });
+      }
+    }
+
+    if (errorMessage) errorMessage.hidden = status !== 'error';
+
+    return status;
+  };
+
+  const initCustomPillowForm = (form) => {
+    const itemsContainer = form.querySelector('[data-custom-pillow-items]');
+    const addButton = form.querySelector('[data-add-custom-pillow-item]');
+    const saveDraftButton = form.querySelector('[data-save-custom-pillow-draft]');
+    const clearDraftButton = form.querySelector('[data-clear-custom-pillow-draft]');
+    const closeDraftFeedbackButton = form.querySelector('[data-custom-pillow-draft-feedback-close]');
+
+    if (!itemsContainer || !addButton) return;
+
+    form.noValidate = true;
+
+    const successMessage = form.querySelector('[data-custom-pillow-success]');
+    const closeSuccessButtons = form.querySelectorAll('[data-custom-pillow-success-close]');
+
+    closeSuccessButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        if (successMessage) successMessage.hidden = true;
+      });
+    });
+
+    if (successMessage) {
+      successMessage.addEventListener('click', (event) => {
+        if (event.target === successMessage) successMessage.hidden = true;
+      });
+    }
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && successMessage && !successMessage.hidden) {
+        successMessage.hidden = true;
+      }
+    });
+
+    addButton.addEventListener('click', () => {
+      const firstItem = itemsContainer.querySelector('[data-custom-pillow-item]');
+      if (!firstItem) return;
+
+      updateCustomPillowForm(form);
+
+      const currentItems = Array.from(itemsContainer.querySelectorAll('[data-custom-pillow-item]'));
+      const lastItem = currentItems[currentItems.length - 1];
+      const validation = validateCustomPillowForm(form, true, getCustomPillowValidationFields(form, lastItem));
+
+      if (!validation.isValid) {
+        validation.firstInvalidField?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        validation.firstInvalidField?.focus({ preventScroll: true });
+        return;
+      }
+
+      const newItem = cloneCustomPillowItem(firstItem);
+
+      itemsContainer.appendChild(newItem);
+      updateCustomPillowForm(form);
+      validateCustomPillowForm(form);
+    });
+
+    saveDraftButton?.addEventListener('click', () => {
+      saveCustomPillowDraft(form);
+    });
+
+    clearDraftButton?.addEventListener('click', () => {
+      clearCustomPillowDraft(form);
+    });
+
+    closeDraftFeedbackButton?.addEventListener('click', () => {
+      const draftFeedback = form.querySelector('[data-custom-pillow-draft-feedback]');
+      window.clearTimeout(form.customPillowDraftFeedbackTimeout);
+      if (draftFeedback) draftFeedback.hidden = true;
+    });
+
+    itemsContainer.addEventListener('click', (event) => {
+      const removeButton = event.target.closest('[data-remove-custom-pillow-item]');
+      if (!removeButton) return;
+
+      const item = removeButton.closest('[data-custom-pillow-item]');
+      if (!item || itemsContainer.querySelectorAll('[data-custom-pillow-item]').length === 1) return;
+
+      item.remove();
+      updateCustomPillowForm(form);
+      validateCustomPillowForm(form);
+    });
+
+    itemsContainer.addEventListener('change', (event) => {
+      const conditionalInput = event.target.closest('[data-custom-pillow-product-type-select], [data-custom-pillow-edge-finish-select], [data-custom-pillow-tape-trim-select], [data-custom-pillow-box-band-select], [data-custom-pillow-same-side-checkbox], [data-custom-pillow-add-insert-select]');
+      if (!conditionalInput) return;
+
+      const item = conditionalInput.closest('[data-custom-pillow-item]');
+      if (!item) return;
+
+      updateCustomPillowForm(form);
+      validateCustomPillowForm(form);
+    });
+
+    form.addEventListener('input', () => {
+      updateCustomPillowForm(form);
+      validateCustomPillowForm(form);
+    });
+
+    form.addEventListener('change', () => {
+      updateCustomPillowForm(form);
+      validateCustomPillowForm(form);
+    });
+
+    form.addEventListener('submit', (event) => {
+      updateCustomPillowForm(form);
+
+      const validation = validateCustomPillowForm(form, true);
+
+      if (!validation.isValid) {
+        event.preventDefault();
+        validation.firstInvalidField?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        validation.firstInvalidField?.focus({ preventScroll: true });
+      }
+    });
+
+    updateCustomPillowForm(form);
+    const submissionStatus = showCustomPillowSubmissionStatus(form);
+
+    if (submissionStatus !== 'success') {
+      restoreCustomPillowDraft(form, itemsContainer);
+    }
+
+    validateCustomPillowForm(form);
+  };
+
+  const initCustomPillowForms = (container = document) => {
+    container.querySelectorAll('.custom-pillow-form').forEach((form) => {
+      if (form.dataset.customPillowFormInitialized === 'true') return;
+
+      form.dataset.customPillowFormInitialized = 'true';
+      initCustomPillowForm(form);
+    });
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => initCustomPillowForms());
+  } else {
+    initCustomPillowForms();
+  }
+
+  document.addEventListener('shopify:section:load', (event) => {
+    initCustomPillowForms(event.target);
+  });
+{% endjavascript %}
+
+<style>
+  .section-{{ section.id }} .custom-pillow-form {
+    --custom-pillow-form-width: {{ section.settings.width }}px;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Custom pillow form",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "CUSTOM PILLOW REQUEST"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "SUBMIT REQUEST"
+    },
+    {
+      "type": "range",
+      "id": "width",
+      "min": 520,
+      "max": 1100,
+      "step": 20,
+      "unit": "px",
+      "label": "Form width",
+      "default": 760
+    },
+    {
+      "type": "select",
+      "id": "section_padding",
+      "label": "Section spacing",
+      "options": [
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        },
+        {
+          "value": "both",
+          "label": "Both"
+        },
+        {
+          "value": "none",
+          "label": "None"
+        }
+      ],
+      "default": "both"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom pillow form"
+    }
+  ],
+  "disabled_on": {
+    "groups": [
+      "header",
+      "footer",
+      "aside"
+    ]
+  }
+}
+{% endschema %}

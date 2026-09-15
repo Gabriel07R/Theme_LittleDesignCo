@@ -3,29 +3,62 @@
   action="{{ routes.cart_url }}"
   method="post"
 >
+  {%- liquid
+    assign trade_customer = false
+    assign trade_savings_total = 0
+
+    if customer
+      if customer.tags contains 'TRADE20'
+        assign trade_customer = true
+      elsif customer.tags contains 'RETAILER20'
+        assign trade_customer = true
+      elsif customer.tags contains 'RETAILER30'
+        assign trade_customer = true
+      endif
+    endif
+
+    if trade_customer
+      for trade_item in cart.items
+        assign trade_original_price = trade_item.variant.metafields.custom.original_price.value | default: trade_item.variant.metafields.custom.original_price
+        if trade_original_price != blank
+          assign trade_original_price_cents = trade_original_price | times: 100
+          assign trade_original_line_price = trade_original_price_cents | times: trade_item.quantity
+          if trade_original_line_price > trade_item.original_line_price
+            assign trade_line_savings = trade_original_line_price | minus: trade_item.original_line_price
+            assign trade_savings_total = trade_savings_total | plus: trade_line_savings
+          endif
+        endif
+      endfor
+    endif
+  -%}
   <div class="ajax-cart__cart-items span-12 auto">
     {% for item in cart.items %}
       {% liquid
         # Plus add an insert
         assign has_pillow = false
-        assign has_linked_insert = false
-        assign current_variant_id = item.variant.id | append: ''
         for p in item.properties
           if p.first contains '_insertPillowId'
             assign pillow_id = p.last
             assign has_pillow = true
           endif
         endfor
-        for cart_item in cart.items
-          for p in cart_item.properties
-            assign linked_pillow_id = p.last | append: ''
-            if p.first contains '_insertPillowId'
-              if linked_pillow_id == current_variant_id
-                assign has_linked_insert = true
-              endif
+
+        assign trade_original_price = ''
+        assign trade_original_price_cents = 0
+        assign trade_original_line_price = 0
+        assign trade_line_savings = 0
+        assign has_trade_price = false
+        if trade_customer
+          assign trade_original_price = item.variant.metafields.custom.original_price.value | default: item.variant.metafields.custom.original_price
+          if trade_original_price != blank
+            assign trade_original_price_cents = trade_original_price | times: 100
+            assign trade_original_line_price = trade_original_price_cents | times: item.quantity
+            if trade_original_price_cents > item.original_price
+              assign has_trade_price = true
+              assign trade_line_savings = trade_original_line_price | minus: item.original_line_price
             endif
-          endfor
-        endfor
+          endif
+        endif
       %}
       <ul class="item_{{ item.id }}-{{ forloop.index }} ajax-cart__cart-item grid__wrapper edge">
         <a
@@ -121,7 +154,7 @@
 {% assign file_type = p.last | split: '.' | last | downcase %}
 {% assign file_types = 'jpg,jpeg,webp,gif,png,apng,avif,svg,bmp,ico,tiff' | split: ',' %}
 {% if file_types contains file_type %}
-  <div class="bcpo-cart-file"><img src="{{ p.last }}" style="max-width: 50px; height: auto;"></div>
+  <div class="bcpo-cart-file"><img src="{{ p.last }}" alt="Uploaded file" width="50" height="50" style="max-width: 50px; height: auto;"></div>
 {% else %}
   <span class="bcpo-cart-file">Uploaded file</span>
 {% endif %}
@@ -171,7 +204,7 @@
                 Markup template for discount item
               {%- endcomment -%}
               <div
-                {% unless has_discount %}
+                {% unless has_discount or has_trade_price %}
                   class="hide"
                 {% endunless -%}
                 data-cart-item-discounted-price-group
@@ -180,13 +213,21 @@
                   <span class="visually-hidden">{{ 'products.general.regular_price' | t }}</span>
                 </dt>
                 <dd>
-                  <s data-cart-item-original-price>{{ item.original_price | money }}</s>
+                  <s data-cart-item-original-price>
+                    {%- if has_trade_price -%}
+                      {{- trade_original_price_cents | money -}}
+                    {%- else -%}
+                      {{- item.original_price | money -}}
+                    {%- endif -%}
+                  </s>
                 </dd>
                 <dt>
                   <span class="visually-hidden">{{ 'products.general.sale_price' | t }}</span>
                 </dt>
                 <dd>
-                  <span class="order-discount onsale" data-cart-item-final-price>{{ item.final_price | money }}</span>
+                  <span class="order-discount onsale" data-cart-item-final-price>
+                    {{- item.final_price | money -}}
+                  </span>
                 </dd>
               </div>
 
@@ -194,7 +235,7 @@
                 Markup template for regular price item
               {%- endcomment -%}
               <div
-                {% if has_discount %}
+                {% if has_discount or has_trade_price %}
                   class="hide"
                 {% endif -%}
                 data-cart-item-regular-price-group
@@ -272,6 +313,28 @@
               </li>
             {%- endfor -%}
           </ul>
+          {%- if has_trade_price -%}
+            <ul
+              class="ajax-cart__order-discount mb0 order-discount--list order-discount--title order-discount--cart"
+              aria-label="Trade savings"
+            >
+              <li class="order-discount__item">
+                <p class="onsale">
+                  {% render 'snip-icons',
+                    wrapper: '.order-discount__item',
+                    type: 'apollo',
+                    icon: 'sale-tag',
+                    classes: 'vi-center',
+                    size: '10px',
+                    fill: 'var(--sale-color)',
+                    hover: 'var(--sale-color)'
+                  %}
+                  <span class="vi-center sale-color">Trade Discount</span>
+                  (-{{ trade_line_savings | money }})
+                </p>
+              </li>
+            </ul>
+          {%- endif -%}
         </li>
         <li class="ajax-cart__item-qty v-center js-item-quantity">
           <div class="ajax-cart__item-quantity a-left">
@@ -335,7 +398,7 @@
         </li>
         <li class="ajax-cart__item-line-price v-center">
           <dl
-            {% unless item.original_line_price != item.final_line_price %}
+            {% unless item.original_line_price != item.final_line_price or has_trade_price %}
               class="hide"
             {% endunless -%}
             data-cart-item-discounted-price-group
@@ -344,17 +407,25 @@
               <span class="visually-hidden">{{ 'cart.general.total' | t }}</span>
             </dt>
             <dd>
-              <s data-cart-item-original-price>{{ item.original_line_price | money }}</s>
+              <s data-cart-item-original-price>
+                {%- if has_trade_price -%}
+                  {{- trade_original_line_price | money -}}
+                {%- else -%}
+                  {{- item.original_line_price | money -}}
+                {%- endif -%}
+              </s>
             </dd>
             <dt>
               <span class="visually-hidden">{{ 'cart.general.discounted_total' | t }}</span>
             </dt>
             <dd>
-              <span class="order-discount onsale" data-cart-item-final-price>{{ item.final_line_price | money }}</span>
+              <span class="order-discount onsale" data-cart-item-final-price>
+                {{- item.final_line_price | money -}}
+              </span>
             </dd>
           </dl>
           <div
-            {% if item.original_line_price != item.final_line_price %}
+            {% if item.original_line_price != item.final_line_price or has_trade_price %}
               class="hide"
             {% endif -%}
             data-cart-item-regular-price-group
@@ -462,6 +533,16 @@
             </span>
           </p>
         </div>
+        {%- if trade_savings_total > 0 -%}
+          <div class="trade-savings onsale">
+            <p class="a-left mb0">
+              <em>Your trade savings</em>
+            </p>
+            <p class="cart-savings-amount a-right mb0">
+              <em>-{{ trade_savings_total | money }}</em>
+            </p>
+          </div>
+        {%- endif -%}
         {%- if settings.show_tax_note -%}
           <div class="tax">
             <p class="title a-left mb0">{{ 'cart.general.tax' | t }}</p>

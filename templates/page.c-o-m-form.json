@@ -1,0 +1,1 @@
+{"sections":{"banner":{"type":"banner-image","settings":{}},"custom_pillow_form":{"type":"custom-pillow-form","settings":{"heading":"","button_label":"Submit request","width":760,"section_padding":"both"}},"main":{"type":"main-page","disabled":true,"settings":{"reduced-width":false}}},"order":["banner","custom_pillow_form","main"]}

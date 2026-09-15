@@ -3130,7 +3130,7 @@ div#search--sidebar_container {
   display: none;
 }
 .onsale {
-  display: inline-block;
+  display: block;
   margin-right: 2px;
   color: var(--sale-color) !important;
 }
@@ -11024,7 +11024,7 @@ h4.ajax-cart__title {
   .ajax-cart__page-wrapper .ajax-cart__item-price,
   .ajax-cart__page-wrapper .ajax-cart__item-line-price {
     grid-column: auto / span 1;
-    width: 100%;
+    width: 130%;
   }
   .ajax-cart__page-wrapper .ajax-cart__item-details {
     grid-column: auto / span 5;
@@ -11068,7 +11068,7 @@ h4.ajax-cart__title {
   .ajax-cart__page-wrapper .ajax-cart__item-price,
   .ajax-cart__page-wrapper .ajax-cart__item-line-price {
     grid-column: auto / span 1;
-    width: 100%;
+    width: 130%;
   }
   .ajax-cart__page-wrapper .ajax-cart__item-details {
     grid-column: auto / span 4;
