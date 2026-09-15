@@ -109,11 +109,10 @@
               {% if settings.search_show_products_only %}
                 <input type="hidden" name="type" value="product">
               {% endif %}
-
-              {%- if settings.predictive_search_enabled -%}
-                <div id="predictive-search" class="predictive-search" tabindex="-1"></div>
-              {%- endif -%}
             </form>
+            {%- if settings.predictive_search_enabled -%}
+              <div id="predictive-search" class="predictive-search" tabindex="-1"></div>
+            {%- endif -%}
             {%- if settings.predictive_search_enabled -%}
               </predictive-search>
             {%- endif -%}
