@@ -1261,6 +1261,13 @@
     { value: 'SELF MITER FLANGE ($100)', label: 'SELF MITER FLANGE ($100)' },
     { value: 'CONTRAST MITER FLANGE ($100)', label: 'CONTRAST MITER FLANGE ($100)' },
   ];
+  const customPillowXlLumbarEdgeFinishOptions = [
+    { value: 'KNIFE EDGE ($135)', label: 'KNIFE EDGE ($135)' },
+    { value: 'SELF CORD ($160)', label: 'SELF CORD ($160)' },
+    { value: 'CONTRAST CORD ($160)', label: 'CONTRAST CORD ($160)' },
+    { value: 'SELF BUTTERFLY ($160)', label: 'SELF BUTTERFLY ($160)' },
+    { value: 'CONTRAST BUTTERFLY ($160)', label: 'CONTRAST BUTTERFLY ($160)' },
+  ];
   const customPillowBolsterEdgeFinishOptions = [
     { value: 'SELF CORD ', label: 'SELF CORD ' },
     { value: 'CONTRAST CORD ', label: 'CONTRAST CORD ' },
@@ -1504,6 +1511,8 @@
         setCustomPillowSelectOptions(edgeFinishSelect, 'SELECT EDGE FINISH', customPillowBolsterEdgeFinishOptions, 'bolster-edge-finish', productTypeChanged);
       } else if (isSkittle) {
         setCustomPillowSelectOptions(edgeFinishSelect, 'SELECT EDGE FINISH', customPillowSkittleEdgeFinishOptions, 'skittle-edge-finish', productTypeChanged);
+      } else if (isXlLumbar) {
+        setCustomPillowSelectOptions(edgeFinishSelect, 'SELECT EDGE FINISH', customPillowXlLumbarEdgeFinishOptions, 'xl-lumbar-edge-finish', productTypeChanged);
       } else if (isCustomPillow) {
         setCustomPillowSelectOptions(edgeFinishSelect, 'SELECT EDGE FINISH', customPillowCustomEdgeFinishOptions, 'custom-pillow-edge-finish', productTypeChanged);
       } else {
@@ -2429,15 +2438,19 @@
     const productTypeValue = (productTypeSelect?.value || '').trim().toLowerCase();
     const quantityInput = item.querySelector('[data-field-label="QUANTITY"]');
     const quantity = Math.max(Number(quantityInput?.value || 1) || 1, 1);
-    const basePrice = customPillowBasePrices[productTypeValue] || 0;
     const sizeSelect = item.querySelector('[data-custom-pillow-size-select]');
+    const edgeFinishSelect = item.querySelector('[data-custom-pillow-edge-finish-select]');
     const addInsertSelect = item.querySelector('[data-custom-pillow-add-insert-select]');
     const insertTypeSelect = item.querySelector('[data-custom-pillow-insert-type-select]');
+    const edgeFinishValue = (edgeFinishSelect?.value || '').trim().toLowerCase();
     const addInsertValue = (addInsertSelect?.value || '').trim().toLowerCase();
     const insertTypeValue = (insertTypeSelect?.value || '').trim().toLowerCase();
     const isStandardPillow = productTypeValue === 'pillow' || productTypeValue === 'pillow (standard)' || productTypeValue === 'pillow (standard sizes)';
     const isCustomPillow = productTypeValue === 'pillow (custom)' || productTypeValue === 'pillow (custom sizes)';
     const isXlLumbar = productTypeValue === 'xl lumbar' || productTypeValue === 'xl lumbar 14" x 48"';
+    const basePrice = isXlLumbar && edgeFinishValue !== '' && !edgeFinishValue.startsWith('knife edge')
+      ? 160
+      : customPillowBasePrices[productTypeValue] || 0;
     const standardIntendedUseSelect = item.querySelector('[data-custom-pillow-standard-intended-use-field] [data-custom-pillow-field]');
     const standardIntendedUseValue = (standardIntendedUseSelect?.value || '').trim().toLowerCase();
     const isOutdoorPillow = (isStandardPillow || isCustomPillow || isXlLumbar) && standardIntendedUseValue === 'outdoor';
@@ -2451,6 +2464,7 @@
       : 0;
     const optionPrice = Array.from(item.querySelectorAll('select[data-custom-pillow-field]')).reduce((total, field) => {
       if (field.disabled) return total;
+      if (isXlLumbar && field === edgeFinishSelect) return total;
       return total + getCustomPillowPriceFromText(getCustomPillowSelectedOptionText(field));
     }, 0);
     const estimateEach = basePrice + optionPrice + insertPrice;
