@@ -35,13 +35,19 @@
         {%- liquid
           assign variant_original_price = ''
           if product_json_trade_customer and variant.metafields.custom.original_price != blank
-            assign variant_original_price = variant.metafields.custom.original_price | times: 100 | money
+            assign variant_original_price_cents = variant.metafields.custom.original_price | times: 100
+            if variant_original_price_cents > 0
+              assign variant_original_price = variant_original_price_cents | money
+            endif
           endif
           assign insert_original_price = ''
           if product_json_trade_customer and variant.metafields.custom.add_an_insert != blank
             assign insert_variant = variant.metafields.custom.add_an_insert.value
             if insert_variant.metafields.custom.original_price != blank
-              assign insert_original_price = insert_variant.metafields.custom.original_price | times: 100 | money
+              assign insert_original_price_cents = insert_variant.metafields.custom.original_price | times: 100
+              if insert_original_price_cents > 0
+                assign insert_original_price = insert_original_price_cents | money
+              endif
             endif
           endif
         -%}

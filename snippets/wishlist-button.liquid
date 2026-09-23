@@ -12,14 +12,20 @@
   endif
   assign wishlist_original_price = ''
   if wishlist_trade_customer and wishlist_variant.metafields.custom.original_price != blank
-    assign wishlist_original_price = wishlist_variant.metafields.custom.original_price | times: 100
+    assign wishlist_original_price_cents = wishlist_variant.metafields.custom.original_price | times: 100
+    if wishlist_original_price_cents > 0
+      assign wishlist_original_price = wishlist_original_price_cents
+    endif
   endif
   assign wishlist_insert = false
   assign wishlist_insert_original_price = ''
   if wishlist_variant.metafields.custom.add_an_insert != blank
     assign wishlist_insert = wishlist_variant.metafields.custom.add_an_insert.value
     if wishlist_trade_customer and wishlist_insert.metafields.custom.original_price != blank
-      assign wishlist_insert_original_price = wishlist_insert.metafields.custom.original_price | times: 100
+      assign wishlist_insert_original_price_cents = wishlist_insert.metafields.custom.original_price | times: 100
+      if wishlist_insert_original_price_cents > 0
+        assign wishlist_insert_original_price = wishlist_insert_original_price_cents
+      endif
     endif
   endif
   assign wishlist_image = ''

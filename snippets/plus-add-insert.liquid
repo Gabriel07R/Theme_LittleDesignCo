@@ -1,4 +1,16 @@
 {% if context == 'widget' %}
+  {%- liquid
+    assign plus_insert_trade_customer = false
+    if customer
+      if customer.tags contains 'TRADE20'
+        assign plus_insert_trade_customer = true
+      elsif customer.tags contains 'RETAILER20'
+        assign plus_insert_trade_customer = true
+      elsif customer.tags contains 'RETAILER30'
+        assign plus_insert_trade_customer = true
+      endif
+    endif
+  -%}
   {%# Displays a checkbox for each variant's corresponding insert variant.
     # Shows/hides/deselects with JS on variant change %}
   <div class="plus-insert-widget">
@@ -6,10 +18,12 @@
       {%#Zeke insert variant original price%}
       {% liquid
         assign insert = false
+        assign original_insert_price = 0
         if variant.metafields.custom.add_an_insert != blank
           assign insert = variant.metafields.custom.add_an_insert.value
-          assign original_insert_price = insert.metafields.custom.original_price | times: 100
-  else
+          if insert.metafields.custom.original_price != blank
+            assign original_insert_price = insert.metafields.custom.original_price | times: 100
+          endif
         endif
       %}
 
@@ -28,7 +42,7 @@
               checked
             {% endif %}
           >
-          <label for="insert_checkbox-{{insert.id}}">{%if product.title contains "DRAPES" %}Add Rush Fee {% else %} {{ 'general.plus_add_insert.add_an_insert' | t }} {% endif %} {{ insert.price | money }} {% if customer and customer.tags contains "TRADE20" or customer.tags contains "RETAILER20" or customer.tags contains "RETAILER30"%}
+          <label for="insert_checkbox-{{insert.id}}">{%if product.title contains "DRAPES" %}Add Rush Fee {% else %} {{ 'general.plus_add_insert.add_an_insert' | t }} {% endif %} {{ insert.price | money }} {% if plus_insert_trade_customer and original_insert_price > 0 %}
         <span style="text-decoration: line-through;">{{ original_insert_price | money }}</span>
       {% endif %} </label>
         </div>

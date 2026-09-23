@@ -9,11 +9,26 @@
     {% include 'product-price', variant: current_variant, product: product %}
 {% endcomment %}
 {%- liquid
+  assign product_price_trade_customer = false
+  if customer
+    if customer.tags contains 'TRADE20'
+      assign product_price_trade_customer = true
+    elsif customer.tags contains 'RETAILER20'
+      assign product_price_trade_customer = true
+    elsif customer.tags contains 'RETAILER30'
+      assign product_price_trade_customer = true
+    endif
+  endif
+
   if variant.title
     assign compare_at_price = variant.compare_at_price
     assign price = variant.price
     assign available = variant.available
-    assign original_price = variant.metafields.custom.original_price | times: 100
+    assign original_price = 0
+    assign original_price_value = variant.metafields.custom.original_price.value | default: variant.metafields.custom.original_price
+    if original_price_value != blank
+      assign original_price = original_price_value | times: 100
+    endif
   else
     assign compare_at_price = 1999
     assign price = 1999
@@ -54,7 +69,11 @@
         {%- liquid
           if variant.title
             assign price = variant.price
-            assign original_price = variant.metafields.custom.original_price | times: 100
+            assign original_price = 0
+            assign original_price_value = variant.metafields.custom.original_price.value | default: variant.metafields.custom.original_price
+            if original_price_value != blank
+              assign original_price = original_price_value | times: 100
+            endif
           else
             assign price = 1999
             assign available = true
@@ -62,11 +81,15 @@
 
           assign money_price = price | money
           assign money_original = original_price | money
+          assign has_original_price = false
+          if original_price > 0
+            assign has_original_price = true
+          endif
 
         -%}
             
-        <span class="js-original-price" data-variant-price-id="{{variant.id}}" style="text-decoration: line-through; {% unless forloop.first %} display: none {% endunless %}">
-          {% if customer and customer.tags contains "TRADE20" or customer.tags contains "RETAILER20" or customer.tags contains "RETAILER30"%}
+        <span class="js-original-price" data-variant-price-id="{{variant.id}}" style="text-decoration: line-through;{% unless has_original_price %} display: none;{% endunless %}{% if has_original_price %}{% unless forloop.first %} display: none;{% endunless %}{% endif %}">
+          {% if product_price_trade_customer and has_original_price %}
             {{ money_original }}
           {% endif %}
 
