@@ -140,30 +140,38 @@
               {%- endunless -%}
               {% assign property_size = item.properties | size %}
               {% if property_size > 0 %}
-                <p>
+                <p class="ajax-cart__cart-properties">
                   {% for p in item.properties %}
                     {% unless p.last == blank %}
                       {% # Plus link insert to pillow %}
                       <span class="{% if p.first contains '_' %}display-none{% endif %}">
-                        <strong>{{ p.first }}:</strong>
+                        {{ p.first }}
                         {% comment %}
                           Check if there was an uploaded file associated
                         {% endcomment %}
                         {% if p.last contains '/uploads/' %}
                           <a href="{{ p.last }}">
-{% assign file_type = p.last | split: '.' | last | downcase %}
-{% assign file_types = 'jpg,jpeg,webp,gif,png,apng,avif,svg,bmp,ico,tiff' | split: ',' %}
-{% if file_types contains file_type %}
-  <div class="bcpo-cart-file"><img src="{{ p.last }}" alt="Uploaded file" width="50" height="50" style="max-width: 50px; height: auto;"></div>
-{% else %}
-  <span class="bcpo-cart-file">Uploaded file</span>
-{% endif %}
-</a>
+                            {% assign file_type = p.last | split: '.' | last | downcase %}
+                            {% assign file_types = 'jpg,jpeg,webp,gif,png,apng,avif,svg,bmp,ico,tiff' | split: ',' %}
+                            {% if file_types contains file_type %}
+                              <div class="bcpo-cart-file">
+                                <img
+                                  src="{{ p.last }}"
+                                  alt="Uploaded file"
+                                  width="50"
+                                  height="50"
+                                  style="max-width: 50px; height: auto;"
+                                >
+                              </div>
+                            {% else %}
+                              <span class="bcpo-cart-file">Uploaded file</span>
+                            {% endif %}
+                          </a>
                         {% else %}
                           {{ p.last }}
                         {% endif %}
+                        <br>
                       </span>
-                      <br>
                     {% endunless %}
                   {% endfor %}
                 </p>
@@ -341,7 +349,7 @@
             <button
               data-ajax-qty-decrease="{{ item.id }}-{{ forloop.index }}"
               data-item-key="{{ item.key }}"
-              {%# Plus add an insert %}
+              {% # Plus add an insert %}
               data-item-id="{{ item.id }}-{{ forloop.index }}"
               {% if item.variant.metafields.custom.add_an_insert != blank and settings.plus_add_insert == true %}
                 data-insert-id="{{item.variant.metafields.custom.add_an_insert.value.id}}"
@@ -360,7 +368,7 @@
               data-item-id="{{ item.id }}-{{ forloop.index }}"
               data-item-key="{{ item.key }}"
               data-item-line="{{ forloop.index }}"
-              {%# Plus add an insert %}
+              {% # Plus add an insert %}
               {% if item.variant.metafields.custom.add_an_insert != blank and settings.plus_add_insert == true %}
                 data-insert-id="{{item.variant.metafields.custom.add_an_insert.value.id}}"
               {% endif %}
@@ -376,7 +384,7 @@
             <button
               data-ajax-qty-increase="{{ item.id }}-{{ forloop.index }}"
               data-item-key="{{ item.key }}"
-              {%# Plus add an insert %}
+              {% # Plus add an insert %}
               data-item-id="{{ item.id }}-{{ forloop.index }}"
               {% if item.variant.metafields.custom.add_an_insert != blank and settings.plus_add_insert == true %}
                 data-insert-id="{{item.variant.metafields.custom.add_an_insert.value.id}}"

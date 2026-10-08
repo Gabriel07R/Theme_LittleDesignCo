@@ -10819,6 +10819,10 @@ Mini-cart add insert button paused.
   margin-bottom: 10px;
   line-height: normal;
 }
+.ajax-cart__cart-properties {
+  display: inline;
+  margin: 0;
+}
 input.ajax-cart__qty-input::-webkit-outer-spin-button,
 input.ajax-cart__qty-input::-webkit-inner-spin-button {
   -webkit-appearance: none;
