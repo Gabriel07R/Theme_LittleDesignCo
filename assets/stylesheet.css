@@ -10822,6 +10822,8 @@ Mini-cart add insert button paused.
 .ajax-cart__cart-properties {
   display: inline;
   margin: 0;
+  font-size: 14px;
+  font-weight: 500;
 }
 input.ajax-cart__qty-input::-webkit-outer-spin-button,
 input.ajax-cart__qty-input::-webkit-inner-spin-button {
