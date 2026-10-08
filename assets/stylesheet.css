@@ -10819,6 +10819,7 @@ Mini-cart add insert button paused.
   margin-bottom: 10px;
   line-height: normal;
 }
+/* formatted custom/extra variants on the cart to look the same as real variants */
 .ajax-cart__cart-properties {
   display: inline;
   margin: 0;
@@ -14708,4 +14709,9 @@ input.plus-line-item-property__input {
 
 .test-class {
   display: block;
+}
+
+/* 4th extra variant added to certain product buttons */ 
+.colorway-label {
+  font-weight: var(--main-weight);
 }
