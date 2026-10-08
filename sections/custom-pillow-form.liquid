@@ -1294,6 +1294,13 @@
     { value: 'CENTER TRIM (+$10)', label: 'CENTER TRIM (+$10)' },
     { value: 'PARALLEL TRIM [2 PIECES] (+$20)', label: 'PARALLEL TRIM [2 PIECES] (+$20)' },
   ];
+  const customPillowInsertTypeOptions = [
+    { value: 'FEATHER DOWN', label: 'FEATHER DOWN' },
+    { value: 'DOWN ALTERNATIVE', label: 'DOWN ALTERNATIVE' },
+  ];
+  const customPillowXlLumbarInsertTypeOptions = [
+    { value: 'DOWN ALTERNATIVE', label: 'DOWN ALTERNATIVE' },
+  ];
   const customPillowBasePrices = {
     bolster: 135,
     'ball pillow': 105,
@@ -1409,6 +1416,7 @@
     const standardIntendedUseValue = (standardIntendedUseSelect?.value || '').trim().toLowerCase();
     const isOutdoorPillow = (isStandardPillow || isCustomPillow) && standardIntendedUseValue === 'outdoor';
     const isPillowWithInsertOption = isStandardPillow || isCustomPillow;
+    const isStandardXlLumbarSize = isStandardPillow && sizeSelect.value === 'XL LUMBAR 14" X 48"';
 
     item.dataset.customPillowProductType = productTypeValue;
 
@@ -1561,6 +1569,12 @@
     }
 
     if (insertTypeSelect) {
+      if (isStandardXlLumbarSize) {
+        setCustomPillowSelectOptions(insertTypeSelect, 'SELECT INSERT TYPE', customPillowXlLumbarInsertTypeOptions, 'standard-xl-lumbar-insert-type');
+      } else {
+        setCustomPillowSelectOptions(insertTypeSelect, 'SELECT INSERT TYPE', customPillowInsertTypeOptions, 'standard-insert-type');
+      }
+
       insertTypeSelect.disabled = !showInsertTypeField;
       insertTypeSelect.required = showInsertTypeField;
 
