@@ -4612,10 +4612,44 @@ theme.prefetchVariants = function(context, {elements}, sectionId, config) {
   }
 };
 
+theme.DemiDuvetColorway = function(context) {
+  if (!context.querySelector('[data-demi-duvet-colorway]')) return;
+
+  function updateColorway() {
+    const field = context.querySelector('[data-demi-duvet-colorway]');
+    if (!field) return;
+
+    const position = field.dataset.edgeFinishPosition;
+    const edgeFinish = context.querySelector(`.product__variants-select option[data-position="${position}"]:checked`) ||
+      context.querySelector(`.product__variants-swatches input[data-position="${position}"]:checked`);
+    if (!edgeFinish) return;
+
+    const hide = edgeFinish.value.trim().toLowerCase().replace(/[-\s]+/g, ' ') === 'knife edge';
+    const select = field.querySelector('select');
+    field.classList.toggle('display-none', hide);
+    select.disabled = hide;
+    select.required = !hide;
+    select.classList.toggle('required', !hide);
+    if (hide) select.classList.remove('required-error');
+  }
+
+  updateColorway();
+
+  if (context.dataset.demiDuvetColorwayBound === '1') return;
+  context.dataset.demiDuvetColorwayBound = '1';
+  context.addEventListener('change', (event) => {
+    if (event.target.closest('.product__variants-select, .product__variants-swatches')) {
+      updateColorway();
+    }
+  });
+};
+
 theme.ProductForm = function (context, sectionId, events, Product) {
   var prodForm = context.querySelector(`#product-form-${sectionId}`);
   var config = JSON.parse(prodForm.dataset.productForm || '{}');
   var selector, varSelectors, options, variant;
+
+  theme.DemiDuvetColorway(context);
 
   context.querySelectorAll('.formVariantId').forEach((item, i) => {
     // Plus initialize hidden insert variant selector 

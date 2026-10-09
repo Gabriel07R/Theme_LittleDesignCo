@@ -20,6 +20,21 @@
     show_gift_card_recipient: block.settings.show_gift_card_recipient
   %}
 {% endcomment %}
+{% liquid
+  assign edge_finish_position = 0
+  assign hide_edge_finish_colorway = false
+  for option in product.options_with_values
+    assign option_handle = option.name | handleize
+    if option_handle == 'edge-finish'
+      assign edge_finish_position = option.position
+      assign edge_finish_handle = option.selected_value | handleize
+      if edge_finish_handle == 'knife-edge'
+        assign hide_edge_finish_colorway = true
+      endif
+      break
+    endif
+  endfor
+%}
 {% form 'product',
   product,
   id: product_form_id,
@@ -28,12 +43,19 @@
   data-product-id: product.id
 %}
   <div
+    data-demi-duvet-colorway
+    data-edge-finish-position="{{ edge_finish_position }}"
     style="margin-bottom:0px;"
-    class="product-form__input product-form__input--dropdown plus-product-form__select">
+    class="product-form__input product-form__input--dropdown plus-product-form__select{% if hide_edge_finish_colorway %} display-none{% endif %}">
 
-    <label class="form__label label-center colorway-label ">Edge Finish Colorway</label>
+    <label class="form__label label-center colorway-label " for="EdgeFinishColorway-{{ product_form_id }}">Edge Finish Colorway</label>
       <div class="select mb10">
-        <select required class="required js-variant-selector styled-select" id="/" name="items[0]properties[/]">
+        <select
+          class="styled-select{% unless hide_edge_finish_colorway %} required{% endunless %}"
+          id="EdgeFinishColorway-{{ product_form_id }}"
+          name="items[0]properties[/]"
+          {% if hide_edge_finish_colorway %}disabled{% else %}required{% endif %}
+        >
             <option value="Apple Red">Apple Red</option>
             <option value="Basil">Basil</option>
             <option value="Blossom">Blossom</option>
