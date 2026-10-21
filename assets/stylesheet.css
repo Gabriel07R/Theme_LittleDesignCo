@@ -8578,6 +8578,7 @@ ul.header__nav__list li.header__nav__list-item.navigation__menuitem--active > .h
     flex-flow: column wrap;
     flex: 1 1 100%;
     columns: 4;
+    column-rule: 1px solid var(--dotted-color);
     padding-top: 20px;
     padding-bottom: 20px;
  }
@@ -8641,6 +8642,7 @@ ul.header__nav__list li.header__nav__list-item.navigation__menuitem--active > .h
   flex-flow: column wrap;
   flex: 1 1 100%;
   columns: 3;
+  column-rule: 1px solid var(--dotted-color);
 }
 h5.header__linklist-images-header {
   margin-bottom: 5px;
