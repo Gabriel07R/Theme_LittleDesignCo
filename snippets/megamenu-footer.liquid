@@ -1,0 +1,10 @@
+{% doc %}
+  Renders the optional text area beneath a mega menu divider.
+  @param {block} block - The mega menu settings block.
+{% enddoc %}
+
+{% if block.settings.show_menu_footer %}
+  <div class="header__megamenu-footer">
+    {{ block.settings.menu_footer_text }}
+  </div>
+{% endif %}

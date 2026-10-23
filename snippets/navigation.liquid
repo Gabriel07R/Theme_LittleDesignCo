@@ -6,7 +6,7 @@
  {% if block.type == 'collections_mega_menu' %}
   {% if block.settings.collection_item == link.title %}
     {% capture collections_mega %}
-      <div class="header__megamenu-wrapper image-ratio-{{ block.settings.image_ratio }}" {{ block.shopify_attributes }}>
+      <div class="header__megamenu-wrapper{% if block.settings.show_menu_footer %} header__megamenu--with-footer{% endif %} image-ratio-{{ block.settings.image_ratio }}" {{ block.shopify_attributes }}>
         {% for n in (1..6) %}
           {% assign collection = "collection_" | append: n %}
           {% assign collection = block.settings[collection] %}
@@ -25,6 +25,7 @@
             </a>
           {% endif %}
         {% endfor %}
+        {% render 'megamenu-footer', block: block %}
       </div>
     {% endcapture %}
     {% assign collections_mega_menu = true %}
@@ -32,7 +33,7 @@
  {% elsif block.type == 'linklist_columns' %}
     {% if block.settings.linklist_item == link.title %}
       {% capture linklist_columns %}
-        <div class="header__linklist-columns-wrapper" {{ block.shopify_attributes }}>
+        <div class="header__linklist-columns-wrapper{% if block.settings.show_menu_footer %} header__megamenu--with-footer{% endif %}" {{ block.shopify_attributes }}>
           <div class="header__linklist-columns-container">
             {% assign linklist_qty = link.links.size %}
             {% for sub_link in link.links limit: 6 %}
@@ -59,6 +60,7 @@
               {% endif %}
            }
           </style>
+          {% render 'megamenu-footer', block: block %}
         </div>
       {% endcapture %}
       {% assign linklist_mega_menu = true %}
@@ -66,7 +68,7 @@
  {% elsif block.type == 'linklist_with_images' %}
     {% if block.settings.linklist_images_menu_item == link.title %}
         {% capture linklist_images_columns %}
-          <div class="header__linklist-images-wrapper image-ratio-{{ block.settings.image_ratio }}" {{ block.shopify_attributes }}>
+          <div class="header__linklist-images-wrapper{% if block.settings.show_menu_footer %} header__megamenu--with-footer{% endif %} image-ratio-{{ block.settings.image_ratio }}" {{ block.shopify_attributes }}>
             <div class="header__linklist-images-container">
               {% for sub_link in link.links %}
                 <ul class="header__linklist-images-list">
@@ -101,6 +103,7 @@
                   {% endif %}
                 {% if custom_url %}</a>{% else %}</div>{% endif %}
               {% endfor %}
+            {% render 'megamenu-footer', block: block %}
           </div>
         {% endcapture %}
       {% assign linklist_images_menu = true %}
