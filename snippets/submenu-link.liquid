@@ -1,0 +1,56 @@
+{% doc %}
+  Renders a mega menu link with an optional circular image or empty circle.
+  @param {link} menu_link - The submenu link.
+  @param {string} menu_title - The top-level menu label.
+  @param {string} submenu_title - The column heading.
+  @param {string} link_class - The existing link styling class.
+  @param {block[]} blocks - The header section blocks.
+{% enddoc %}
+
+{% liquid
+  assign normalized_menu = menu_title | strip | downcase
+  assign normalized_submenu = submenu_title | strip | downcase
+  assign normalized_link = menu_link.title | strip | downcase
+  assign selected_image_block = nil
+  assign selected_priority = -1
+
+  for image_block in blocks
+    if image_block.type != 'submenu_link_image'
+      continue
+    endif
+    assign target_menu = image_block.settings.menu_title | strip | downcase
+    assign target_submenu = image_block.settings.submenu_title | strip | downcase
+    assign target_link = image_block.settings.link_title | strip | downcase
+    if target_submenu == blank or target_submenu != normalized_submenu
+      continue
+    endif
+    if target_menu != blank and target_menu != normalized_menu
+      continue
+    endif
+    if target_link != blank and target_link != normalized_link
+      continue
+    endif
+    assign priority = 0
+    if target_menu != blank
+      assign priority = priority | plus: 1
+    endif
+    if target_link != blank
+      assign priority = priority | plus: 2
+    endif
+    if priority >= selected_priority
+      assign selected_image_block = image_block
+      assign selected_priority = priority
+    endif
+  endfor
+%}
+
+<a class="{{ link_class }}{% if selected_image_block %} header__submenu-link--with-image{% endif %}" href="{{ menu_link.url }}">
+  {% if selected_image_block %}
+    <span class="header__submenu-circle{% if selected_image_block.settings.image == blank %} header__submenu-circle--empty{% endif %}" aria-hidden="true" {{ selected_image_block.shopify_attributes }}>
+      {% if selected_image_block.settings.image != blank %}
+        {{ selected_image_block.settings.image | image_url: width: 96 | image_tag: widths: '32, 64, 96', sizes: '28px', width: 28, height: 28, loading: 'lazy', alt: '' }}
+      {% endif %}
+    </span>
+  {% endif %}
+  <span>{{ menu_link.title | escape }}</span>
+</a>

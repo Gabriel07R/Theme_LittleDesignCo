@@ -86,13 +86,13 @@
     <div id="logo" class="{{ logo_span }} header__desktop-logo">
       {% if mobile_logo %}
         <a class="desktop-hide" href="{{ routes.root_url }}">
-          {{ section.settings.mobile_logo | image_url: width: 800 | class: 'v-align-middle' | image_tag: loading: 'eager', fetchpriority: 'high' }}
+          {{ section.settings.mobile_logo | image_url: width: 800 | image_tag: class: 'v-align-middle', loading: 'eager', fetchpriority: 'high' }}
         </a>
       {% endif %}
       {% if section.settings.logo != blank %}
         {%- assign image_size = '1000x' -%}
         <a class="{% if mobile_logo %}device-hide{% endif %}"href="{{ routes.root_url }}">
-          {{ section.settings.logo | image_url: width: 1000 | class: 'v-align-middle' | image_tag: loading: 'eager', fetchpriority: 'high' }}
+          {{ section.settings.logo | image_url: width: 1000 | image_tag: class: 'v-align-middle', loading: 'eager', fetchpriority: 'high' }}
         </a>
       {% else %}
         <a class="v-align-middle {% if mobile_logo %}device-hide{% endif %}" href="{{ routes.root_url }}">
@@ -447,6 +447,36 @@
     }
   ],
   "blocks": [
+    {
+      "type": "submenu_link_image",
+      "name": "Submenu link image",
+      "settings": [
+        {
+          "type": "text",
+          "id": "menu_title",
+          "label": "Top-level menu label",
+          "info": "For example: PILLOWS. Leave blank to apply across all mega menus."
+        },
+        {
+          "type": "text",
+          "id": "submenu_title",
+          "label": "Submenu column label",
+          "info": "Required. Enter the column heading, for example: SHOP BY PATTERN."
+        },
+        {
+          "type": "text",
+          "id": "link_title",
+          "label": "Link label",
+          "info": "For example: GEOMETRIC. Leave blank to apply to every link in this column. Individual link blocks override column blocks."
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Circle image",
+          "info": "Leave blank for an empty outlined circle. Images are cropped to a circle."
+        }
+      ]
+    },
     {
       "type": "collections_mega_menu",
       "name": "Collections mega menu",

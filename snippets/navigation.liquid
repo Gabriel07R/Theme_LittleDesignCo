@@ -41,7 +41,7 @@
                   <a href="{{ sub_link.url }}">{{ sub_link.title | truncate: 30 }}</a>
                 </h5>
                 {% for sub_sub_link in sub_link.links %}
-                   <li class="header__linklist-item"><a class="header__linklist-link" href="{{ sub_sub_link.url }}">{{ sub_sub_link.title }}</a></li>
+                   <li class="header__linklist-item">{% render 'submenu-link', menu_link: sub_sub_link, menu_title: link.title, submenu_title: sub_link.title, link_class: 'header__linklist-link', blocks: section.blocks %}</li>
                 {% endfor %}
             </ul>
             {% endfor %}
@@ -75,7 +75,7 @@
                   </h5>
                   {% for sub_sub_link in sub_link.links %}
                     <li class="header__linklist-images-item">
-                      <a class="header__linklist-images-link" href="{{ sub_sub_link.url }}">{{ sub_sub_link.title }}</a>
+                      {% render 'submenu-link', menu_link: sub_sub_link, menu_title: link.title, submenu_title: sub_link.title, link_class: 'header__linklist-images-link', blocks: section.blocks %}
                     </li>
                   {% endfor %}
                 </ul>

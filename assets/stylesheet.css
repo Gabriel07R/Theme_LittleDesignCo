@@ -8677,6 +8677,31 @@ h5.header__linklist-images-header {
 .header__linklist-images-link:hover {
   text-decoration: underline;
 }
+.header__linklist-link.header__submenu-link--with-image,
+.header__linklist-images-link.header__submenu-link--with-image {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-block: 3px;
+}
+.header__submenu-circle {
+  display: block;
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+.header__submenu-circle--empty {
+  border: 1px solid currentColor;
+}
+.header__submenu-circle img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+}
 .header__linklist-images__image-wrapper {
   padding: 0 10px;
 }
