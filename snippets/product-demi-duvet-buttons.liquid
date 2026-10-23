@@ -35,6 +35,14 @@
     endif
   endfor
 %}
+{% capture edge_finish_colorway_options -%}
+  {%- for colorway in product.metafields.custom.colorway.value -%}
+    {%- assign colorway_value = colorway | strip -%}
+    {%- if colorway_value != blank -%}
+      <option value="{{ colorway_value | escape }}">{{ colorway_value | escape }}</option>
+    {%- endif -%}
+  {%- endfor -%}
+{%- endcapture %}
 {% form 'product',
   product,
   id: product_form_id,
@@ -42,13 +50,15 @@
   data-product-form: product_form_config,
   data-product-id: product.id
 %}
-  <div
-    data-demi-duvet-colorway
-    data-edge-finish-position="{{ edge_finish_position }}"
-    style="margin-bottom:0px;"
-    class="product-form__input product-form__input--dropdown plus-product-form__select{% if hide_edge_finish_colorway %} display-none{% endif %}">
+  {% if edge_finish_colorway_options != blank %}
+    <div
+      data-demi-duvet-colorway
+      data-edge-finish-position="{{ edge_finish_position }}"
+      style="margin-bottom:0px;"
+      class="product-form__input product-form__input--dropdown plus-product-form__select{% if hide_edge_finish_colorway %} display-none{% endif %}"
+    >
 
-    <label class="form__label label-center colorway-label " for="EdgeFinishColorway-{{ product_form_id }}">Edge Finish Colorway</label>
+      <label class="form__label label-center colorway-label " for="EdgeFinishColorway-{{ product_form_id }}">Edge Finish Colorway</label>
       <div class="select mb10">
         <select
           class="styled-select{% unless hide_edge_finish_colorway %} required{% endunless %}"
@@ -56,41 +66,11 @@
           name="items[0]properties[/]"
           {% if hide_edge_finish_colorway %}disabled{% else %}required{% endif %}
         >
-            <option value="Apple Red">Apple Red</option>
-            <option value="Basil">Basil</option>
-            <option value="Blossom">Blossom</option>
-            <option value="Blush">Blush</option>
-            <option value="Bone">Bone</option>
-            <option value="Calypso Blue">Calypso Blue</option>
-            <option value="Cameo">Cameo</option>
-            <option value="Carnation">Carnation</option>
-            <option value="Celadon">Celadon</option>
-            <option value="Chartreuse">Chartreuse</option>
-            <option value="Clover">Clover</option>
-            <option value="Daffodil">Daffodil</option>
-            <option value="Dove Grey">Dove Grey</option>
-            <option value="Eucalyptus">Eucalyptus</option>
-            <option value="Hydrangea Blue">Hydrangea Blue</option>
-            <option value="Kelly Green">Kelly Green</option>
-            <option value="Lilac">Lilac</option>
-            <option value="Mineral">Mineral</option>
-            <option value="Natural">Natural</option>
-            <option value="Navy Blue">Navy Blue</option>
-            <option value="Olive">Olive</option>
-            <option value="Peacock">Peacock</option>
-            <option value="Persimmon">Persimmon</option>
-            <option value="Pink Peony">Pink Peony</option>
-            <option value="Powder Blue">Powder Blue</option>
-            <option value="Rosé Pink">Rosé Pink</option>
-            <option value="Smokey Amethyst">Smokey Amethyst</option>
-            <option value="Smokey Lavender">Smokey Lavender</option>
-            <option value="Spa Blue">Spa Blue</option>
-            <option value="Stone">Stone</option>
-            <option value="White">White</option>
-            <option value="Wisteria">Wisteria</option>
+          {{ edge_finish_colorway_options }}
         </select>
       </div>
-</div>
+    </div>
+  {% endif %}
 
   <div class="product-add clearfix">
     {% if show_gift_card_recipient and product.gift_card? %}

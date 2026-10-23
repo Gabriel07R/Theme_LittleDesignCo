@@ -1,0 +1,150 @@
+{% doc %}
+  Renders only the available swatch values for one product option.
+  @param {product} product - Product to render.
+  @param {object} section - Product section.
+  @param {object} option - Product option to render.
+  @param {variant} current_variant - Selected variant.
+  @param {boolean} show_size_chart - Whether to show the size chart.
+  @param {string} size_chart_label - Size chart link label.
+  @param {page} size_chart_page - Size chart page.
+  @param {string} size_chart_type - Size chart display mode.
+  @param {string} section_id - Section identifier.
+{% enddoc %}
+
+{%- liquid
+
+  assign available_values = option.values | where: 'available', true
+  assign selected_value = option.values | where: 'selected', true | first
+  assign selected_available_value = available_values | where: 'selected', true | first
+  if selected_available_value == blank
+    assign selected_available_value = available_values.first
+  endif
+  assign sold_out_text = 'products.product.sold_out' | t
+  assign color_swatch_style = settings.color_swatch_style
+  assign option_name = option.name | downcase
+  assign color_swatch_options = settings.swatch_option_names | replace: ' ,', ',' | replace: ', ', ',' | split: ',' | downcase
+  assign current_option = "option" | append: option.position
+  assign other_options = "option1 option2 option3" | remove: current_option | strip | split: " "
+  assign size_swatches = "size, sizes, talla, taglia, taille, tamanho, grosse" | split: ", "
+
+-%}
+
+<div
+  class="swatch clearfix js-variant-selector"
+  data-option-index="{{ option.position }}"
+  data-hide-variant-option
+  data-selected-value="{{ option.selected_value | escape }}"
+  data-other-options='{{ other_options | json }}'
+>
+
+  <p class="option-label">
+    {{ option.name }} | <span id="selected-option-{{ option.position }}">{{ selected_available_value | default: sold_out_text }}</span>
+  </p>
+
+  {% if available_values == empty %}
+    <input type="radio" name="{{ option_name }}" value="" data-position="{{ option.position }}" data-option-value-id="{{ selected_value.id }}" checked disabled hidden>
+  {% endif %}
+
+  {% for option_value in available_values %}
+
+    {%- liquid
+
+      assign has_image = false
+      assign image_url = option_value | handle | append: '.png' | file_url
+      assign css_color = option_value | split: ' ' | last | handle
+      assign available = false
+      assign swatch_image_url = nil
+      if option_value.swatch.image
+        assign swatch_image_url = option_value.swatch.image | image_url: width: 50
+        assign has_image = true
+      endif
+      if option_value.swatch.color and color_swatch_style == 'swatch'
+        assign css_color = option_value.swatch.color
+      endif
+
+    -%}
+
+    {%- liquid
+
+      assign available = option_value.available
+
+    -%}
+
+    {%- liquid
+
+      assign variant_image_url = ''
+
+      if option_value.variant.image != blank
+        assign variant_image_url = option_value.variant.image | image_url: width: 100
+      endif
+
+      assign checked = ""
+
+      if option_value == selected_available_value
+        assign checked = 'checked="checked"'
+      endif
+
+    -%}
+
+    {%- capture handle %}{{ section.id }}-{{ option.name | handleize }}-{{ forloop.index0 }}{% endcapture -%}
+
+    {% capture radio_button %}
+      <input
+        type="radio"
+        class="swatches__form--input"
+        id="{{ handle }}"
+        name="{{ option_name }}"
+        value="{{ option_value | escape }}"
+        form="product-form-{{ section.id }}"
+        data-position="{{ option.position }}"
+        data-option-value-id="{{ option_value.id }}"
+        {{ checked }}
+       />
+    {% endcapture %}
+
+    {% capture regular_swatch %}
+      <div class="swatch-element">
+        {{ radio_button }}
+
+        <label
+          class="swatches__form--label"
+          for="{{ handle }}"
+          tabindex="0"
+        >
+          {{ option_value }}
+        </label>
+      </div>
+    {% endcapture %}
+
+    {% capture color_swatch %}
+      <div class="swatch-element color">
+
+        {{ radio_button }}
+
+        <label
+          class="swatches__form--label"
+          for="{{ handle }}"
+          aria-label="{{ option_value | escape }}"
+          style="background-color: {{ css_color }};
+          {% unless color_swatch_style == 'default-color' %}
+            background-image: url({% if color_swatch_style == 'custom-image' %}{{ image_url }}{% elsif color_swatch_style == 'variant-image' %}{{ variant_image_url }}{% elsif color_swatch_style == 'swatch' %}{{ swatch_image_url }}{% endif %});background-position: center center;
+          {% endunless %}"
+          tabindex="0">
+        </label>
+      </div>
+    {% endcapture %}
+
+    {% if color_swatch_options contains option_name %}
+      {{ color_swatch }}
+    {% else %}
+      {{ regular_swatch }}
+    {% endif %}
+  {% endfor %}
+
+  {% unless template == 'product.quick' %}
+    {% if show_size_chart and size_swatches contains option_name %}
+      {% render 'size-chart', label: size_chart_label, page: size_chart_page, section_id: section_id, type: size_chart_type %}
+    {% endif %}
+  {% endunless %}
+
+</div>
