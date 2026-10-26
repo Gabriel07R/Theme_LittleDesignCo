@@ -1,0 +1,33 @@
+{% doc %}
+  Renders an optional promotional image below a selected submenu column.
+  @param {block} block - The mega menu settings block.
+  @param {string} column_title - The current column heading.
+  @param {boolean} first_column - Whether this is the first column.
+{% enddoc %}
+
+{% liquid
+  assign target_heading = block.settings.column_image_heading | strip | downcase
+  assign current_heading = column_title | strip | downcase
+  assign show_image = false
+  if target_heading == blank
+    assign show_image = first_column
+  elsif target_heading == current_heading
+    assign show_image = true
+  endif
+  assign image_description = block.settings.column_image_alt | default: block.settings.column_image.alt
+  if block.settings.column_image_link != blank and image_description == blank
+    assign image_description = column_title
+  endif
+%}
+
+{% if show_image and block.settings.column_image != blank %}
+  <li class="header__megamenu-column-image">
+    {% if block.settings.column_image_link != blank %}
+      <a class="header__megamenu-column-image-link" href="{{ block.settings.column_image_link }}">
+    {% endif %}
+    {{ block.settings.column_image | image_url: width: 800 | image_tag: widths: '200, 400, 600, 800', sizes: '(min-width: 990px) 250px, 40vw', loading: 'lazy', alt: image_description }}
+    {% if block.settings.column_image_link != blank %}
+      </a>
+    {% endif %}
+  </li>
+{% endif %}

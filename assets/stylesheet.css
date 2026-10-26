@@ -8781,6 +8781,49 @@ h5.header__linklist-images-header {
 .header__megamenu--with-footer {
   flex-wrap: wrap;
 }
+.header__megamenu-column-image {
+  margin-top: 24px;
+  list-style: none;
+  break-inside: avoid;
+}
+.header__linklist-columns-container:has(.header__megamenu-column-image),
+.header__linklist-images-container:has(.header__megamenu-column-image) {
+  display: grid;
+  grid-template-columns: repeat(var(--submenu-columns), minmax(0, 1fr));
+  column-gap: 20px;
+  column-rule: none;
+  padding-bottom: 0;
+}
+.header__linklist-columns-container:has(.header__megamenu-column-image) > ul,
+.header__linklist-images-container:has(.header__megamenu-column-image) > ul {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  margin-bottom: 0;
+}
+.header__linklist-columns-container:has(.header__megamenu-column-image) > ul + ul,
+.header__linklist-images-container:has(.header__megamenu-column-image) > ul + ul {
+  border-inline-start: 1px solid var(--dotted-color);
+  padding-inline-start: 20px;
+}
+.header__linklist-columns-container .header__megamenu-column-image,
+.header__linklist-images-container .header__megamenu-column-image {
+  margin-top: auto;
+  padding-top: 24px;
+}
+.header__megamenu--with-footer:has(.header__megamenu-column-image) > .header__megamenu-footer {
+  margin-top: 12px;
+}
+.header__megamenu-column-image-link {
+  display: block;
+}
+.header__megamenu-column-image img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+}
 .header__linklist-images-wrapper.header__megamenu--with-footer > .header__linklist-images-container {
   flex-basis: 0;
   min-width: 0;

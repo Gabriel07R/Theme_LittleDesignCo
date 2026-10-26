@@ -34,7 +34,7 @@
     {% if block.settings.linklist_item == link.title %}
       {% capture linklist_columns %}
         <div class="header__linklist-columns-wrapper{% if block.settings.show_menu_footer %} header__megamenu--with-footer{% endif %}" {{ block.shopify_attributes }}>
-          <div class="header__linklist-columns-container">
+          <div class="header__linklist-columns-container" style="--submenu-columns: {{ link.links.size | at_least: 1 | at_most: 6 }};">
             {% assign linklist_qty = link.links.size %}
             {% for sub_link in link.links limit: 6 %}
              <ul class="header__linklist-columns-list">
@@ -44,6 +44,7 @@
                 {% for sub_sub_link in sub_link.links %}
                    <li class="header__linklist-item">{% render 'submenu-link', menu_link: sub_sub_link, menu_title: link.title, submenu_title: sub_link.title, link_class: 'header__linklist-link', blocks: section.blocks %}</li>
                 {% endfor %}
+              {% render 'megamenu-column-image', block: block, column_title: sub_link.title, first_column: forloop.first %}
             </ul>
             {% endfor %}
           </div>
@@ -69,7 +70,7 @@
     {% if block.settings.linklist_images_menu_item == link.title %}
         {% capture linklist_images_columns %}
           <div class="header__linklist-images-wrapper{% if block.settings.show_menu_footer %} header__megamenu--with-footer{% endif %} image-ratio-{{ block.settings.image_ratio }}" {{ block.shopify_attributes }}>
-            <div class="header__linklist-images-container">
+            <div class="header__linklist-images-container" style="--submenu-columns: {{ link.links.size | at_least: 1 | at_most: 3 }};">
               {% for sub_link in link.links %}
                 <ul class="header__linklist-images-list">
                   <h5 class="header__linklist-images-header">
@@ -80,6 +81,7 @@
                       {% render 'submenu-link', menu_link: sub_sub_link, menu_title: link.title, submenu_title: sub_link.title, link_class: 'header__linklist-images-link', blocks: section.blocks %}
                     </li>
                   {% endfor %}
+                  {% render 'megamenu-column-image', block: block, column_title: sub_link.title, first_column: forloop.first %}
                 </ul>
               {% endfor %}
              </div>
