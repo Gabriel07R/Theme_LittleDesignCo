@@ -8789,10 +8789,13 @@ h5.header__linklist-images-header {
 .header__linklist-columns-container:has(.header__megamenu-column-image),
 .header__linklist-images-container:has(.header__megamenu-column-image) {
   display: grid;
-  grid-template-columns: repeat(var(--submenu-columns), minmax(0, 1fr));
+  grid-template-columns: repeat(var(--submenu-columns, 4), minmax(0, 1fr));
   column-gap: 20px;
   column-rule: none;
   padding-bottom: 0;
+}
+.header__linklist-images-container:has(.header__megamenu-column-image) {
+  grid-template-columns: repeat(var(--submenu-columns, 3), minmax(0, 1fr));
 }
 .header__linklist-columns-container:has(.header__megamenu-column-image) > ul,
 .header__linklist-images-container:has(.header__megamenu-column-image) > ul {
@@ -8826,7 +8829,7 @@ h5.header__linklist-images-header {
 }
 .header__linklist-images-wrapper.header__megamenu--with-footer > .header__linklist-images-container {
   flex-basis: 0;
-  min-width: 0;
+  min-width: 1px;
 }
 .header__megamenu-footer {
   flex: 0 0 100%;
