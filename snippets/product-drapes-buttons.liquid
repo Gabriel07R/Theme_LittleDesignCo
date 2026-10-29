@@ -42,19 +42,6 @@
       name="items[0][properties][Fabric Colorway]"
       value="Apple Red"
     >
-    <div class="container mb20">
-      <p class="plus-line-item-property__field">
-        <label for="install-date">Install Date</label>
-        <input
-          required
-          class="required plus-line-item-property__input"
-          id="install-date"
-          type="date"
-          name="items[0]properties[Install Date]"
-          placeholder="Inches"
-        >
-      </p>
-    </div>
   </div>
 
   <div class="product-add clearfix">
@@ -67,24 +54,13 @@
 
     {% assign qty_name = 'name="quantity"' %}
     {% if settings.plus_add_insert == true %}
-      {% liquid
-        assign context = 'input'
-        render 'plus-add-insert', context: context
-        assign qty_name = 'name="items[0][quantity]"'
-      %}
+      {% assign qty_name = 'name="items[0][quantity]"' %}
     {% endif %}
     <input class="formQty" type="hidden" {{ qty_name }} value="1">
     <input class="formVariantId" name="" type="hidden" value="{{ product.selected_or_first_available_variant.id }}">
 
     <!-- Quantity Selector -->
     <div class="qty-button">
-      {% if settings.plus_add_insert == true %}
-        {% liquid
-          assign context = 'widget'
-          render 'plus-add-insert', context: context
-        %}
-      {% endif %}
-
       <label
         class="option-label"
         for="product-qty-{{ product.id }}"
