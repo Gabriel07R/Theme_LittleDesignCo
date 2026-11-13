@@ -106,7 +106,7 @@
       }
     {% endcapture %}
 
-    {% capture 'layout_images' %}
+    {% capture layout_images %}
       <div id="product-photos" {{ gallery_style }}
         class="product-photos carousel-container js-product-gallery{% if section.settings.pf_gallery_style contains 'scroll' %} product__section-image--{{ scroll_type }}{% endif %}{% if settings.animation != 'none' %} animate {{ settings.animation }} delay--1{% endif %}"
         data-product-single-media-group
@@ -1803,3 +1803,13 @@
   ]
 }
 {% endschema %}
+{% comment %}
+
+This file has been rewritten to preserve the original behavior.
+
+---
+Changes:
+- from: "{% capture 'layout_images' %}"
+  to: "{% capture layout_images %}"
+  position: 4062..4089
+{% endcomment %}

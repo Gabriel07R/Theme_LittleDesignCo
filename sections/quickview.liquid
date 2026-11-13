@@ -43,7 +43,7 @@ data-url="{{ product.url }}">
   <div class="product-page grid__wrapper edge product-template" id="product-{{ product.id }}"
     data-product-id="{{ product.id }}">
 
-    {% capture 'layout_images' %}
+    {% capture layout_images %}
     <div id="product-photos" {{ gallery_style }}
       class="product-photos carousel-container product__section-images js-product-gallery{% if settings.animation != 'none' %} animate {{ settings.animation }} delay--1{% endif %}"
       data-product-single-media-group data-gallery-config='{{ product_gallery_config }}'>
@@ -63,7 +63,7 @@ data-url="{{ product.url }}">
       </div>
     {% endcapture %}
 
-    {% capture 'layout_form' %}
+    {% capture layout_form %}
 
      {% capture product_form_config %}
       { "money_format": {{ shop.money_format | json }},
@@ -105,7 +105,7 @@ data-url="{{ product.url }}">
 
     {% endcapture %}
 
-    {% capture 'layout_accordion' %}
+    {% capture layout_accordion %}
       <div class="accordion">
           <div id="soc">
             {% render 'social' with product %}
@@ -140,3 +140,19 @@ data-url="{{ product.url }}">
 {% endif %}
 </script>
 </template>
+{% comment %}
+
+This file has been rewritten to preserve the original behavior.
+
+---
+Changes:
+- from: "{% capture 'layout_images' %}"
+  to: "{% capture layout_images %}"
+  position: 1661..1688
+- from: "{% capture 'layout_form' %}"
+  to: "{% capture layout_form %}"
+  position: 2577..2602
+- from: "{% capture 'layout_accordion' %}"
+  to: "{% capture layout_accordion %}"
+  position: 3995..4025
+{% endcomment %}

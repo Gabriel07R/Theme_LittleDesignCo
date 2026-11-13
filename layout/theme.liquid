@@ -27,7 +27,6 @@
     <link rel="preload" href="{{ 'eventemitter3.min.js' | asset_url }}" as="script">
     <link rel="preload" href="{{ 'vendor-video.js' | asset_url }}" as="script">
     <link rel="preload" href="{{ 'theme.js' | asset_url }}" as="script">
-    
 
     {% if settings.favicon -%}
       <link rel="shortcut icon" href="{{ settings.favicon | image_url: width: 32, height: 32 }}" type="image/png">
@@ -51,7 +50,6 @@
 
     <link rel="stylesheet" href="{{ 'stylesheet.css' | asset_url }}" type="text/css">
     <link rel="stylesheet" href="{{ 'component-wishlist.css' | asset_url }}" type="text/css">
-
 
     <style>
       {{ main_font | font_face: font_display: 'swap' }}
@@ -108,46 +106,46 @@
         data-wau-slideout="ajax-cart"
         id="slideout-ajax-cart"
       >
-      {% if cart_recently_viewed %}
-        <div class="cart--featured_collection">
-          <h4>Recently viewed</h4>
-          <section
-            id="cart-recently-viewed-products"
-            class="cart-recently-viewed-products"
-            data-section-type="cart-recently-viewed-products"
-          >
-            <div class="cart__disclosure">
-              <p>Recently viewed products. <a href="#">Search the store?</a></p>
-            </div>
-            <div id="cart-recently-viewed-products-wrapper"></div>
-          </section>
-          <style>
-            .cart__disclosure {
-              display: none;
-            }
-            .cart-recently-viewed-products:has(#cart-recently-viewed-products-wrapper:empty) .cart__disclosure {
-              display: block;
-            }
-          </style>
-        </div>
-      {% elsif cart_featured_collection %}
-        <div class="cart--featured_collection">
-          <h4>{{ 'cart.general.featured_items' | t }}</h4>
-          {% for product in collection.products limit: 4 %}
-            {% if product.available %}
-              <div
-                class="product-index product-listing-simple"
-                id="product-listing-{{ product.id }}"
-                data-product-id="{{ product.id }}"
-                data-alpha="{{ product.title }}"
-                data-price="{{ product.price }}"
-              >
-                {% render 'product-listing-simple', product: product, collection: collection %}
+        {% if cart_recently_viewed %}
+          <div class="cart--featured_collection">
+            <h4>Recently viewed</h4>
+            <section
+              id="cart-recently-viewed-products"
+              class="cart-recently-viewed-products"
+              data-section-type="cart-recently-viewed-products"
+            >
+              <div class="cart__disclosure">
+                <p>Recently viewed products. <a href="#">Search the store?</a></p>
               </div>
-            {% endif %}
-          {% endfor %}
-        </div>
-      {% endif %}
+              <div id="cart-recently-viewed-products-wrapper"></div>
+            </section>
+            <style>
+              .cart__disclosure {
+                display: none;
+              }
+              .cart-recently-viewed-products:has(#cart-recently-viewed-products-wrapper:empty) .cart__disclosure {
+                display: block;
+              }
+            </style>
+          </div>
+        {% elsif cart_featured_collection %}
+          <div class="cart--featured_collection">
+            <h4>{{ 'cart.general.featured_items' | t }}</h4>
+            {% for product in collection.products limit: 4 %}
+              {% if product.available %}
+                <div
+                  class="product-index product-listing-simple"
+                  id="product-listing-{{ product.id }}"
+                  data-product-id="{{ product.id }}"
+                  data-alpha="{{ product.title }}"
+                  data-price="{{ product.price }}"
+                >
+                  {% render 'product-listing-simple', product: product, collection: collection %}
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
+        {% endif %}
 
         {% render 'cart-mini' %}
       </aside>
@@ -184,7 +182,7 @@
 
     {% section 'mailing-popup' %}
 
-      <script src="{{ 'shopify_common.js' | shopify_asset_url }}" defer="defer"></script>
+    <script src="{{ 'shopify_common.js' | shopify_asset_url }}" defer="defer"></script>
     {%- if request.page_type contains 'customers/' -%}
       <script src="{{ 'customer_area.js' | shopify_asset_url }}" defer></script>
     {%- endif -%}
@@ -202,7 +200,10 @@
       }
     </script>
 
-    <wau-popover-loader data-asset-url='{{ 'vendor-popover-polyfill.js' | asset_url }}' data-css-class="popover"></wau-popover-loader>
+    <wau-popover-loader
+      data-asset-url="{{ 'vendor-popover-polyfill.js' | asset_url }}"
+      data-css-class="popover"
+    ></wau-popover-loader>
 
     <!-- Root element of PhotoSwipe. Must have class pswp. -->
     <div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
@@ -263,7 +264,7 @@
       </div>
     </div>
 
-      {% capture search_modal_content %}
+    {% capture search_modal_content %}
       {%- if settings.predictive_search_enabled -%}
         <predictive-search
           data-routes="{{ routes.predictive_search_url | default: '/search/suggest' }}"
@@ -315,14 +316,15 @@
           <input type="hidden" name="type" value="product">
         {% endif %}
       </form>
-      {%- if settings.predictive_search_enabled -%}
-        <div id="predictive-search" class="predictive-search" tabindex="-1"></div>
-      {%- endif -%}
+        {%- if settings.predictive_search_enabled -%}
+          <div id="predictive-search" class="predictive-search" tabindex="-1"></div>
+        {%- endif -%}
+      
       {%- if settings.predictive_search_enabled -%}
         </predictive-search>
       {%- endif -%}
     {% endcapture %}
     {% render 'modal', id: 'search-modal', content: search_modal_content, attributes: 'data-wau-modal-full' %}
-    {%  section 'quickview' %}
+    {% section 'quickview' %}
   </body>
 </html>

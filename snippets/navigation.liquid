@@ -34,7 +34,7 @@
     {% if block.settings.linklist_item == link.title %}
       {% capture linklist_columns %}
         <div class="header__linklist-columns-wrapper{% if block.settings.show_menu_footer %} header__megamenu--with-footer{% endif %}" {{ block.shopify_attributes }}>
-          <div class="header__linklist-columns-container" style="--submenu-columns: {{ link.links.size | at_least: 1 | at_most: 6 }};">
+          <div class="header__linklist-columns-container">
             {% assign linklist_qty = link.links.size %}
             {% for sub_link in link.links limit: 6 %}
              <ul class="header__linklist-columns-list">
@@ -70,7 +70,7 @@
     {% if block.settings.linklist_images_menu_item == link.title %}
         {% capture linklist_images_columns %}
           <div class="header__linklist-images-wrapper{% if block.settings.show_menu_footer %} header__megamenu--with-footer{% endif %} image-ratio-{{ block.settings.image_ratio }}" {{ block.shopify_attributes }}>
-            <div class="header__linklist-images-container" style="--submenu-columns: {{ link.links.size | at_least: 1 | at_most: 3 }};">
+            <div class="header__linklist-images-container">
               {% for sub_link in link.links %}
                 <ul class="header__linklist-images-list">
                   <h5 class="header__linklist-images-header">
