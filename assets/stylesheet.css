@@ -8814,6 +8814,20 @@ h5.header__linklist-images-header {
   margin-top: auto;
   padding-top: 24px;
 }
+.header__linklist-columns-container:has(> .header__linklist-columns-list:nth-child(5):last-child) {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px 20px;
+  column-rule: none;
+}
+.header__linklist-columns-container:has(> .header__linklist-columns-list:nth-child(5):last-child) > .header__linklist-columns-list {
+  min-width: 0;
+  margin-bottom: 0;
+}
+.header__linklist-columns-container:has(> .header__linklist-columns-list:nth-child(5):last-child) > .header__linklist-columns-list:nth-child(5) {
+  grid-column: 1;
+  border-inline-start: 0;
+}
 .header__megamenu--with-footer:has(.header__megamenu-column-image) > .header__megamenu-footer {
   margin-top: 12px;
 }
